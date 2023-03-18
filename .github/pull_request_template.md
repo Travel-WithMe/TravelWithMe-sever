@@ -22,6 +22,6 @@
 ## PR Checklist
 PR이 다음 요구 사항을 충족하는지 확인하세요.
 
-- [ ] Pull Request Title을 다음 예시와 같이 작성했습니다. (e.g. Feat: 회원가입 기능 구현)
+- [ ] Pull Request Title을 다음 예시와 같이 작성했습니다. (e.g. [feat -> develop] feat - #1: 회원가입 기능 구현)
 - [ ] 커밋 메시지 컨벤션에 맞게 작성했습니다. <a href="https://www.notion.so/Commit-message-00f64f681b8040cdb00eac1cf613e351?pvs=4" target="_blank"> Commit message convention 참고 </a> (Ctrl + 클릭하세요.) 
 - [ ] 변경 사항에 대한 테스트를 했습니다.(버그 수정/기능에 대한 테스트).
