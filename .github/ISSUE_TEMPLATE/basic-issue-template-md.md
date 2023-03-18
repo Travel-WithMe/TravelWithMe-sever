@@ -18,5 +18,5 @@ assignees: ''
 
 ## Issue Checklist
 아래 체크리스트를 확인해주세요.
-- [ ] Issue Title을 다음 예시와 같이 작성했습니다. (e.g. [FE] Feat: 회원가입 기능 구현 )
+- [ ] Issue Title을 다음 예시와 같이 작성했습니다. (e.g. [BE] 회원가입 기능 구현 )
 - [ ] 우측의 Assignees, Labels, Projects, Milestone을 적절하게 선택했습니다.
