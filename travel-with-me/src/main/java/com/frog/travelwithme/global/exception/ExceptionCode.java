@@ -16,14 +16,18 @@ public enum ExceptionCode {
 
     // Security, JWT
     NO_ACCESS_TOKEN(403, "Token without permission information"),
-    TOKEN_SIGNATURE_INVALID(400, "Token Signature Invalid"),
-    TOKEN_EXPIRED(400, "Token Expired"),
-    TOKEN_UNSUPPORTED(400, "Token Unsupported"),
-    TOKEN_ILLEGAL_ARGUMENT(400, "Token Illegal Argumnet"),
+    TOKEN_SIGNATURE_INVALID(400, "Token signature invalid"),
+    TOKEN_EXPIRED(400, "Token expired"),
+    TOKEN_UNSUPPORTED(400, "Token unsupported"),
+    TOKEN_ILLEGAL_ARGUMENT(400, "Token illegal argumnet"),
+    MEMBER_NOT_FOUND(404, "Member not found"),
+    HEADER_REFRESH_TOKEN_NOT_EXISTS(404, "No refresh token in header"),
+    TOKEN_IS_NOT_SAME(404, "Token is not same"),
 
     // AES
-    ENCRYPTION_FAILED(404, "암호화에 실패하였습니다."),
-    DECRYPTION_FAILED(404, "복호화에 실패하였습니다.");
+    ENCRYPTION_FAILED(404, "Encryption failed"),
+    DECRYPTION_FAILED(404, "Decryption failed.\n"),
+    SECRET_KEY_INVALID(400, "Secret key ivalid");
 
     @Getter
     private final int status;
