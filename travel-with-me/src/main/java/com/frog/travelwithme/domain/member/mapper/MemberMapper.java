@@ -1,8 +1,9 @@
 package com.frog.travelwithme.domain.member.mapper;
 
 import com.frog.travelwithme.domain.member.entity.Member;
-import com.frog.travelwithme.domain.member.entity.MemberDto;
+import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 /**
  * 작성자: 김찬빈
@@ -14,10 +15,22 @@ public
 interface MemberMapper {
     default Member toEntity(MemberDto.SignUp signUpDto) {
         Member.MemberBuilder memberBuilder = Member.builder();
-        memberBuilder.signUpDto(signUpDto);
+        memberBuilder
+                .email(signUpDto.getEmail())
+                .password(signUpDto.getPassword())
+                .nickname(signUpDto.getNickname())
+                .nation(signUpDto.getNation())
+                .address(signUpDto.getAddress())
+                .image(signUpDto.getImage())
+                .introduction(signUpDto.getIntroduction())
+                .role(signUpDto.getRole());
 
         return memberBuilder.build();
     }
 
-    MemberDto.SingUpResponse toDto(Member member);
+    Member toEntity(MemberDto.Patch patchDto);
+
+    @Mapping(target = "role",
+    expression = "java(member.getRoles().get(0))")
+    MemberDto.Response toDto(Member member);
 }

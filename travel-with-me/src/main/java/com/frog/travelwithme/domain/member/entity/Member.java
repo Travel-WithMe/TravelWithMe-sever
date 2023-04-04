@@ -1,24 +1,20 @@
 package com.frog.travelwithme.domain.member.entity;
 
 import com.frog.travelwithme.domain.BaseTimeEntity;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Member 설명: 회원 데이터 관리
  * 작성자: 김찬빈
- * 버전 정보: 1.0.0
+ * 버전 정보: 1.0.1
  * 작성일자: 2023/03/27
  **/
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseTimeEntity {
     @Id
@@ -45,27 +41,25 @@ public class Member extends BaseTimeEntity {
     @Embedded
     private Coordinate coordinate;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> roles = new ArrayList<>();
+    private String role;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private OAuthStatus oauthstatus;
 
     @Builder
-    public Member(MemberDto.SignUp signUpDto) {
-        this.email = signUpDto.getEmail();
-        this.password = signUpDto.getPassword();
-        this.nickname = signUpDto.getNickname();
-        this.nation = signUpDto.getNation();
-        this.address = signUpDto.getAddress();
-        this.image = signUpDto.getImage();
-        this.introduction = signUpDto.getIntroduction();
-        this.roles.add(signUpDto.getRole());
-    }
-
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
+    public Member(Long id, String email, String nickname, String password, String nation, String address,
+                  String image, String introduction, String role, OAuthStatus oauthstatus) {
+        this.id = id;
+        this.email = email;
+        this.nickname = nickname;
+        this.password = password;
+        this.nation = nation;
+        this.address = address;
+        this.image = image;
+        this.introduction = introduction;
+        this.role = role;
+        this.oauthstatus = oauthstatus;
     }
 
     public void passwordEncoding(PasswordEncoder passwordEncoder) {

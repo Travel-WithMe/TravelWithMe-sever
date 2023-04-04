@@ -27,7 +27,8 @@ public enum ExceptionCode {
     // AES
     ENCRYPTION_FAILED(404, "Encryption failed"),
     DECRYPTION_FAILED(404, "Decryption failed.\n"),
-    SECRET_KEY_INVALID(400, "Secret key ivalid");
+    SECRET_KEY_INVALID(400, "Secret key invalid"),
+    MEMBER_ROLE_INVALID(400, "Member role invalid");
 
     @Getter
     private final int status;
