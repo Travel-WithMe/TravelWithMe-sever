@@ -3,6 +3,8 @@ package com.frog.travelwithme.global.security.auth.userdetails;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.global.security.auth.utils.CustomAuthorityUtils;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,37 +17,38 @@ import java.util.List;
  * 작성일자: 2023/03/28
  **/
 @Getter
+@NoArgsConstructor
+@ToString
 public class CustomUserDetails extends Member implements UserDetails {
-    private final Long id;
-    private final String email;
-    private final List<String> roles;
+    private Long id;
+    private String email;
+    private String role;
     private String password;
 
     private CustomUserDetails(Member member) {
         this.id = member.getId();
         this.email = member.getEmail();
         this.password = member.getPassword();
-        this.roles = member.getRoles();
+        this.role = member.getRole();
     }
 
-    private CustomUserDetails(Long id, String email, List<String> roles) {
+    private CustomUserDetails(Long id, String email, String role) {
         this.id = id;
         this.email = email;
-        this.roles = roles;
+        this.role = role;
     }
 
     public static CustomUserDetails of(Member member) {
         return new CustomUserDetails(member);
     }
 
-    public static CustomUserDetails of(Long id, String email, List<String> roles) {
-        return new CustomUserDetails(id, email, roles);
+    public static CustomUserDetails of(Long id, String email, String role) {
+        return new CustomUserDetails(id, email, role);
     }
 
     @Override
     public List<GrantedAuthority> getAuthorities() {
-        CustomAuthorityUtils authorityUtils = new CustomAuthorityUtils();
-        return authorityUtils.createAuthorities(roles);
+        return CustomAuthorityUtils.createAuthorities(role);
     }
 
     @Override

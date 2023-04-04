@@ -5,6 +5,7 @@ import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 버전 정보: 1.0.0
  * 작성일자: 2023/03/29
  **/
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
