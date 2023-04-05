@@ -2,7 +2,7 @@ package com.frog.travelwithme.global.security.config;
 
 import com.frog.travelwithme.common.config.AES128Config;
 import com.frog.travelwithme.domain.member.service.MemberService;
-import com.frog.travelwithme.global.redis.RedisDao;
+import com.frog.travelwithme.global.redis.RedisService;
 import com.frog.travelwithme.global.security.auth.filter.JwtAuthenticationFilter;
 import com.frog.travelwithme.global.security.auth.filter.JwtVerificationFilter;
 import com.frog.travelwithme.global.security.auth.handler.CustomAccessDeniedHandler;
@@ -38,7 +38,7 @@ public class SecurityConfiguration {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
     private final AES128Config aes128Config;
-    private final RedisDao redisDao;
+    private final RedisService redisService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -86,8 +86,8 @@ public class SecurityConfiguration {
         public void configure(HttpSecurity builder) throws Exception {
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
             JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager,
-                    jwtTokenProvider, aes128Config, memberService, redisDao);
-            JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenProvider, redisDao);
+                    jwtTokenProvider, aes128Config, memberService, redisService);
+            JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenProvider, redisService);
 
             jwtAuthenticationFilter.setFilterProcessesUrl("/members/login");
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler());
