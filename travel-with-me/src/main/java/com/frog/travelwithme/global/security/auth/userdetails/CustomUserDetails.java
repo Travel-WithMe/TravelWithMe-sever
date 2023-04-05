@@ -20,20 +20,17 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class CustomUserDetails extends Member implements UserDetails {
-    private Long id;
     private String email;
     private String role;
     private String password;
 
     private CustomUserDetails(Member member) {
-        this.id = member.getId();
         this.email = member.getEmail();
         this.password = member.getPassword();
         this.role = member.getRole();
     }
 
-    private CustomUserDetails(Long id, String email, String role) {
-        this.id = id;
+    private CustomUserDetails(String email, String role) {
         this.email = email;
         this.role = role;
     }
@@ -42,8 +39,8 @@ public class CustomUserDetails extends Member implements UserDetails {
         return new CustomUserDetails(member);
     }
 
-    public static CustomUserDetails of(Long id, String email, String role) {
-        return new CustomUserDetails(id, email, role);
+    public static CustomUserDetails of(String email, String role) {
+        return new CustomUserDetails(email, role);
     }
 
     @Override
