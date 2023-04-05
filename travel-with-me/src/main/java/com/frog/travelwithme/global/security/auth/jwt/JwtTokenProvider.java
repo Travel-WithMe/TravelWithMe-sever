@@ -22,8 +22,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * JwtTokenProvider 설명: JWT 토큰 생성, 복호화 및 정보 추출, 유효성 검증.
@@ -72,7 +74,7 @@ public class JwtTokenProvider {
         Date accessTokenExpiresIn = getTokenExpiration(accessTokenExpirationMinutes);
         Date refreshTokenExpiresIn = getTokenExpiration(refreshTokenExpirationMinutes);
         Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", customUserDetails.getRoles());
+        claims.put("role", customUserDetails.getRole());
         claims.put("id", customUserDetails.getId());
 
         String accessToken = Jwts.builder()
@@ -103,25 +105,17 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseClaims(accessToken);
 
-        if (claims.get("roles") == null) {
+        if (claims.get("role") == null) {
             throw new BusinessLogicException(ExceptionCode.NO_ACCESS_TOKEN);
         }
 
-        List<String> authorities = Arrays.stream(claims.get("roles")
-                        .toString()
-                        .replace("[", "")
-                        .replace("]", "")
-                        .replace(",", "")
-                        .split(","))
-                .collect(Collectors.toList());
+        String authority = claims.get("role").toString();
 
         CustomUserDetails customUserDetails = CustomUserDetails.of(
-                claims.get("id", Long.class),
                 claims.get("sub", String.class),
-                authorities);
+                authority);
 
-        customUserDetails.getRoles().forEach(role
-                -> log.info("# AuthMember.getRoles 권한 체크 = {}", role));
+        log.info("# AuthMember.getRoles 권한 체크 = {}", customUserDetails.getRole());
 
         return new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
     }

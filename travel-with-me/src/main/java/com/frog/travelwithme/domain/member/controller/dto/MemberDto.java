@@ -1,4 +1,4 @@
-package com.frog.travelwithme.domain.member.entity;
+package com.frog.travelwithme.domain.member.controller.dto;
 
 import lombok.*;
 
@@ -10,12 +10,13 @@ import java.time.LocalDateTime;
 
 /**
  * 작성자: 김찬빈
- * 버전 정보: 1.0.0
+ * 버전 정보: 1.0.1
  * 작성일자: 2023/03/29
  **/
 public class MemberDto {
 
     @Getter
+    @Builder
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class SignUp {
@@ -39,9 +40,25 @@ public class MemberDto {
     }
 
     @Getter
+    @Builder
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class SingUpResponse {
+    public static class Patch {
+        private String password;
+        private String nickname;
+        private String nation;
+        private String address;
+        private String image;
+        private String introduction;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class Response {
+        private Long id;
+        private String email;
         private String nickname;
         private String nation;
         private String address;
@@ -49,21 +66,11 @@ public class MemberDto {
         private String introduction;
         private String role;
         private LocalDateTime createdAt;
-
-        @Builder
-        public SingUpResponse(Member member) {
-            this.nickname = member.getNickname();
-            this.nation = member.getNation();
-            this.address = member.getAddress();
-            this.image = member.getImage();
-            this.introduction = member.getIntroduction();
-            this.role = member.getRoles().get(0);
-            this.createdAt = member.getCreatedAt();
-        }
+        private LocalDateTime lastModifiedAt;
     }
 
-    @Builder
     @Getter
+    @Builder
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class LoginResponse {
