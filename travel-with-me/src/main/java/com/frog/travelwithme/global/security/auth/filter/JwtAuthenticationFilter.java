@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frog.travelwithme.common.config.AES128Config;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
-import com.frog.travelwithme.global.redis.RedisDao;
+import com.frog.travelwithme.global.redis.RedisService;
 import com.frog.travelwithme.global.security.auth.dto.LoginDto;
 import com.frog.travelwithme.global.security.auth.dto.TokenDto;
 import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final JwtTokenProvider jwtTokenProvider;
     private final AES128Config aes128Config;
     private final MemberService memberService;
-    private final RedisDao redisDao;
+    private final RedisService redisService;
 
     @SneakyThrows
     @Override
@@ -73,7 +73,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // 로그인 성공시 Refresh Token Redis 저장 ( key = Email / value = Refresh Token )
         int refreshTokenExpirationMinutes = jwtTokenProvider.getRefreshTokenExpirationMinutes();
-        redisDao.setValues(findMember.getEmail(), refreshToken, Duration.ofMinutes(refreshTokenExpirationMinutes));
+        redisService.setValues(findMember.getEmail(), refreshToken, Duration.ofMinutes(refreshTokenExpirationMinutes));
 
         this.getSuccessHandler().onAuthenticationSuccess(request, response, authResult);
     }
