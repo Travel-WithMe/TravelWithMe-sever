@@ -3,13 +3,12 @@ package com.frog.travelwithme.global.security.auth.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ErrorResponse;
-import com.frog.travelwithme.global.redis.RedisDao;
+import com.frog.travelwithme.global.redis.RedisService;
 import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -37,7 +36,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
                     "/members/login",
                     "/members/reissue");
     private final JwtTokenProvider jwtTokenProvider;
-    private final RedisDao redisDao;
+    private final RedisService redisService;
 
     // JWT 인증 정보를 현재 쓰레드의 SecurityContext에 저장(가입/로그인/재발급 Request 제외)
     @Override
@@ -46,6 +45,9 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
             String accessToken = jwtTokenProvider.resolveAccessToken(request);
+            log.info("StringUtils.hasText(accessToken) = {}", StringUtils.hasText(accessToken));
+            log.info("doNotLogout(accessToken) = {}", doNotLogout(accessToken));
+            log.info("jwtTokenProvider.validateToken(accessToken, response) = {}", jwtTokenProvider.validateToken(accessToken, response));
             if (StringUtils.hasText(accessToken) && doNotLogout(accessToken)
                     && jwtTokenProvider.validateToken(accessToken, response)) {
                 setAuthenticationToContext(accessToken);
@@ -63,8 +65,8 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
     }
 
     private boolean doNotLogout(String accessToken) {
-        String isLogout = redisDao.getValues(accessToken);
-        return ObjectUtils.isEmpty(isLogout);
+        String isLogout = redisService.getValues(accessToken);
+        return isLogout.equals("false");
     }
 
     // EXCLUDE_URL과 동일한 요청이 들어왔을 경우, 현재 필터를 진행하지 않고 다음 필터 진행
