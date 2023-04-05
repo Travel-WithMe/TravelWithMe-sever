@@ -1,7 +1,7 @@
 package com.frog.travelwithme.global.security.auth.utils;
 
 import com.frog.travelwithme.domain.member.entity.Member;
-import com.frog.travelwithme.domain.member.entity.MemberDto;
+import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.global.dto.SingleResponseDto;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ErrorResponse;
@@ -40,7 +40,7 @@ public class Responder {
                 .id(member.getId())
                 .eamil(member.getEmail())
                 .nickname(member.getNickname())
-                .role(member.getRoles().get(0))
+                .role(member.getRole())
                 .build();
 
         response.getWriter().write(gson.toJson(new SingleResponseDto<>(lgoinResponse), SingleResponseDto.class));

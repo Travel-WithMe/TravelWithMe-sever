@@ -1,13 +1,12 @@
 package com.frog.travelwithme.domain.member.mapper;
 
-import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
+import com.frog.travelwithme.domain.member.entity.Member;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 /**
  * 작성자: 김찬빈
- * 버전 정보: 1.0.0
+ * 버전 정보: 1.0.1
  * 작성일자: 2023/04/02
  **/
 @Mapper(componentModel = "spring")
@@ -30,7 +29,5 @@ interface MemberMapper {
 
     Member toEntity(MemberDto.Patch patchDto);
 
-    @Mapping(target = "role",
-    expression = "java(member.getRoles().get(0))")
     MemberDto.Response toDto(Member member);
 }
