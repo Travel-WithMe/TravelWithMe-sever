@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.Map;
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  **/
 @Component
 @RequiredArgsConstructor
-public class RedisDao {
+public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     public void setValues(String key, String data) {
@@ -31,6 +32,7 @@ public class RedisDao {
         values.set(key, data, duration);
     }
 
+    @Transactional(readOnly = true)
     public String getValues(String key) {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
         if (values.get(key) == null) {
@@ -52,6 +54,7 @@ public class RedisDao {
         values.putAll(key, data);
     }
 
+    @Transactional(readOnly = true)
     public String getHashOps(String key, String hashKey) {
         HashOperations<String, Object, Object> values = redisTemplate.opsForHash();
         return Boolean.TRUE.equals(values.hasKey(key, hashKey)) ? (String) redisTemplate.opsForHash().get(key, hashKey) : "";
