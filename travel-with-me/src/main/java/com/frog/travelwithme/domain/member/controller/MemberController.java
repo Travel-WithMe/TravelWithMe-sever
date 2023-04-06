@@ -48,4 +48,12 @@ public class MemberController {
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
+
+    @DeleteMapping
+    public ResponseEntity deleteMember(@AuthenticationPrincipal CustomUserDetails user) {
+        String email = user.getEmail();
+        memberService.deleteMember(email);
+
+        return new ResponseEntity<>(new SingleResponseDto<>("Member deleted successfully"), HttpStatus.NO_CONTENT);
+    }
 }

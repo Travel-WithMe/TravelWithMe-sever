@@ -8,6 +8,8 @@ public interface ResourceUtils {
 
     String getResourceUrl();
 
+    String getResourceUrl(String url);
+
     String getResourceUrl(Long id);
 
     String getResourceUrl(Long id, String url);

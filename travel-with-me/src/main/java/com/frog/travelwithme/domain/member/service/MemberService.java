@@ -76,4 +76,9 @@ public class MemberService {
             throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
         }
     }
+
+    public void deleteMember(String email) {
+        findVerifiedMember(email);
+        memberRepository.deleteByEmail(email);
+    }
 }
