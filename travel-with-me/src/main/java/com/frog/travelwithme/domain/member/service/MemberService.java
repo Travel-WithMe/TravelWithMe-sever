@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static com.frog.travelwithme.domain.member.entity.Member.OAuthStatus.NORMAL;
+import static com.frog.travelwithme.common.EnumCollection.OAuthStatus.NORMAL;
 import static com.frog.travelwithme.global.security.auth.utils.CustomAuthorityUtils.verifiedRole;
 
 /**
