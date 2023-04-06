@@ -59,6 +59,7 @@ public class ResultActionsUtils {
                         .with(csrf()))
                 .andDo(print());
     }
+
     public static ResultActions patchRequest(MockMvc mockMvc,
                                              String url,
                                              String json,
