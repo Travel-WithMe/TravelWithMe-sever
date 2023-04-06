@@ -4,7 +4,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
-public class CommunityResourceUtils implements ResourceUtils {
+public class MemberResourceUtils implements ResourceUtils {
 
     private static final String PATH = "/";
     private static final String BASE_URL = "/members";
@@ -21,6 +21,12 @@ public class CommunityResourceUtils implements ResourceUtils {
     @Override
     public String getResourceUrl() {
         return UriComponentsBuilder.newInstance().path(BASE_URL)
+                .build().toUri().toString();
+    }
+
+    @Override
+    public String getResourceUrl(String url) {
+        return UriComponentsBuilder.newInstance().path(BASE_URL + PATH + url)
                 .build().toUri().toString();
     }
 

@@ -111,10 +111,10 @@ public class JwtTokenProvider {
         String authority = claims.get("role").toString();
 
         CustomUserDetails customUserDetails = CustomUserDetails.of(
-                claims.get("sub", String.class),
+                claims.getSubject(),
                 authority);
 
-        log.info("# AuthMember.getRoles 권한 체크 = {}", customUserDetails.getRole());
+        log.info("# AuthMember.getRoles 권한 체크 = {}", customUserDetails.getAuthorities().toString());
 
         return new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
     }
