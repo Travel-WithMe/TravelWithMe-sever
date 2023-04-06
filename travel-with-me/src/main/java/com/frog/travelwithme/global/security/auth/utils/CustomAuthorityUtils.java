@@ -2,11 +2,13 @@ package com.frog.travelwithme.global.security.auth.utils;
 
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
-import com.frog.travelwithme.global.security.auth.enums.Roles;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.List;
+
+import static com.frog.travelwithme.common.EnumCollection.Roles.ADMIN;
+import static com.frog.travelwithme.common.EnumCollection.Roles.USER;
 
 /**
  * CustomAuthorityUtils 설명: DB에 저장된 Role을 기반으로 권한 정보 생성
@@ -22,7 +24,7 @@ public class CustomAuthorityUtils {
     public static void verifiedRole(String role) {
         if (role == null) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_ROLE_DOES_NOT_EXISTS);
-        } else if (!role.equals(Roles.USER.toString()) && !role.equals(Roles.ADMIN.toString())) {
+        } else if (!role.equals(USER.toString()) && !role.equals(ADMIN.toString())) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_ROLE_INVALID);
         }
     }

@@ -1,5 +1,6 @@
 package com.frog.travelwithme.domain.member.entity;
 
+import com.frog.travelwithme.common.EnumCollection.OAuthStatus;
 import com.frog.travelwithme.domain.BaseTimeEntity;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -68,17 +69,5 @@ public class Member extends BaseTimeEntity {
 
     public void setOauthStatus(OAuthStatus oauthstatus) {
         this.oauthstatus = oauthstatus;
-    }
-
-    public enum OAuthStatus {
-        NORMAL("일반"),
-        OAUTH("소셜");
-
-        @Getter
-        private final String status;
-
-        OAuthStatus(String status) {
-            this.status = status;
-        }
     }
 }
