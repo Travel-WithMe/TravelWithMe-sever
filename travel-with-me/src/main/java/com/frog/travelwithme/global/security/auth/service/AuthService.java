@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
 
 /**
@@ -31,7 +30,7 @@ public class AuthService {
     private final RedisService redisService;
     private final MemberRepository memberRepository;
 
-    public String reissueAccessToken(String encryptedRefreshToken, HttpServletResponse response) {
+    public String reissueAccessToken(String encryptedRefreshToken) {
         verifiedRefreshToken(encryptedRefreshToken);
         String refreshToken = aes128Config.decryptAes(encryptedRefreshToken);
         Claims claims = jwtTokenProvider.parseClaims(refreshToken);
