@@ -89,7 +89,7 @@ public class SecurityConfiguration {
                     jwtTokenProvider, aes128Config, memberService, redisService);
             JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenProvider, redisService);
 
-            jwtAuthenticationFilter.setFilterProcessesUrl("/members/login");
+            jwtAuthenticationFilter.setFilterProcessesUrl("/auth/login");
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler());
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new LoginFailurHandler());
 
