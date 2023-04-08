@@ -83,6 +83,15 @@ public class ResultActionsUtils {
 
     public static ResultActions getRequest(MockMvc mockMvc,
                                            String url,
+                                           String json) throws Exception {
+        return mockMvc.perform(get(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andDo(print());
+    }
+
+    public static ResultActions getRequest(MockMvc mockMvc,
+                                           String url,
                                            CustomUserDetails userDetails) throws Exception {
         return mockMvc.perform(get(url)
                         .with(user(userDetails)))

@@ -3,6 +3,7 @@ package com.frog.travelwithme.utils;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
+import com.frog.travelwithme.global.security.auth.dto.LoginDto;
 
 import java.time.LocalDateTime;
 
@@ -25,6 +26,13 @@ public class StubData {
         static String role = "USER";
         static LocalDateTime createdAt = LocalDateTime.now();
         static LocalDateTime lastModifiedAt = LocalDateTime.now();
+
+        public static LoginDto getLoginDto() {
+            return LoginDto.builder()
+                    .email(email)
+                    .password(password)
+                    .build();
+        }
 
         public static SignUp getSignUpDto() {
             return SignUp.builder()
