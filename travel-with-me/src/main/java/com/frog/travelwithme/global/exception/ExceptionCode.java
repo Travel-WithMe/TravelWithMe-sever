@@ -26,9 +26,14 @@ public enum ExceptionCode {
 
     // AES
     ENCRYPTION_FAILED(404, "Encryption failed"),
-    DECRYPTION_FAILED(404, "Decryption failed.\n"),
+    DECRYPTION_FAILED(404, "Decryption failed."),
     SECRET_KEY_INVALID(400, "Secret key invalid"),
-    MEMBER_ROLE_INVALID(400, "Member role invalid");
+    MEMBER_ROLE_INVALID(400, "Member role invalid"),
+
+    // Redis
+    NOT_FOUND_AVAILABLE_PORT(404, "사용 가능한 Port를 찾을 수 없습니다. port: 10000 ~ 65535"),
+    ERROR_EXECUTING_EMBEDDED_REDIS(404, "EmbeddedRedis 실행 중 에러 발생"),
+    REDIS_SERVER_EXCUTABLE_NOT_FOUND(404, "Redis Server Executable not found");
 
     @Getter
     private final int status;
