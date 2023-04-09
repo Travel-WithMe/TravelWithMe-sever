@@ -1,8 +1,8 @@
 package com.frog.travelwithme.utils;
 
-import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
+import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.global.security.auth.dto.LoginDto;
 
 import java.time.LocalDateTime;
@@ -27,13 +27,6 @@ public class StubData {
         static LocalDateTime createdAt = LocalDateTime.now();
         static LocalDateTime lastModifiedAt = LocalDateTime.now();
 
-        public static LoginDto getLoginDto() {
-            return LoginDto.builder()
-                    .email(email)
-                    .password(password)
-                    .build();
-        }
-
         public static SignUp getSignUpDto() {
             return SignUp.builder()
                     .email(email)
@@ -44,6 +37,20 @@ public class StubData {
                     .image(image)
                     .nation(nation)
                     .role(role)
+                    .build();
+        }
+
+        public static LoginDto getLoginSuccessDto() {
+            return LoginDto.builder()
+                    .email(email)
+                    .password(password)
+                    .build();
+        }
+
+        public static LoginDto getLoginFailDto() {
+            return LoginDto.builder()
+                    .email("fail@gmail.com")
+                    .password(password)
                     .build();
         }
 

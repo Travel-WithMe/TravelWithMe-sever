@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class SecurityTest extends AbstractSecurityTest {
@@ -16,26 +15,27 @@ class SecurityTest extends AbstractSecurityTest {
     @Test
     @DisplayName("로그인 성공")
     void loginSuccessTest() throws Exception {
-        LoginDto loginDto = StubData.MockMember.getLoginDto();
+        LoginDto loginDto = StubData.MockMember.getLoginSuccessDto();
         String uri = getResourceUrl("login"); // /auth/login
         String json = ObjectMapperUtils.asJsonString(loginDto);
         ResultActions actions = ResultActionsUtils.getRequest(mvc, uri, json);
 
-        // then
+        // when // then
         actions
-                .andExpect(status().isOk())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("로그인 실패")
     void loginFailTest() throws Exception {
         // given
+        LoginDto loginDto = StubData.MockMember.getLoginFailDto();
+        String uri = getResourceUrl("login"); // /auth/login
+        String json = ObjectMapperUtils.asJsonString(loginDto);
+        ResultActions actions = ResultActionsUtils.getRequest(mvc, uri, json);
 
-        // when
-
-        // then
-
+        // when // then
+        actions
+                .andExpect(status().isUnauthorized());
     }
-
 }
