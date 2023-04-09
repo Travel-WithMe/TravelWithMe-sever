@@ -31,14 +31,14 @@ public class AuthService {
     private final MemberRepository memberRepository;
 
     public String reissueAccessToken(String encryptedRefreshToken) {
-        verifiedRefreshToken(encryptedRefreshToken);
+        this.verifiedRefreshToken(encryptedRefreshToken);
         String refreshToken = aes128Config.decryptAes(encryptedRefreshToken);
         Claims claims = jwtTokenProvider.parseClaims(refreshToken);
         String email = claims.getSubject();
         String redisRefreshToken = redisService.getValues(email);
 
         if (redisService.validateValues(redisRefreshToken) && refreshToken.equals(redisRefreshToken)) {
-            Member findMember = findVerifiedMember(email);
+            Member findMember = this.findMemberByEmail(email);
             CustomUserDetails userDetails = CustomUserDetails.of(findMember);
             TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
             String newAccessToken = tokenDto.getAccessToken();
@@ -70,7 +70,7 @@ public class AuthService {
         }
     }
 
-    private Member findVerifiedMember(String email) {
+    private Member findMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
