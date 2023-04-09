@@ -1,6 +1,6 @@
 package com.frog.travelwithme.unit.common.config;
 
-import com.frog.travelwithme.common.config.AES128Config;
+import com.frog.travelwithme.global.config.AES128Config;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;

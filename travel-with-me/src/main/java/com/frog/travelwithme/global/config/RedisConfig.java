@@ -1,4 +1,4 @@
-package com.frog.travelwithme.common.config;
+package com.frog.travelwithme.global.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;

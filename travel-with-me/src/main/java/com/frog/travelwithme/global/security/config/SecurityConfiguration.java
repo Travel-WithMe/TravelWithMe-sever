@@ -1,6 +1,6 @@
 package com.frog.travelwithme.global.security.config;
 
-import com.frog.travelwithme.common.config.AES128Config;
+import com.frog.travelwithme.global.config.AES128Config;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.redis.RedisService;
 import com.frog.travelwithme.global.security.auth.filter.JwtAuthenticationFilter;

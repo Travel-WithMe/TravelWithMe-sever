@@ -1,6 +1,6 @@
 package com.frog.travelwithme.global.security.auth.service;
 
-import com.frog.travelwithme.common.config.AES128Config;
+import com.frog.travelwithme.global.config.AES128Config;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.global.exception.BusinessLogicException;

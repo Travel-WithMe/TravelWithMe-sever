@@ -1,7 +1,7 @@
 package com.frog.travelwithme.global.security.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.frog.travelwithme.common.config.AES128Config;
+import com.frog.travelwithme.global.config.AES128Config;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.redis.RedisService;

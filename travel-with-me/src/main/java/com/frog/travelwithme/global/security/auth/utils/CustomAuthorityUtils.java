@@ -7,8 +7,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.List;
 
-import static com.frog.travelwithme.common.EnumCollection.Roles.ADMIN;
-import static com.frog.travelwithme.common.EnumCollection.Roles.USER;
+import static com.frog.travelwithme.global.enums.EnumCollection.Roles.ADMIN;
+import static com.frog.travelwithme.global.enums.EnumCollection.Roles.USER;
 
 /**
  * CustomAuthorityUtils 설명: DB에 저장된 Role을 기반으로 권한 정보 생성

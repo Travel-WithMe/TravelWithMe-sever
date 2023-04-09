@@ -1,4 +1,4 @@
-package com.frog.travelwithme.common.utils;
+package com.frog.travelwithme.global.utils;
 
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;

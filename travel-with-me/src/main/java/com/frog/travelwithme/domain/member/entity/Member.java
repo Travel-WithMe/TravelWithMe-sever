@@ -1,6 +1,6 @@
 package com.frog.travelwithme.domain.member.entity;
 
-import com.frog.travelwithme.common.EnumCollection.OAuthStatus;
+import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
 import com.frog.travelwithme.domain.BaseTimeEntity;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
