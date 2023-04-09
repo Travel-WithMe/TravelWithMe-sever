@@ -35,7 +35,7 @@ public class MemberService {
         verifiedRole(signUpDto.getRole());
         Member member = mapper.toEntity(signUpDto);
         member.setOauthStatus(NORMAL);
-        verifyExistsEmail(member.getEmail());
+        this.checkDuplicatedEmail(member.getEmail());
         member.passwordEncoding(passwordEncoder);
 
         // TODO: 이메일 발송 로직 구현 추가 필요
@@ -44,33 +44,39 @@ public class MemberService {
         return mapper.toDto(saveMember);
     }
 
-    public MemberDto.Response findMember(String email) {
-        Member findMember = findVerifiedMember(email);
+    @Transactional(readOnly = true)
+    public MemberDto.Response findMemberByEmail(String email) {
+        Member findMember = this.findMemberAndCheckMemberExists(email);
+
+        return mapper.toDto(findMember);
+    }
+
+    @Transactional(readOnly = true)
+    public MemberDto.Response findMemberById(Long id) {
+        Member findMember = this.findMemberAndCheckMemberExists(id);
 
         return mapper.toDto(findMember);
     }
 
     public MemberDto.Response updateMember(MemberDto.Patch patchDto, String email) {
         Member member = mapper.toEntity(patchDto);
-        Member findMember = findVerifiedMember(email);
+        Member findMember = this.findMemberAndCheckMemberExists(email);
         Member updateMember = beanUtils.copyNonNullProperties(member, findMember);
-
         return mapper.toDto(updateMember);
     }
 
     @Transactional(readOnly = true)
-    public Member findVerifiedMember(Long id) {
+    public Member findMemberAndCheckMemberExists(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
 
-    @Transactional(readOnly = true)
-    public Member findVerifiedMember(String email) {
+    private Member findMemberAndCheckMemberExists(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
 
-    private void verifyExistsEmail(String email) {
+    private void checkDuplicatedEmail(String email) {
         Optional<Member> member = memberRepository.findByEmail(email);
         if (member.isPresent()) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
@@ -78,7 +84,7 @@ public class MemberService {
     }
 
     public void deleteMember(String email) {
-        findVerifiedMember(email);
+        this.findMemberAndCheckMemberExists(email);
         memberRepository.deleteByEmail(email);
     }
 }
