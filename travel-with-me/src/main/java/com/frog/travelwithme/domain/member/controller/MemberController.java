@@ -35,7 +35,7 @@ public class MemberController {
     @GetMapping
     public ResponseEntity getMember(@AuthenticationPrincipal CustomUserDetails user) {
         String email = user.getEmail();
-        MemberDto.Response response = memberService.findMember(email);
+        MemberDto.Response response = memberService.findMemberByEmail(email);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }

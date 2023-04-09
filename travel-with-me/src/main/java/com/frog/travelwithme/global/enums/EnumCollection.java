@@ -55,4 +55,23 @@ public class EnumCollection {
             return this.name();
         }
     }
+
+    @AllArgsConstructor
+    public enum BuddyMatchingStatus implements EnumType {
+        WAIT("승인대기 상태"),
+        APPROVE("승인완료 상태"),
+        REJECT("거절 상태");
+
+        private final String description;
+
+        @Override
+        public String getName() {
+            return this.name();
+        }
+
+        @Override
+        public String getDescription() {
+            return this.description;
+        }
+    }
 }

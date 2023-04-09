@@ -28,7 +28,7 @@ class MemberControllerGetTest extends AbstractMemberController {
     void getMemberTest() throws Exception {
         // given
         MemberDto.Response response = StubData.MockMember.getResponseDto();
-        given(memberService.findMember(any())).willReturn(response);
+        given(memberService.findMemberByEmail(any())).willReturn(response);
 
         // when
         String uri = getResourceUrl();

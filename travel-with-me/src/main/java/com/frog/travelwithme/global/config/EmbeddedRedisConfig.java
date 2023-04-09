@@ -5,6 +5,7 @@ import com.frog.travelwithme.global.exception.ExceptionCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StringUtils;
 import redis.embedded.RedisServer;
 
@@ -100,7 +101,8 @@ public class EmbeddedRedisConfig {
 
     private File getRedisServerExecutable() {
         try {
-            return new File("src/main/resources/binary/redis/redis-server-linux-arm64-arc");
+            // return new File("src/main/resources/binary/redis/redis-server-linux-arm64-arc"); // TODO : 서버 배포후 삭제
+            return new File("src/main/resources/binary/redis/redis-server-6.2.5-mac-arm64");
         } catch (Exception e) {
             throw new BusinessLogicException(ExceptionCode.REDIS_SERVER_EXCUTABLE_NOT_FOUND);
         }
