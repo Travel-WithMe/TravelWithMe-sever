@@ -1,6 +1,6 @@
 package com.frog.travelwithme.domain.member.service;
 
-import com.frog.travelwithme.common.utils.CustomBeanUtils;
+import com.frog.travelwithme.global.utils.CustomBeanUtils;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.mapper.MemberMapper;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static com.frog.travelwithme.common.EnumCollection.OAuthStatus.NORMAL;
+import static com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus.NORMAL;
 import static com.frog.travelwithme.global.security.auth.utils.CustomAuthorityUtils.verifiedRole;
 
 /**

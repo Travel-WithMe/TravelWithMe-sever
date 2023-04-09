@@ -1,4 +1,4 @@
-package com.frog.travelwithme.common;
+package com.frog.travelwithme.global.enums;
 
 import lombok.AllArgsConstructor;
 

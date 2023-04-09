@@ -1,4 +1,4 @@
-package com.frog.travelwithme.common.config;
+package com.frog.travelwithme.global.config;
 
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
