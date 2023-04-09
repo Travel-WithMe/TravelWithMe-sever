@@ -17,30 +17,30 @@ import static org.awaitility.Awaitility.await;
 @Slf4j
 @SpringBootTest
 class RedisCrudTest {
-    String key = "key";
-    String value = "value";
-    Duration duration = Duration.ofMillis(5000);
+    final String KEY = "key";
+    final String VALUE = "value";
+    final Duration DURATION = Duration.ofMillis(5000);
     @Autowired
     private RedisService redisService;
 
     @BeforeEach
     void shutDown() {
-        redisService.setValues(key, value, duration);
+        redisService.setValues(KEY, VALUE, DURATION);
     }
 
     @AfterEach
     void tearDown() {
-        redisService.deleteValues(key);
+        redisService.deleteValues(KEY);
     }
 
     @Test
     @DisplayName("Redis에 데이터를 저장하면 정상적으로 조회된다.")
     void saveAndFindTest() throws Exception {
         // when
-        String findValue = redisService.getValues(key);
+        String findValue = redisService.getValues(KEY);
 
         // then
-        assertThat(value).isEqualTo(findValue);
+        assertThat(VALUE).isEqualTo(findValue);
     }
 
     @Test
@@ -48,22 +48,22 @@ class RedisCrudTest {
     void updateTest() throws Exception {
         // given
         String updateValue = "updateValue";
-        redisService.setValues(key, updateValue, duration);
+        redisService.setValues(KEY, updateValue, DURATION);
 
         // when
-        String findValue = redisService.getValues(key);
+        String findValue = redisService.getValues(KEY);
 
         // then
         assertThat(updateValue).isEqualTo(findValue);
-        assertThat(value).isNotEqualTo(findValue);
+        assertThat(VALUE).isNotEqualTo(findValue);
     }
 
     @Test
     @DisplayName("Redis에 저장된 데이터를 삭제할 수 있다.")
     void deleteTest() throws Exception {
         // when
-        redisService.deleteValues(key);
-        String findValue = redisService.getValues(key);
+        redisService.deleteValues(KEY);
+        String findValue = redisService.getValues(KEY);
 
         // then
         assertThat(findValue).isEqualTo("false");
@@ -73,10 +73,10 @@ class RedisCrudTest {
     @DisplayName("Redis에 저장된 데이터는 만료시간이 지나면 삭제된다.")
     void expiredTest() throws Exception {
         // when
-        String findValue = redisService.getValues(key);
+        String findValue = redisService.getValues(KEY);
         await().pollDelay(Duration.ofMillis(6000)).untilAsserted(
                 () -> {
-                    String expiredValue = redisService.getValues(key);
+                    String expiredValue = redisService.getValues(KEY);
                     assertThat(expiredValue).isNotEqualTo(findValue);
                     assertThat(expiredValue).isEqualTo("false");
                 }
