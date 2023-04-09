@@ -62,7 +62,7 @@ out/
 # yml
 application.yml
 application-local.yml
-application-server.yml
+application-dev.yml
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/

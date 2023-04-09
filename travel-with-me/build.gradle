@@ -73,6 +73,15 @@ dependencies {
 	testImplementation 'org.awaitility:awaitility:4.2.0'
 }
 
+// submodule-twm -> resources 복사
+task copyPrivate(type: Copy) {
+	copy {
+		from './submodule-twm'
+		include "*.yml"
+		into 'src/main/resources'
+	}
+}
+
 tasks.named('test') {
 	outputs.dir snippetsDir
 	useJUnitPlatform()
