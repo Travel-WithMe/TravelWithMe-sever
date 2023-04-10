@@ -61,7 +61,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
 
     @AfterEach
     void afterEach() {
-        memberService.deleteMember("email@gmail.com");
+        memberService.deleteMember(EMAIL);
     }
 
     @Test
