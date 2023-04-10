@@ -1,4 +1,4 @@
-package com.frog.travelwithme.utils.response;
+package com.frog.travelwithme.utils.snippet.response;
 
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
@@ -8,7 +8,7 @@ import java.util.List;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
-public class ResponsePostSnippet {
+public class MemberResponseSnippet {
     public static ResponseFieldsSnippet getMemberResponseSnippet() {
         return responseFields(
                 List.of(
@@ -28,7 +28,7 @@ public class ResponsePostSnippet {
     }
 
     public static ResponseFieldsSnippet getMemberPageSnippet() {
-        return ResponsePageSnippet.getPageSnippet()
+        return PageResponseSnippet.getPageSnippet()
                 .and(
                         fieldWithPath("data[].id").description("회원 ID"),
                         fieldWithPath("data[].nickname").description("작성자 닉네임 및 타입"),
