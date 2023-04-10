@@ -42,9 +42,9 @@ public class AuthService {
             CustomUserDetails userDetails = CustomUserDetails.of(findMember);
             TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
             String newAccessToken = tokenDto.getAccessToken();
-            int refreshTokenExpirationMinutes = jwtTokenProvider.getRefreshTokenExpirationMinutes();
+            long refreshTokenExpirationMillis = jwtTokenProvider.getRefreshTokenExpirationMillis();
             redisService.setValues(refreshToken, newAccessToken,
-                    Duration.ofMinutes(refreshTokenExpirationMinutes));
+                    Duration.ofMillis(refreshTokenExpirationMillis));
             return newAccessToken;
         } else throw new BusinessLogicException(ExceptionCode.TOKEN_IS_NOT_SAME);
     }
@@ -59,8 +59,8 @@ public class AuthService {
             redisService.deleteValues(email);
 
             // 로그아웃 시 Access Token Redis 저장 ( key = Access Token / value = "logout" )
-            int accessTokenExpirationMinutes = jwtTokenProvider.getAccessTokenExpirationMinutes();
-            redisService.setValues(accessToken, "logout", Duration.ofMinutes(accessTokenExpirationMinutes));
+            long accessTokenExpirationMillis = jwtTokenProvider.getAccessTokenExpirationMillis();
+            redisService.setValues(accessToken, "logout", Duration.ofMillis(accessTokenExpirationMillis));
         }
     }
 
