@@ -63,6 +63,7 @@ out/
 application.yml
 application-local.yml
 application-dev.yml
+application-test.yml
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/

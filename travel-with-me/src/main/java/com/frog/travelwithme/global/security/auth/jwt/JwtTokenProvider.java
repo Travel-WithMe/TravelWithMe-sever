@@ -46,12 +46,12 @@ public class JwtTokenProvider {
     private String secretKey;
 
     @Getter
-    @Value("${jwt.access-token-expiration-minutes}")
-    private int accessTokenExpirationMinutes;
+    @Value("${jwt.access-token-expiration-millis}")
+    private long accessTokenExpirationMillis;
 
     @Getter
-    @Value("${jwt.refresh-token-expiration-minutes}")
-    private int refreshTokenExpirationMinutes;
+    @Value("${jwt.refresh-token-expiration-millis}")
+    private long refreshTokenExpirationMillis;
     private Key key;
 
     // Bean 등록후 Key SecretKey HS256 decode
@@ -71,8 +71,8 @@ public class JwtTokenProvider {
     }
 
     public TokenDto generateTokenDto(CustomUserDetails customUserDetails) {
-        Date accessTokenExpiresIn = getTokenExpiration(accessTokenExpirationMinutes);
-        Date refreshTokenExpiresIn = getTokenExpiration(refreshTokenExpirationMinutes);
+        Date accessTokenExpiresIn = getTokenExpiration(accessTokenExpirationMillis);
+        Date refreshTokenExpiresIn = getTokenExpiration(refreshTokenExpirationMillis);
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", customUserDetails.getRole());
 
@@ -142,10 +142,10 @@ public class JwtTokenProvider {
         return true;
     }
 
-    private Date getTokenExpiration(int expirationMinutes) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, expirationMinutes);
-        return calendar.getTime();
+    private Date getTokenExpiration(long expirationMillisecond) {
+        Date date = new Date();
+
+        return new Date(date.getTime() + expirationMillisecond);
     }
 
     // Token 복호화 및 예외 발생(토큰 만료, 시그니처 오류)시 Claims 객체가 안만들어짐.
