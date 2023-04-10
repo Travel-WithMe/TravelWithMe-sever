@@ -87,12 +87,12 @@ public class StubData {
 
         public static MemberDto.Patch getPatchDto() {
             return MemberDto.Patch.builder()
-                    .password(password)
-                    .nickname(nickname)
-                    .address(address)
-                    .nation(nation)
-                    .image(image)
-                    .introduction(introduction)
+                    .password("patch" + password)
+                    .nickname("patch" + nickname)
+                    .address("patch" + address)
+                    .nation("patch" + nation)
+                    .image("patch" + image)
+                    .introduction("patch" + introduction)
                     .build();
         }
 
