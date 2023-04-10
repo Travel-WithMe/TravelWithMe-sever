@@ -6,7 +6,7 @@ import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
 import com.frog.travelwithme.global.redis.RedisService;
-import com.frog.travelwithme.global.security.auth.dto.TokenDto;
+import com.frog.travelwithme.global.security.auth.controller.dto.TokenDto;
 import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import io.jsonwebtoken.Claims;
@@ -37,7 +37,7 @@ public class AuthService {
         String email = claims.getSubject();
         String redisRefreshToken = redisService.getValues(email);
 
-        if (redisService.validateValues(redisRefreshToken) && refreshToken.equals(redisRefreshToken)) {
+        if (redisService.checkExistsValue(redisRefreshToken) && refreshToken.equals(redisRefreshToken)) {
             Member findMember = this.findMemberByEmail(email);
             CustomUserDetails userDetails = CustomUserDetails.of(findMember);
             TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
@@ -55,7 +55,7 @@ public class AuthService {
         Claims claims = jwtTokenProvider.parseClaims(refreshToken);
         String email = claims.getSubject();
         String redisRefreshToken = redisService.getValues(email);
-        if (!redisService.validateValues(redisRefreshToken)) {
+        if (redisService.checkExistsValue(redisRefreshToken)) {
             redisService.deleteValues(email);
 
             // 로그아웃 시 Access Token Redis 저장 ( key = Access Token / value = "logout" )
