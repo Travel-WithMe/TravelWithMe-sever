@@ -1,11 +1,11 @@
-package com.frog.travelwithme.utils.response;
+package com.frog.travelwithme.utils.snippet.response;
 
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
-public class ResponseErrorSnippet {
+public class ErrorResponseSnippet {
     public static ResponseFieldsSnippet getFieldErrorSnippet() {
         return getFieldErrorSnippets()
                 .and(

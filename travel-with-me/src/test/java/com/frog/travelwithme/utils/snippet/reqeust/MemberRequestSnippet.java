@@ -1,4 +1,4 @@
-package com.frog.travelwithme.utils.reqeust;
+package com.frog.travelwithme.utils.snippet.reqeust;
 
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
@@ -15,7 +15,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
  * 버전 정보: 1.0.1
  * 작성일자: 2023/03/18
  **/
-public class RequestPostSnippet {
+public class MemberRequestSnippet {
     public static RequestFieldsSnippet getSignUpSnippet() {
         return requestFields(
                 List.of(

@@ -1,11 +1,11 @@
-package com.frog.travelwithme.utils.response;
+package com.frog.travelwithme.utils.snippet.response;
 
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
-public class ResponsePageSnippet {
+public class PageResponseSnippet {
     public static ResponseFieldsSnippet getPageSnippet() {
         return responseFields(
                 fieldWithPath("pageInfo.page").description("현재 페이지"),

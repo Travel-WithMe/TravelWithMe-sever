@@ -1,4 +1,4 @@
-package com.frog.travelwithme.utils.reqeust;
+package com.frog.travelwithme.utils.snippet.reqeust;
 
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import org.springframework.http.HttpHeaders;
