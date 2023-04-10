@@ -68,15 +68,4 @@ public class MemberDto {
         private LocalDateTime createdAt;
         private LocalDateTime lastModifiedAt;
     }
-
-    @Getter
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class LoginResponse {
-        private Long id;
-        private String eamil;
-        private String nickname;
-        private String role;
-    }
 }

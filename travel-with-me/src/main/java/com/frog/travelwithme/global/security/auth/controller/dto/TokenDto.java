@@ -1,4 +1,4 @@
-package com.frog.travelwithme.global.security.auth.dto;
+package com.frog.travelwithme.global.security.auth.controller.dto;
 
 import lombok.Builder;
 import lombok.Data;
