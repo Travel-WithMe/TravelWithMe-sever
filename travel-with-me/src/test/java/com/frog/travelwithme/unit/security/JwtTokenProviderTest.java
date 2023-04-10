@@ -1,7 +1,7 @@
 package com.frog.travelwithme.unit.security;
 
 import com.frog.travelwithme.global.exception.BusinessLogicException;
-import com.frog.travelwithme.global.security.auth.dto.TokenDto;
+import com.frog.travelwithme.global.security.auth.controller.dto.TokenDto;
 import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import io.jsonwebtoken.io.Decoders;

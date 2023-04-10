@@ -3,14 +3,16 @@ package com.frog.travelwithme.utils;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Member;
-import com.frog.travelwithme.global.security.auth.dto.LoginDto;
+import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto;
+import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDto;
+import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 
 import java.time.LocalDateTime;
 
 /**
  * StubData 설명: 테스트를 위한 Stub data 관리
  * 작성자: 김찬빈
- * 버전 정보: 1.0.0
+ * 버전 정보: 1.0.1
  * 작성일자: 2023/04/03
  **/
 public class StubData {
@@ -92,6 +94,19 @@ public class StubData {
                     .image(image)
                     .introduction(introduction)
                     .build();
+        }
+
+        public static AuthDto.LoginResponse getLoginResponseDto() {
+            return AuthDto.LoginResponse.builder()
+                    .id(id)
+                    .email(email)
+                    .nickname(nickname)
+                    .role(role)
+                    .build();
+        }
+
+        public static CustomUserDetails getUserDetails() {
+            return CustomUserDetails.of(email, role);
         }
     }
 }

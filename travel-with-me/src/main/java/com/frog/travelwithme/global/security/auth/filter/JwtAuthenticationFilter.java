@@ -1,12 +1,11 @@
 package com.frog.travelwithme.global.security.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.frog.travelwithme.global.config.AES128Config;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
+import com.frog.travelwithme.global.config.AES128Config;
 import com.frog.travelwithme.global.redis.RedisService;
-import com.frog.travelwithme.global.security.auth.dto.LoginDto;
-import com.frog.travelwithme.global.security.auth.dto.TokenDto;
+import com.frog.travelwithme.global.security.auth.controller.dto.TokenDto;
 import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.global.security.auth.utils.Responder;
@@ -25,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Duration;
+
+import static com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDto;
 
 /**
  * JwtAuthenticationFilter 설명: 로그인 검증 및 JWT 발급

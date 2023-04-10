@@ -18,6 +18,13 @@ public class ErrorResponseSnippet {
     public static ResponseFieldsSnippet getFieldErrorSnippets() {
         return responseFields(
                 fieldWithPath("status").description("상태코드"),
+                fieldWithPath("message").description("메시지")
+        );
+    }
+
+    public static ResponseFieldsSnippet getFieldErrorSnippetsLong() {
+        return responseFields(
+                fieldWithPath("status").description("상태코드"),
                 fieldWithPath("message").description("메시지"),
                 fieldWithPath("fieldErrors").description("필드에러"),
                 fieldWithPath("violationErrors").description("반복에러")

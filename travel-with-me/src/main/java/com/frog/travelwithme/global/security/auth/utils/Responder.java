@@ -1,11 +1,11 @@
 package com.frog.travelwithme.global.security.auth.utils;
 
 import com.frog.travelwithme.domain.member.entity.Member;
-import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.global.dto.SingleResponseDto;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ErrorResponse;
 import com.frog.travelwithme.global.exception.ExceptionCode;
+import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginResponse;
 import com.google.gson.Gson;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,7 +16,7 @@ import java.io.IOException;
 /**
  * Responder 설명: ErrorResponse를 클라이언트에게 전송
  * 작성자: 김찬빈
- * 버전 정보: 1.0.0
+ * 버전 정보: 1.0.1
  * 작성일자: 2023/03/29
  **/
 public class Responder {
@@ -36,9 +36,9 @@ public class Responder {
     public static void loginSuccessResponse(HttpServletResponse response, Member member) throws IOException {
         Gson gson = new Gson();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        MemberDto.LoginResponse lgoinResponse = MemberDto.LoginResponse.builder()
+        LoginResponse lgoinResponse = LoginResponse.builder()
                 .id(member.getId())
-                .eamil(member.getEmail())
+                .email(member.getEmail())
                 .nickname(member.getNickname())
                 .role(member.getRole())
                 .build();

@@ -21,6 +21,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
  **/
 public class ResultActionsUtils {
 
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+
+    private static final String REFRESH_HEADER = "Refresh";
+    private static final String BEARER_PREFIX = "Bearer ";
+
     public static ResultActions postRequest(MockMvc mockMvc,
                                             String url,
                                             HttpHeaders headers) throws Exception {
@@ -57,6 +62,29 @@ public class ResultActionsUtils {
         return mockMvc.perform(patch(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf()))
+                .andDo(print());
+    }
+
+    public static ResultActions patchRequest(MockMvc mockMvc,
+                                             String url,
+                                             String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(patch(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions patchRequest(MockMvc mockMvc,
+                                             String url,
+                                             String accessToken,
+                                             String encryptedRefreshToken
+                                             ) throws Exception {
+        return mockMvc.perform(patch(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
                 .andDo(print());
     }
 
