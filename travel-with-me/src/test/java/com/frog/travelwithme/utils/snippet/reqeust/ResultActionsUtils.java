@@ -75,13 +75,29 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
-    public static ResultActions patchRequest(MockMvc mockMvc,
-                                             String url,
-                                             String accessToken,
-                                             String encryptedRefreshToken
-                                             ) throws Exception {
+    public static ResultActions patchRequestWithToken(MockMvc mockMvc,
+                                                      String url,
+                                                      String accessToken,
+                                                      String encryptedRefreshToken
+    ) throws Exception {
         return mockMvc.perform(patch(url)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions patchRequestWithContentAndToken(MockMvc mockMvc,
+                                                                String url,
+                                                                String json,
+                                                                String accessToken,
+                                                                String encryptedRefreshToken
+    ) throws Exception {
+
+        return mockMvc.perform(patch(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
                         .with(csrf())
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
                         .header(REFRESH_HEADER, encryptedRefreshToken))
@@ -101,11 +117,37 @@ public class ResultActionsUtils {
     }
 
     public static ResultActions deleteRequest(MockMvc mockMvc,
+                                              String url) throws Exception {
+        return mockMvc.perform(delete(url)
+                        .with(csrf()))
+                .andDo(print());
+    }
+
+    public static ResultActions deleteRequest(MockMvc mockMvc,
                                               String url,
                                               CustomUserDetails userDetails) throws Exception {
         return mockMvc.perform(delete(url)
                         .with(csrf())
                         .with(user(userDetails)))
+                .andDo(print());
+    }
+
+    public static ResultActions deleteRequestWithToken(MockMvc mockMvc,
+                                                       String url,
+                                                       String accessToken,
+                                                       String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(delete(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions getRequest(MockMvc mockMvc,
+                                           String url) throws Exception {
+        return mockMvc.perform(get(url)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print());
     }
 
@@ -123,6 +165,18 @@ public class ResultActionsUtils {
                                            CustomUserDetails userDetails) throws Exception {
         return mockMvc.perform(get(url)
                         .with(user(userDetails)))
+                .andDo(print());
+    }
+
+    public static ResultActions getRequestWithToken(MockMvc mockMvc,
+                                                    String url,
+                                                    String accessToken,
+                                                    String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(get(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
                 .andDo(print());
     }
 

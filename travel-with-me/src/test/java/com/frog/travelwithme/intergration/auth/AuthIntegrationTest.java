@@ -182,7 +182,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
 
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/logout")
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.patchRequest(mvc, uri, accessToken, encryptedRefreshToken);
+        ResultActions actions = ResultActionsUtils.patchRequestWithToken(mvc, uri, accessToken, encryptedRefreshToken);
 
         // when
         String redisRefreshToken = redisService.getValues(EMAIL);
