@@ -1,4 +1,4 @@
-package com.frog.travelwithme.global.security.config;
+package com.frog.travelwithme.global.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
