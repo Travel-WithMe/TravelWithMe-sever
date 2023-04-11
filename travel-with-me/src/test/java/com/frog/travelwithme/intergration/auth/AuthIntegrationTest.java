@@ -70,13 +70,15 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         // given
         LoginDto loginSuccessDto = StubData.MockMember.getLoginSuccessDto();
         LoginResponse expectedResponseDto = StubData.MockMember.getLoginResponseDto();
+
+        // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/login")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(loginSuccessDto);
         ResultActions actions = ResultActionsUtils.getRequest(mvc, uri, json);
-        LoginResponse responseDto = ObjectMapperUtils.actionsSingleResponseToLoginDto(actions);
 
-        // when // then
+        // then
+        LoginResponse responseDto = ObjectMapperUtils.actionsSingleResponseToLoginDto(actions);
         assertThat(expectedResponseDto.getEmail()).isEqualTo(responseDto.getEmail());
         assertThat(expectedResponseDto.getNickname()).isEqualTo(responseDto.getNickname());
         assertThat(expectedResponseDto.getRole()).isEqualTo(responseDto.getRole());
@@ -95,12 +97,13 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         // given
         LoginDto loginFailDto = StubData.MockMember.getLoginFailDto();
 
+        // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/login")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(loginFailDto);
         ResultActions actions = ResultActionsUtils.getRequest(mvc, uri, json);
 
-        // when // then
+        // then
         actions
                 .andExpect(status().isUnauthorized())
                 .andDo(document("login-fail",
@@ -120,11 +123,12 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         redisService.setValues(EMAIL, refreshToken, Duration.ofMillis(10000));
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
+        // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/reissue")
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.patchRequest(mvc, uri, encryptedRefreshToken);
 
-        // when // then
+        // then
         actions
                 .andExpect(status().isOk())
                 .andDo(document("access-token-reissue-success"));
@@ -141,11 +145,12 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         redisService.setValues("email@gmail.com", failRefreshToken, Duration.ofMillis(10000));
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
+        // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/reissue")
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.patchRequest(mvc, uri, encryptedRefreshToken);
 
-        // when // then
+        // then
         actions
                 .andExpect(status().is(404))
                 .andDo(document("reissue-fail-by-token-not-same",
@@ -156,12 +161,12 @@ class AuthIntegrationTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Header에 Refresh token이 존재하지 않으면 Access token 재발급 실패")
     void accessTokenReissrueFailTest2() throws Exception {
-        // given
+        // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/reissue")
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.patchRequest(mvc, uri);
 
-        // when // then
+        // then
         actions
                 .andExpect(status().is(404))
                 .andDo(document("reissue-fail-by-no-refresh-token-in-header",
@@ -180,15 +185,14 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
         redisService.setValues(EMAIL, refreshToken, Duration.ofMillis(10000));
 
+        // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/logout")
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.patchRequestWithToken(mvc, uri, accessToken, encryptedRefreshToken);
 
-        // when
+        // then
         String redisRefreshToken = redisService.getValues(EMAIL);
         String logout = redisService.getValues(accessToken);
-
-        // then
         assertThat(redisRefreshToken).isEqualTo("false");
         assertThat(logout).isEqualTo("logout");
         actions

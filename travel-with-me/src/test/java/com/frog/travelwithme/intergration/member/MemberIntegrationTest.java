@@ -10,7 +10,6 @@ import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.intergration.BaseIntegrationTest;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.StubData;
-import com.frog.travelwithme.utils.security.WithMockCustomUser;
 import com.frog.travelwithme.utils.snippet.reqeust.MemberRequestSnippet;
 import com.frog.travelwithme.utils.snippet.reqeust.ResultActionsUtils;
 import com.frog.travelwithme.utils.snippet.response.MemberResponseSnippet;
@@ -59,13 +58,14 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         memberService.deleteMember(EMAIL);
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
 
+        // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
         ResultActions actions = ResultActionsUtils.postRequest(mvc, uri, json);
-        Response response = ObjectMapperUtils.actionsSingleResponseToMemberDto(actions);
 
-        // when // then
+        // then
+        Response response = ObjectMapperUtils.actionsSingleResponseToMemberDto(actions);
         assertThat(signUpDto.getEmail()).isEqualTo(response.getEmail());
         assertThat(signUpDto.getNickname()).isEqualTo(response.getNickname());
         assertThat(signUpDto.getAddress()).isEqualTo(response.getAddress());
@@ -93,14 +93,15 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         Response originMemberDto = memberService.findMemberByEmail(EMAIL);
         MemberDto.Patch patchDto = StubData.MockMember.getPatchDto();
 
+        // when
         String json = ObjectMapperUtils.asJsonString(patchDto);
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.
                 patchRequestWithContentAndToken(mvc, uri, json, accessToken, encryptedRefreshToken);
-        Response response = ObjectMapperUtils.actionsSingleResponseToMemberDto(actions);
 
-        // when // then
+        // then
+        Response response = ObjectMapperUtils.actionsSingleResponseToMemberDto(actions);
         assertThat(originMemberDto.getNickname()).isNotEqualTo(response.getNickname());
         assertThat(originMemberDto.getAddress()).isNotEqualTo(response.getAddress());
         assertThat(originMemberDto.getIntroduction()).isNotEqualTo(response.getIntroduction());
@@ -119,8 +120,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get member test")
-    @WithMockCustomUser
+    @DisplayName("회원 조회")
     void getMemberTest() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
@@ -129,11 +129,12 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
+        // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.getRequestWithToken(mvc, uri, accessToken, encryptedRefreshToken);
 
-        // when // then
+        // then
         actions
                 .andExpect(status().isOk())
                 .andDo(document("get-member",
@@ -152,11 +153,12 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
+        // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.deleteRequestWithToken(mvc, uri, accessToken, encryptedRefreshToken);
 
-        // when // then
+        // then
         actions
                 .andExpect(status().isNoContent())
                 .andDo(document("delete-member"));
