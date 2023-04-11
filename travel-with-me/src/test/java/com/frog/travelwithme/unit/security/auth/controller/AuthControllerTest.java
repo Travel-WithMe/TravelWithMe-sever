@@ -4,13 +4,12 @@ package com.frog.travelwithme.unit.security.auth.controller;
 import com.frog.travelwithme.global.security.auth.controller.AuthController;
 import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import com.frog.travelwithme.global.security.auth.service.AuthService;
-import com.frog.travelwithme.utils.snippet.reqeust.ResultActionsUtils;
 import com.frog.travelwithme.utils.security.WithMockCustomUser;
+import com.frog.travelwithme.utils.snippet.reqeust.ResultActionsUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
@@ -41,7 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         }
 )
 @ExtendWith(RestDocumentationExtension.class)
-@AutoConfigureRestDocs
 class AuthControllerTest {
 
     private final String BASE_URL = "/auth";
