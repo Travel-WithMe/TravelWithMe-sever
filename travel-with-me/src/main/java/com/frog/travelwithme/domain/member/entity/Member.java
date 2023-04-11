@@ -1,11 +1,13 @@
 package com.frog.travelwithme.domain.member.entity;
 
-import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
 import com.frog.travelwithme.domain.BaseTimeEntity;
+import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
+import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 /**
  * Member 설명: 회원 데이터 관리
@@ -69,5 +71,20 @@ public class Member extends BaseTimeEntity {
 
     public void setOauthStatus(OAuthStatus oauthstatus) {
         this.oauthstatus = oauthstatus;
+    }
+
+    public void updateMemberData(MemberDto.Patch patchDto) {
+        Optional.ofNullable(patchDto.getNickname())
+                .ifPresent(updateNickname -> this.nickname = updateNickname);
+        Optional.ofNullable(patchDto.getPassword())
+                .ifPresent(updatePassword -> this.password = updatePassword);
+        Optional.ofNullable(patchDto.getNation())
+                .ifPresent(updateNation -> this.nation = updateNation);
+        Optional.ofNullable(patchDto.getImage())
+                .ifPresent(updateImage -> this.image = updateImage);
+        Optional.ofNullable(patchDto.getAddress())
+                .ifPresent(updateAddress -> this.address = updateAddress);
+        Optional.ofNullable(patchDto.getIntroduction())
+                .ifPresent(updateIntroduction -> this.introduction = updateIntroduction);
     }
 }

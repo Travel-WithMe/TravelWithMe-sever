@@ -1,6 +1,5 @@
 package com.frog.travelwithme.domain.member.service;
 
-import com.frog.travelwithme.global.utils.CustomBeanUtils;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.mapper.MemberMapper;
@@ -28,7 +27,6 @@ import static com.frog.travelwithme.global.security.auth.utils.CustomAuthorityUt
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final CustomBeanUtils<Member> beanUtils;
     private final MemberMapper mapper;
 
     public MemberDto.Response signUp(MemberDto.SignUp signUpDto) {
@@ -59,10 +57,10 @@ public class MemberService {
     }
 
     public MemberDto.Response updateMember(MemberDto.Patch patchDto, String email) {
-        Member member = mapper.toEntity(patchDto);
         Member findMember = this.findMemberAndCheckMemberExists(email);
-        Member updateMember = beanUtils.copyNonNullProperties(member, findMember);
-        return mapper.toDto(updateMember);
+        findMember.updateMemberData(patchDto);
+
+        return mapper.toDto(findMember);
     }
 
     @Transactional(readOnly = true)
