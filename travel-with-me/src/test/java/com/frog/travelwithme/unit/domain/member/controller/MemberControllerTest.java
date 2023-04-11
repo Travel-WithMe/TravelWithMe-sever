@@ -7,30 +7,23 @@ import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.StubData;
 import com.frog.travelwithme.utils.security.WithMockCustomUser;
-import com.frog.travelwithme.utils.snippet.reqeust.MemberRequestSnippet;
 import com.frog.travelwithme.utils.snippet.reqeust.ResultActionsUtils;
-import com.frog.travelwithme.utils.snippet.response.MemberResponseSnippet;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
-import static com.frog.travelwithme.utils.ApiDocumentUtils.getResponsePreProcessor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -44,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfigurer.class)
         }
 )
-@ExtendWith(RestDocumentationExtension.class)
 class MemberControllerTest {
     private final String BASE_URL = "/members";
     @Autowired
@@ -71,12 +63,7 @@ class MemberControllerTest {
 
         // then
         actions
-                .andExpect(status().isCreated())
-                .andDo(document("signup",
-                        getRequestPreProcessor(),
-                        getResponsePreProcessor(),
-                        MemberRequestSnippet.getSignUpSnippet(),
-                        MemberResponseSnippet.getMemberResponseSnippet()));
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -96,12 +83,7 @@ class MemberControllerTest {
 
         // then
         actions
-                .andExpect(status().isOk())
-                .andDo(document("patch-member",
-                        getRequestPreProcessor(),
-                        getResponsePreProcessor(),
-                        MemberRequestSnippet.getPatchSnippet(),
-                        MemberResponseSnippet.getMemberResponseSnippet()));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -119,10 +101,7 @@ class MemberControllerTest {
 
         // then
         actions
-                .andExpect(status().isOk())
-                .andDo(document("get-member",
-                        getResponsePreProcessor(),
-                        MemberResponseSnippet.getMemberResponseSnippet()));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -139,8 +118,6 @@ class MemberControllerTest {
 
         // then
         actions
-                .andExpect(status().isNoContent())
-                .andDo(document("delete-member",
-                        getResponsePreProcessor()));
+                .andExpect(status().isNoContent());
     }
 }
