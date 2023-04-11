@@ -12,7 +12,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 /**
  * RequestPostSnippet 설명: requestFields 관리
  * 작성자: 이재혁
- * 버전 정보: 1.0.1
+ * 버전 정보: 1.0.0
  * 작성일자: 2023/03/18
  **/
 public class MemberRequestSnippet {

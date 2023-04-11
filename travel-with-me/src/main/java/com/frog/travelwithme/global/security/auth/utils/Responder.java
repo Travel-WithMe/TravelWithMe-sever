@@ -16,7 +16,7 @@ import java.io.IOException;
 /**
  * Responder 설명: ErrorResponse를 클라이언트에게 전송
  * 작성자: 김찬빈
- * 버전 정보: 1.0.1
+ * 버전 정보: 1.0.0
  * 작성일자: 2023/03/29
  **/
 public class Responder {
