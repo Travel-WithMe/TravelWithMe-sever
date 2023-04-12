@@ -8,13 +8,11 @@ import com.frog.travelwithme.utils.security.WithMockCustomUser;
 import com.frog.travelwithme.utils.snippet.reqeust.ResultActionsUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -25,12 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * 작성자: 김찬빈
- * 버전 정보: 1.0.1
+ * 버전 정보: 1.0.0
  * 작성일자: 2023/04/10
  **/
 @WebMvcTest(
@@ -39,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfigurer.class)
         }
 )
-@ExtendWith(RestDocumentationExtension.class)
 class AuthControllerTest {
 
     private final String BASE_URL = "/auth";
@@ -66,8 +62,7 @@ class AuthControllerTest {
 
         // then
         actions
-                .andExpect(status().isOk())
-                .andDo(document("access-token-reissue"));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -84,7 +79,6 @@ class AuthControllerTest {
 
         // then
         actions
-                .andExpect(status().isNoContent())
-                .andDo(document("logout"));
+                .andExpect(status().isNoContent());
     }
 }
