@@ -5,7 +5,7 @@ import com.frog.travelwithme.global.security.auth.controller.AuthController;
 import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import com.frog.travelwithme.global.security.auth.service.AuthService;
 import com.frog.travelwithme.utils.security.WithMockCustomUser;
-import com.frog.travelwithme.utils.snippet.reqeust.ResultActionsUtils;
+import com.frog.travelwithme.utils.ResultActionsUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

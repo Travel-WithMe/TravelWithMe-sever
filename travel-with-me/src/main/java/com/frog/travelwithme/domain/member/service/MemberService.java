@@ -20,5 +20,7 @@ public interface MemberService {
 
     Member findMemberAndCheckMemberExists(Long id);
 
+    Member findMemberAndCheckMemberExists(String email);
+
     void deleteMember(String email);
 }

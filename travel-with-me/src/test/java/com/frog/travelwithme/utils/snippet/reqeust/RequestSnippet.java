@@ -15,7 +15,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
  * 버전 정보: 1.0.0
  * 작성일자: 2023/03/18
  **/
-public class MemberRequestSnippet {
+public class RequestSnippet {
     public static RequestFieldsSnippet getSignUpSnippet() {
         return requestFields(
                 List.of(
@@ -31,7 +31,7 @@ public class MemberRequestSnippet {
         );
     }
 
-    public static Snippet getPatchSnippet() {
+    public static Snippet getMemberPatchSnippet() {
         return requestFields(
                 List.of(
                         fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호"),
@@ -43,4 +43,17 @@ public class MemberRequestSnippet {
                 )
         );
     }
+
+    public static RequestFieldsSnippet getRecruitmentSnippet() {
+        return requestFields(
+                List.of(
+                        fieldWithPath("title").type(JsonFieldType.STRING).description("동행모집 게시글 제목"),
+                        fieldWithPath("content").type(JsonFieldType.STRING).description("동행모집 게시글 내용"),
+                        fieldWithPath("travelNationality").type(JsonFieldType.STRING).description("동행모집 국가"),
+                        fieldWithPath("travelStartDate").type(JsonFieldType.STRING).description("동행모집 여행 시작날짜"),
+                        fieldWithPath("travelEndDate").type(JsonFieldType.STRING).description("동행모집 여행 종료날짜")
+                )
+        );
+    }
+
 }

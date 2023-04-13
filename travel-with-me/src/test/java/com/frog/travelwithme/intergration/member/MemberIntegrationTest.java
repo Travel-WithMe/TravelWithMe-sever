@@ -10,9 +10,10 @@ import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.intergration.BaseIntegrationTest;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.StubData;
-import com.frog.travelwithme.utils.snippet.reqeust.MemberRequestSnippet;
-import com.frog.travelwithme.utils.snippet.reqeust.ResultActionsUtils;
-import com.frog.travelwithme.utils.snippet.response.MemberResponseSnippet;
+import com.frog.travelwithme.utils.ResultActionsUtils;
+import com.frog.travelwithme.utils.snippet.reqeust.RequestSnippet;
+import com.frog.travelwithme.utils.snippet.response.ResponseSnippet;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Slf4j
 class MemberIntegrationTest extends BaseIntegrationTest {
 
     private final String BASE_URL = "/members";
@@ -62,10 +64,10 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-        ResultActions actions = ResultActionsUtils.postRequest(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
 
         // then
-        Response response = ObjectMapperUtils.actionsSingleResponseToMemberDto(actions);
+        Response response = ObjectMapperUtils.actionsSingleToDto(actions, Response.class);
         assertThat(signUpDto.getEmail()).isEqualTo(response.getEmail());
         assertThat(signUpDto.getNickname()).isEqualTo(response.getNickname());
         assertThat(signUpDto.getAddress()).isEqualTo(response.getAddress());
@@ -77,8 +79,8 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 .andDo(document("signup",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
-                        MemberRequestSnippet.getSignUpSnippet(),
-                        MemberResponseSnippet.getMemberResponseSnippet()));
+                        RequestSnippet.getSignUpSnippet(),
+                        ResponseSnippet.getMemberSnippet()));
     }
 
     @Test
@@ -101,7 +103,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 patchRequestWithContentAndToken(mvc, uri, json, accessToken, encryptedRefreshToken);
 
         // then
-        Response response = ObjectMapperUtils.actionsSingleResponseToMemberDto(actions);
+        Response response = ObjectMapperUtils.actionsSingleToDto(actions, Response.class);
         assertThat(originMemberDto.getNickname()).isNotEqualTo(response.getNickname());
         assertThat(originMemberDto.getAddress()).isNotEqualTo(response.getAddress());
         assertThat(originMemberDto.getIntroduction()).isNotEqualTo(response.getIntroduction());
@@ -115,8 +117,8 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 .andDo(document("patch-member",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
-                        MemberRequestSnippet.getPatchSnippet(),
-                        MemberResponseSnippet.getMemberResponseSnippet()));
+                        RequestSnippet.getMemberPatchSnippet(),
+                        ResponseSnippet.getMemberSnippet()));
     }
 
     @Test
@@ -139,7 +141,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andDo(document("get-member",
                         getResponsePreProcessor(),
-                        MemberResponseSnippet.getMemberResponseSnippet()));
+                        ResponseSnippet.getMemberSnippet()));
     }
 
     @Test

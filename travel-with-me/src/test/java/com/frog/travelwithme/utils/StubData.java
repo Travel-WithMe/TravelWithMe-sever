@@ -1,12 +1,15 @@
 package com.frog.travelwithme.utils;
 
+import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
+import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -107,6 +110,25 @@ public class StubData {
 
         public static CustomUserDetails getUserDetails() {
             return CustomUserDetails.of(email, role);
+        }
+    }
+
+    public static class MockBuddy {
+
+        static String title = "바하마 배편 동행 구해요";
+        static String content = "1인 방예약이 너무비싸 쉐어하실분 구합니다!";
+        static String travelNationality = "The Bahamas";
+        static String travelStartDate = "2023-01-01"; //LocalDate.of(2023,01,01);
+        static String travelEndDate = "2023-01-03"; //LocalDate.of(2023,01,03);
+
+        public static BuddyDto.PostRecruitment getPostRecruitment() {
+            return BuddyDto.PostRecruitment.builder()
+                    .title(title)
+                    .content(content)
+                    .travelNationality(travelNationality)
+                    .travelStartDate(travelStartDate)
+                    .travelEndDate(travelEndDate)
+                    .build();
         }
     }
 }

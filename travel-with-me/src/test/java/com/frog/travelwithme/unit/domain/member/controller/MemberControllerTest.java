@@ -7,7 +7,7 @@ import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.StubData;
 import com.frog.travelwithme.utils.security.WithMockCustomUser;
-import com.frog.travelwithme.utils.snippet.reqeust.ResultActionsUtils;
+import com.frog.travelwithme.utils.ResultActionsUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -59,7 +59,7 @@ class MemberControllerTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-        ResultActions actions = ResultActionsUtils.postRequest(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
 
         // then
         actions
@@ -79,7 +79,7 @@ class MemberControllerTest {
         String json = ObjectMapperUtils.asJsonString(patchDto);
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.patchRequest(mvc, uri, json, userDetails);
+        ResultActions actions = ResultActionsUtils.patchRequestWithContentAndUserDetails(mvc, uri, json, userDetails);
 
         // then
         actions
@@ -97,7 +97,7 @@ class MemberControllerTest {
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.getRequest(mvc, uri, userDetails);
+        ResultActions actions = ResultActionsUtils.getRequestWithUserDetails(mvc, uri, userDetails);
 
         // then
         actions
@@ -114,7 +114,7 @@ class MemberControllerTest {
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.deleteRequest(mvc, uri, userDetails);
+        ResultActions actions = ResultActionsUtils.deleteRequestWithUserDetails(mvc, uri, userDetails);
 
         // then
         actions

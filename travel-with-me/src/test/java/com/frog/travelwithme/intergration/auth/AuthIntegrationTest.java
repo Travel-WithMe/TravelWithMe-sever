@@ -12,7 +12,7 @@ import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.intergration.BaseIntegrationTest;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.StubData;
-import com.frog.travelwithme.utils.snippet.reqeust.ResultActionsUtils;
+import com.frog.travelwithme.utils.ResultActionsUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -75,10 +75,10 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/login")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(loginSuccessDto);
-        ResultActions actions = ResultActionsUtils.getRequest(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.getRequestWithContent(mvc, uri, json);
 
         // then
-        LoginResponse responseDto = ObjectMapperUtils.actionsSingleResponseToLoginDto(actions);
+        LoginResponse responseDto = ObjectMapperUtils.actionsSingleToDto(actions, LoginResponse.class);
         assertThat(expectedResponseDto.getEmail()).isEqualTo(responseDto.getEmail());
         assertThat(expectedResponseDto.getNickname()).isEqualTo(responseDto.getNickname());
         assertThat(expectedResponseDto.getRole()).isEqualTo(responseDto.getRole());
@@ -101,7 +101,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/login")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(loginFailDto);
-        ResultActions actions = ResultActionsUtils.getRequest(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.getRequestWithContent(mvc, uri, json);
 
         // then
         actions
@@ -126,7 +126,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/reissue")
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.patchRequest(mvc, uri, encryptedRefreshToken);
+        ResultActions actions = ResultActionsUtils.patchRequestWithToken(mvc, uri, encryptedRefreshToken);
 
         // then
         actions
@@ -148,7 +148,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/reissue")
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.patchRequest(mvc, uri, encryptedRefreshToken);
+        ResultActions actions = ResultActionsUtils.patchRequestWithToken(mvc, uri, encryptedRefreshToken);
 
         // then
         actions
