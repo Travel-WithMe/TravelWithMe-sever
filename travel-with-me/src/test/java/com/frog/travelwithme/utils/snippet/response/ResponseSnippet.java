@@ -8,8 +8,8 @@ import java.util.List;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
-public class MemberResponseSnippet {
-    public static ResponseFieldsSnippet getMemberResponseSnippet() {
+public class ResponseSnippet {
+    public static ResponseFieldsSnippet getMemberSnippet() {
         return responseFields(
                 List.of(
                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과 데이터"),
@@ -39,5 +39,21 @@ public class MemberResponseSnippet {
                         fieldWithPath("data[].role").description("회원 역할"),
                         fieldWithPath("data[].createdAt").description("회원 가입일")
                 );
+    }
+
+    public static ResponseFieldsSnippet getRecruitmentSnippet() {
+        return responseFields(
+                List.of(
+                        fieldWithPath("data.title").type(JsonFieldType.STRING).description("동행모집 게시글 제목"),
+                        fieldWithPath("data.content").type(JsonFieldType.STRING).description("동행모집 게시글 내용"),
+                        fieldWithPath("data.travelNationality").type(JsonFieldType.STRING).description("동행모집 국가"),
+                        fieldWithPath("data.travelStartDate").type(JsonFieldType.STRING).description("동행모집 여행 시작날짜"),
+                        fieldWithPath("data.travelEndDate").type(JsonFieldType.STRING).description("동행모집 여행 종료날짜"),
+                        fieldWithPath("data.viewCount").type(JsonFieldType.NUMBER).description("동행모집 게시글 조회수"),
+                        fieldWithPath("data.commentCount").type(JsonFieldType.NUMBER).description("동행모집 게시글 댓글수"),
+                        fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("작성자 닉네임 및 타입"),
+                        fieldWithPath("data.memberImage").type(JsonFieldType.STRING).description("프로필 이미지 url")
+                )
+        );
     }
 }

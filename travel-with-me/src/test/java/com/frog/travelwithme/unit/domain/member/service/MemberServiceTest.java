@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 
 public class MemberServiceTest extends AbstractMemberService{
 
-    @Test
-    @DisplayName("Test Example Service")
-    void test() {
-
-    }
+//    @Test
+//    @DisplayName("Test Example Service")
+//    void test() {
+//
+//    }
 
 }

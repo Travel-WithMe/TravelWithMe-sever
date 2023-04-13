@@ -49,6 +49,7 @@ class BuddyRecruitmentControllerTest {
     void test() throws Exception {
         // given
 
+
         // when
 
         // then

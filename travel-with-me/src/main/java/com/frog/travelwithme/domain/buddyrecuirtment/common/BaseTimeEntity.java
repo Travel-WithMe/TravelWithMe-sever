@@ -1,4 +1,4 @@
-package com.frog.travelwithme.domain;
+package com.frog.travelwithme.domain.buddyrecuirtment.common;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class BaseTimeEntity {
+
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -29,4 +30,5 @@ public class BaseTimeEntity {
     @LastModifiedDate
     @Column(name = "last_modified_at")
     private LocalDateTime lastModifiedAt;
+
 }

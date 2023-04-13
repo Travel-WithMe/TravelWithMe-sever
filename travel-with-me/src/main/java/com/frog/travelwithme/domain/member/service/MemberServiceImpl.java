@@ -80,7 +80,9 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.deleteByEmail(email);
     }
 
-    private Member findMemberAndCheckMemberExists(String email) {
+    @Override
+    @Transactional(readOnly = true)
+    public Member findMemberAndCheckMemberExists(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }

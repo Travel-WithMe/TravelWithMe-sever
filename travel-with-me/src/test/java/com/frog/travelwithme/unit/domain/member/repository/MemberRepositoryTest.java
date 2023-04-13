@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 
 public class MemberRepositoryTest extends AbstractMemberRepository{
 
-    @Test
-    @DisplayName("Test Example Repository")
-    void test() {
-
-    }
+//    @Test
+//    @DisplayName("Test Example Repository")
+//    void test() {
+//
+//    }
 
 }
