@@ -17,12 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
  * 작성일자: 2023/04/10
  **/
 @Slf4j
-@SpringBootTest
-@ActiveProfiles("test")
-@AutoConfigureMockMvc
 @Disabled
 @Transactional
+@SpringBootTest
+@AutoConfigureMockMvc
 @AutoConfigureRestDocs
+@ActiveProfiles("test")
 public class BaseIntegrationTest {
     @Autowired
     protected MockMvc mvc;
