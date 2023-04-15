@@ -198,5 +198,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         actions
                 .andExpect(status().isNoContent())
                 .andDo(document("logout"));
+
+        redisService.deleteValues(accessToken);
     }
 }
