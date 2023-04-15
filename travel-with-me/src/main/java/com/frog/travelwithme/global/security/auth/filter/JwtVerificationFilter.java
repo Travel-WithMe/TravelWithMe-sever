@@ -33,8 +33,8 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
             List.of("/",
                     "/h2",
                     "/members/signup",
-                    "/members/login",
-                    "/members/reissue");
+                    "/auth/login",
+                    "/auth/reissue");
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
 
