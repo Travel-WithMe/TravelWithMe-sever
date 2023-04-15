@@ -11,6 +11,7 @@ import com.frog.travelwithme.global.security.auth.handler.LoginFailurHandler;
 import com.frog.travelwithme.global.security.auth.handler.LoginSuccessHandler;
 import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,6 +33,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
  * 버전 정보: 1.0.0
  * 작성일자: 2023/03/29
  **/
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfiguration {
@@ -84,6 +86,7 @@ public class SecurityConfiguration {
     public class CustomFilterConfigurer extends AbstractHttpConfigurer<CustomFilterConfigurer, HttpSecurity> {
         @Override
         public void configure(HttpSecurity builder) throws Exception {
+            log.info("SecurityConfiguration.CustomFilterConfigurer.configure excute");
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
             JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager,
                     jwtTokenProvider, aes128Config, memberService, redisService);

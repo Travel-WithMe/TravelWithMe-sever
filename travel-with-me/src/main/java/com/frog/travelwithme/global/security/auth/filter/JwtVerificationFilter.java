@@ -43,6 +43,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+        log.info("JwtVerificationFilter.doFilterInternal excute");
         try {
             String accessToken = jwtTokenProvider.resolveAccessToken(request);
             log.info("StringUtils.hasText(accessToken) = {}", StringUtils.hasText(accessToken));
@@ -72,6 +73,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
     // EXCLUDE_URL과 동일한 요청이 들어왔을 경우, 현재 필터를 진행하지 않고 다음 필터 진행
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        log.info("JwtVerificationFilter.shouldNotFilter excute, path = {}", request.getServletPath());
         boolean result = EXCLUDE_URL.stream().anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
         log.info("# Exclude url check = {}, result check = {}", request.getServletPath(), result);
 

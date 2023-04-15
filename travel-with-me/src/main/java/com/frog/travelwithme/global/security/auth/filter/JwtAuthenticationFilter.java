@@ -47,6 +47,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) throws AuthenticationException {
+        log.info("JwtAuthenticationFilter.attemptAuthentication excute");
         ObjectMapper objectMapper = new ObjectMapper();
 
         // ServletInputStream을 LoginDto 객체로 역직렬화
@@ -62,6 +63,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
+        log.info("JwtAuthenticationFilter.successfulAuthentication excute");
         CustomUserDetails customUserDetails = (CustomUserDetails) authResult.getPrincipal();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(customUserDetails);
         String accessToken = tokenDto.getAccessToken();

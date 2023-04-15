@@ -62,15 +62,18 @@ public class JwtTokenProvider {
     }
 
     public String encodeBase64SecretKey(String secretKey) {
+        log.info("JwtTokenProvider.encodeBase64SecretKey excute, secretKey = {}", secretKey);
         return Encoders.BASE64.encode(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
     private Key getKeyFromBase64EncodedKey(String base64EncodedSecretKey) {
+        log.info("JwtTokenProvider.getKeyFromBase64EncodedKey excute, base64EncodedSecretKey = {}", base64EncodedSecretKey);
         byte[] keyBytes = Decoders.BASE64.decode(base64EncodedSecretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public TokenDto generateTokenDto(CustomUserDetails customUserDetails) {
+        log.info("JwtTokenProvider.generateTokenDto excute, customUserDetails = {}", customUserDetails.toString());
         Date accessTokenExpiresIn = getTokenExpiration(accessTokenExpirationMillis);
         Date refreshTokenExpiresIn = getTokenExpiration(refreshTokenExpirationMillis);
         Map<String, Object> claims = new HashMap<>();
@@ -102,6 +105,7 @@ public class JwtTokenProvider {
 
     // JWT 토큰을 복호화하여 토큰 정보를 반환
     public Authentication getAuthentication(String accessToken) {
+        log.info("JwtTokenProvider.getAuthentication excute, accessToken = {}", accessToken);
         Claims claims = parseClaims(accessToken);
 
         if (claims.get("role") == null) {
@@ -121,6 +125,7 @@ public class JwtTokenProvider {
 
     // 토큰 검증
     public boolean validateToken(String token, HttpServletResponse response) {
+        log.info("JwtTokenProvider.validateToken excute, token = {}", token);
         try {
             parseClaims(token);
         } catch (MalformedJwtException e) {
@@ -168,6 +173,7 @@ public class JwtTokenProvider {
 
     // Request Header에 Access Token 정보를 추출하는 메서드
     public String resolveAccessToken(HttpServletRequest request) {
+        log.info("JwtTokenProvider.resolveAccessToken excute, request = {}", request.toString());
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(7);
@@ -177,6 +183,7 @@ public class JwtTokenProvider {
 
     // Request Header에 Refresh Token 정보를 추출하는 메서드
     public String resolveRefreshToken(HttpServletRequest request) {
+        log.info("JwtTokenProvider.resolveRefreshToken excute, request = {}", request.toString());
         String bearerToken = request.getHeader(REFRESH_HEADER);
         if (StringUtils.hasText(bearerToken)) {
             return bearerToken;
