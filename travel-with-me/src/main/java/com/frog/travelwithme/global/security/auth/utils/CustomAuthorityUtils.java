@@ -2,6 +2,7 @@ package com.frog.travelwithme.global.security.auth.utils;
 
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -16,12 +17,15 @@ import static com.frog.travelwithme.global.enums.EnumCollection.Roles.USER;
  * 버전 정보: 1.0.0
  * 작성일자: 2023/03/29
  **/
+@Slf4j
 public class CustomAuthorityUtils {
     public static List<GrantedAuthority> createAuthorities(String role) {
+        log.info("CustomAuthorityUtils.createAuthorities excute, role = {}", role);
         return List.of(new SimpleGrantedAuthority("ROLE_" + role));
     }
 
     public static void verifiedRole(String role) {
+        log.info("CustomAuthorityUtils.verifiedRole excute, role = {}", role);
         if (role == null) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_ROLE_DOES_NOT_EXISTS);
         } else if (!role.equals(USER.toString()) && !role.equals(ADMIN.toString())) {
