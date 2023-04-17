@@ -7,6 +7,7 @@ import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,9 +22,10 @@ import static com.frog.travelwithme.global.security.auth.utils.CustomAuthorityUt
  * 버전 정보: 1.0.0
  * 작성일자: 2023/03/29
  **/
+@Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -71,7 +73,10 @@ public class MemberServiceImpl implements MemberService {
     @Transactional(readOnly = true)
     public Member findMemberAndCheckMemberExists(Long id) {
         return memberRepository.findById(id)
-                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> {
+                            log.debug("MemberServiceImpl.findMemberAndCheckMemberExists exception occur id: {}", id);
+                            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+                        });
     }
 
     @Override
@@ -84,12 +89,16 @@ public class MemberServiceImpl implements MemberService {
     @Transactional(readOnly = true)
     public Member findMemberAndCheckMemberExists(String email) {
         return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.debug("MemberServiceImpl.findMemberAndCheckMemberExists exception occur email: {}", email);
+                    throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+                });
     }
 
     private void checkDuplicatedEmail(String email) {
         Optional<Member> member = memberRepository.findByEmail(email);
         if (member.isPresent()) {
+            log.debug("MemberServiceImpl.checkDuplicatedEmail exception occur email: {}", email);
             throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
         }
     }

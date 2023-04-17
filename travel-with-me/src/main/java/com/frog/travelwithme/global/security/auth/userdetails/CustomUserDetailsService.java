@@ -30,7 +30,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         log.info("CustomUserDetailsService.loadUserByUsername excute, email = {}", email);
         return memberRepository.findByEmail(email)
                 .map(this::createUserDetails)
-                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.debug("CustomUserDetailsService.loadUserByUsername exception occur email: {}", email);
+                    throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+                });
     }
 
     private UserDetails createUserDetails(Member member) {
