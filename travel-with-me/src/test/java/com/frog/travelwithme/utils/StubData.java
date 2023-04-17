@@ -1,9 +1,11 @@
 package com.frog.travelwithme.utils;
 
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
+import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyRecruitment;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Member;
+import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
@@ -11,6 +13,7 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * StubData 설명: 테스트를 위한 Stub data 관리
@@ -115,11 +118,30 @@ public class StubData {
 
     public static class MockBuddy {
 
+        static Long id = 1L;
         static String title = "바하마 배편 동행 구해요";
         static String content = "1인 방예약이 너무비싸 쉐어하실분 구합니다!";
         static String travelNationality = "The Bahamas";
         static String travelStartDate = "2023-01-01"; //LocalDate.of(2023,01,01);
         static String travelEndDate = "2023-01-03"; //LocalDate.of(2023,01,03);
+        static Long viewCount = 0L;
+        static Long commentCount = 0L;
+        static LocalTime localTime = LocalTime.of(0, 0);
+
+
+        public static BuddyRecruitment getBuddyRecruitment() {
+            BuddyRecruitment buddyRecruitment = BuddyRecruitment.builder()
+                    .id(id)
+                    .title(title)
+                    .content(content)
+                    .travelNationality(travelNationality)
+                    .travelStartDate(LocalDateTime.of(LocalDate.parse(travelStartDate),localTime))
+                    .travelEndDate(LocalDateTime.of(LocalDate.parse(travelEndDate),localTime))
+                    .buddyRecruitmentStatus(EnumCollection.BuddyRecruitmentStatus.IN_PROGRESS)
+                    .build();
+
+            return buddyRecruitment;
+        }
 
         public static BuddyDto.PostRecruitment getPostRecruitment() {
             return BuddyDto.PostRecruitment.builder()
@@ -128,6 +150,20 @@ public class StubData {
                     .travelNationality(travelNationality)
                     .travelStartDate(travelStartDate)
                     .travelEndDate(travelEndDate)
+                    .build();
+        }
+
+        public static BuddyDto.ResponseRecruitment getResponseRecruitment() {
+            return BuddyDto.ResponseRecruitment.builder()
+                    .title(title)
+                    .content(content)
+                    .travelNationality(travelNationality)
+                    .travelStartDate(LocalDate.parse(travelStartDate))
+                    .travelEndDate(LocalDate.parse(travelEndDate))
+                    .viewCount(viewCount)
+                    .commentCount(commentCount)
+                    .nickname(MockMember.nickname)
+                    .memberImage(MockMember.image)
                     .build();
         }
     }

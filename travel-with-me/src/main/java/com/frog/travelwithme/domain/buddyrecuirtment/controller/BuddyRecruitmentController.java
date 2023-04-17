@@ -30,8 +30,6 @@ public class BuddyRecruitmentController {
 
     private final BuddyRecruitmentService buddyRecruitmentService;
 
-    private final BuddyMapper buddyMapper;
-
     @PostMapping
     public ResponseEntity postBuddyRecruitment(@RequestBody BuddyDto.PostRecruitment postRecruitmentDto,
                                                @AuthenticationPrincipal CustomUserDetails user) {

@@ -85,4 +85,8 @@ public class BuddyRecruitment extends BaseTimeEntity {
         }
     }
 
+    public void changeStatus(BuddyRecruitmentStatus buddyRecruitmentStatus) {
+        this.buddyRecruitmentStatus = buddyRecruitmentStatus;
+    }
+
 }

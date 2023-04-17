@@ -72,7 +72,6 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
         String json = ObjectMapperUtils.dtoToJsonString(postRecruitmentDto);
-        System.out.println("ssss = " + json);
 
         ResultActions actions = ResultActionsUtils.postRequestWithContentAndToken(
                 mvc, uri, json, accessToken, encryptedRefreshToken
