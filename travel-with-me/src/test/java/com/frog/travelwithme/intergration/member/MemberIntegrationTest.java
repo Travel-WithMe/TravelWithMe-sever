@@ -55,7 +55,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("회원가입")
-    void signUpTest() throws Exception {
+    void memberIntegrationTest1() throws Exception {
         // given
         memberService.deleteMember(EMAIL);
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
@@ -85,7 +85,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("회원 정보 수정")
-    void patchMemberTest() throws Exception {
+    void memberIntegrationTest2() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
@@ -123,7 +123,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("회원 조회")
-    void getMemberTest() throws Exception {
+    void memberIntegrationTest3() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
@@ -146,7 +146,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("회원 삭제")
-    void deleteMemberTest() throws Exception {
+    void memberIntegrationTest4() throws Exception {
         // given
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();

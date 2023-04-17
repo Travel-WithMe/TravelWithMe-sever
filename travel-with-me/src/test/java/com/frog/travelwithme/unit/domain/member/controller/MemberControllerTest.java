@@ -47,9 +47,9 @@ class MemberControllerTest {
     protected CustomUserDetails userDetails;
 
     @Test
-    @DisplayName("Sign up test")
+    @DisplayName("회원가입")
     @WithMockCustomUser
-    void signUpTest() throws Exception {
+    void memberControllerTest1() throws Exception {
         // given
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
         MemberDto.Response response = StubData.MockMember.getResponseDto();
@@ -67,9 +67,9 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("Patch member test")
+    @DisplayName("회원 정보 수정")
     @WithMockCustomUser(email = "email", password = "password")
-    void patchMemberTest() throws Exception {
+    void memberControllerTest2() throws Exception {
         // given
         MemberDto.Patch patchDto = StubData.MockMember.getPatchDto();
         MemberDto.Response response = StubData.MockMember.getResponseDto();
@@ -87,9 +87,9 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("Get member test")
+    @DisplayName("회원 조회")
     @WithMockCustomUser
-    void getMemberTest() throws Exception {
+    void memberControllerTest3() throws Exception {
         // given
         MemberDto.Response response = StubData.MockMember.getResponseDto();
         given(memberService.findMemberByEmail(any())).willReturn(response);
@@ -105,9 +105,9 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("Delete member test")
+    @DisplayName("회원 삭제")
     @WithMockCustomUser
-    void deleteMemberTest() throws Exception {
+    void memberControllerTest4() throws Exception {
         // given
         doNothing().when(memberService).deleteMember(any());
 

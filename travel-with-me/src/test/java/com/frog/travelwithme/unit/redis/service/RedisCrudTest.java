@@ -35,7 +35,7 @@ class RedisCrudTest {
 
     @Test
     @DisplayName("Redis에 데이터를 저장하면 정상적으로 조회된다.")
-    void saveAndFindTest() throws Exception {
+    void redisCrudTest1() throws Exception {
         // when
         String findValue = redisService.getValues(KEY);
 
@@ -45,7 +45,7 @@ class RedisCrudTest {
 
     @Test
     @DisplayName("Redis에 저장된 데이터를 수정할 수 있다.")
-    void updateTest() throws Exception {
+    void redisCrudTest2() throws Exception {
         // given
         String updateValue = "updateValue";
         redisService.setValues(KEY, updateValue, DURATION);
@@ -60,7 +60,7 @@ class RedisCrudTest {
 
     @Test
     @DisplayName("Redis에 저장된 데이터를 삭제할 수 있다.")
-    void deleteTest() throws Exception {
+    void redisCrudTest3() throws Exception {
         // when
         redisService.deleteValues(KEY);
         String findValue = redisService.getValues(KEY);
@@ -71,7 +71,7 @@ class RedisCrudTest {
 
     @Test
     @DisplayName("Redis에 저장된 데이터는 만료시간이 지나면 삭제된다.")
-    void expiredTest() throws Exception {
+    void redisCrudTest4() throws Exception {
         // when
         String findValue = redisService.getValues(KEY);
         await().pollDelay(Duration.ofMillis(6000)).untilAsserted(
