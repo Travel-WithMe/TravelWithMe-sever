@@ -11,7 +11,6 @@ import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDt
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import lombok.Getter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -24,6 +23,7 @@ import java.time.LocalTime;
 public class StubData {
     public static class MockMember {
         static Long id = 1L;
+        @Getter
         static String email = "email@gmail.com";
         static String password = "Password1234!";
         static String nickname = "nickname";
