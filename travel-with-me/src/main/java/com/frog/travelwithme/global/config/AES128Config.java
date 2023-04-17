@@ -2,6 +2,7 @@ package com.frog.travelwithme.global.config;
 
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,7 @@ import java.util.function.Predicate;
  * 버전 정보: 1.0.0
  * 작성일자: 2023/03/28
  **/
+@Slf4j
 @Component
 public class AES128Config {
     private static final Charset ENCODING_TYPE = StandardCharsets.UTF_8;
@@ -53,6 +55,7 @@ public class AES128Config {
             byte[] encryted = cipher.doFinal(plaintext.getBytes(ENCODING_TYPE));
             return new String(Base64.getEncoder().encode(encryted), ENCODING_TYPE);
         } catch (Exception e) {
+            log.debug("decryptAes.encryptAes exception occur plaintext: {}", plaintext);
             throw new BusinessLogicException(ExceptionCode.ENCRYPTION_FAILED);
         }
     }
@@ -64,6 +67,7 @@ public class AES128Config {
             byte[] decoded = Base64.getDecoder().decode(plaintext.getBytes(ENCODING_TYPE));
             return new String(cipher.doFinal(decoded), ENCODING_TYPE);
         } catch (Exception e) {
+            log.debug("AES128Config.decryptAes exception occur plaintext: {}", plaintext);
             throw new BusinessLogicException(ExceptionCode.DECRYPTION_FAILED);
         }
     }
@@ -73,6 +77,9 @@ public class AES128Config {
         Optional.ofNullable(secretKey)
                 .filter(Predicate.not(String::isBlank))
                 .filter(Predicate.not(key -> key.length() != 16))
-                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.SECRET_KEY_INVALID));
+                .orElseThrow(() -> {
+                    log.debug("AES128Config.validation exception occur secretKey: {}", secretKey);
+                    throw new BusinessLogicException(ExceptionCode.SECRET_KEY_INVALID);
+                });
     }
 }

@@ -11,6 +11,7 @@ import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import java.time.Duration;
  * 버전 정보: 1.0.0
  * 작성일자: 2023/04/12
  **/
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -47,7 +49,10 @@ public class AuthServiceImpl implements AuthService {
             redisService.setValues(refreshToken, newAccessToken,
                     Duration.ofMillis(refreshTokenExpirationMillis));
             return newAccessToken;
-        } else throw new BusinessLogicException(ExceptionCode.TOKEN_IS_NOT_SAME);
+        } else {
+            log.debug("AuthServiceImpl.reissueAccessToken exception occur redisRefreshToken: {}", redisRefreshToken);
+            throw new BusinessLogicException(ExceptionCode.TOKEN_IS_NOT_SAME);
+        }
     }
 
     @Override
@@ -68,12 +73,16 @@ public class AuthServiceImpl implements AuthService {
 
     private void verifiedRefreshToken(String encryptedRefreshToken) {
         if (encryptedRefreshToken == null) {
+            log.debug("AuthServiceImpl.verifiedRefreshToken exception occur encryptedRefreshToken: {}", (Object) null);
             throw new BusinessLogicException(ExceptionCode.HEADER_REFRESH_TOKEN_NOT_EXISTS);
         }
     }
 
     private Member findMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.debug("AuthServiceImpl.findMemberByEmail exception occur email: {}", email);
+                    throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+                });
     }
 }

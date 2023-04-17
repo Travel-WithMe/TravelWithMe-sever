@@ -109,6 +109,7 @@ public class JwtTokenProvider {
         Claims claims = parseClaims(accessToken);
 
         if (claims.get("role") == null) {
+            log.debug("JwtTokenProvider.getAuthentication exception occur accessToken: {}", accessToken);
             throw new BusinessLogicException(ExceptionCode.NO_ACCESS_TOKEN);
         }
 
@@ -131,17 +132,22 @@ public class JwtTokenProvider {
         } catch (MalformedJwtException e) {
             log.info("Invalid JWT token");
             log.trace("Invalid JWT token trace = {}", e);
+            log.debug("JwtTokenProvider.validateToken exception occur token: {}", token);
+
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT token");
             log.trace("Expired JWT token trace = {}", e);
+            log.debug("JwtTokenProvider.validateToken exception occur token: {}", token);
             Responder.sendErrorResponse(response, ExceptionCode.TOKEN_EXPIRED);
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token");
             log.trace("Unsupported JWT token trace = {}", e);
+            log.debug("JwtTokenProvider.validateToken exception occur token: {}", token);
             Responder.sendErrorResponse(response, ExceptionCode.TOKEN_UNSUPPORTED);
         } catch (IllegalArgumentException e) {
             log.info("JWT claims string is empty.");
             log.trace("JWT claims string is empty trace = {}", e);
+            log.debug("JwtTokenProvider.validateToken exception occur token: {}", token);
             Responder.sendErrorResponse(response, ExceptionCode.TOKEN_ILLEGAL_ARGUMENT);
         }
         return true;

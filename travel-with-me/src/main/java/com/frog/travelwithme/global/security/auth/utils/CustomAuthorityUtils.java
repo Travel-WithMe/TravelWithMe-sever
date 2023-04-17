@@ -27,8 +27,10 @@ public class CustomAuthorityUtils {
     public static void verifiedRole(String role) {
         log.info("CustomAuthorityUtils.verifiedRole excute, role = {}", role);
         if (role == null) {
+            log.debug("CustomAuthorityUtils.verifiedRole exception occur role: {}", (Object) null);
             throw new BusinessLogicException(ExceptionCode.MEMBER_ROLE_DOES_NOT_EXISTS);
         } else if (!role.equals(USER.toString()) && !role.equals(ADMIN.toString())) {
+            log.debug("CustomAuthorityUtils.verifiedRole exception occur role: {}", role);
             throw new BusinessLogicException(ExceptionCode.MEMBER_ROLE_INVALID);
         }
     }
