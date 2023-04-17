@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DataJpaTest
 @Import(QuerydslConfig.class)
 @ExtendWith(SpringExtension.class)
-public class BuddyRecruitmentRepositoryTest {
+class BuddyRecruitmentRepositoryTest {
 
     @Autowired
     protected BuddyRecruitmentRepository buddyRecruitmentRepository;

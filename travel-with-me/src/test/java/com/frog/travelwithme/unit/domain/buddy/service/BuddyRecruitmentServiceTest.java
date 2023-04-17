@@ -3,9 +3,7 @@ package com.frog.travelwithme.unit.domain.buddy.service;
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyRecruitment;
 import com.frog.travelwithme.domain.buddyrecuirtment.mapper.BuddyMapper;
-import com.frog.travelwithme.domain.buddyrecuirtment.mapper.BuddyMapperImpl;
 import com.frog.travelwithme.domain.buddyrecuirtment.repository.BuddyRecruitmentRepository;
-import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyMatchingService;
 import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyRecruitmentServiceImpl;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
@@ -16,13 +14,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.annotation.Import;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 /**
@@ -33,7 +27,7 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-public class BuddyRecruimentServiceTest {
+class BuddyRecruitmentServiceTest {
 
     @InjectMocks
     protected BuddyRecruitmentServiceImpl buddyRecruitmentService;
@@ -49,7 +43,7 @@ public class BuddyRecruimentServiceTest {
 
     @Test
     @DisplayName("createdRecruitment() 테스트")
-    void buddyRecruimentServiceTest1() {
+    void buddyRecruitmentServiceTest1() {
         //given
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
         BuddyDto.PostRecruitment postRecruitmentDto = StubData.MockBuddy.getPostRecruitment();

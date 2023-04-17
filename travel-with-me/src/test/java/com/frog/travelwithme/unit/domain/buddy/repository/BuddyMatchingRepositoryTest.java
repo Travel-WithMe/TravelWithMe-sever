@@ -19,7 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @DataJpaTest
 @Import(QuerydslConfig.class)
 @ExtendWith(SpringExtension.class)
-public class BuddyMatchingRepositoryTest {
+class BuddyMatchingRepositoryTest {
 
     @Autowired
     protected BuddyMatchingRepository buddyMatchingRepository;
