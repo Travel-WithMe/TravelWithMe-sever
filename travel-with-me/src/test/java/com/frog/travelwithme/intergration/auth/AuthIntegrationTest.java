@@ -66,7 +66,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("로그인 성공")
-    void loginSuccessTest() throws Exception {
+    void authIntegrationTest1() throws Exception {
         // given
         LoginDto loginSuccessDto = StubData.MockMember.getLoginSuccessDto();
         LoginResponse expectedResponseDto = StubData.MockMember.getLoginResponseDto();
@@ -93,7 +93,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("로그인 실패")
-    void loginFailTest() throws Exception {
+    void authIntegrationTest2() throws Exception {
         // given
         LoginDto loginFailDto = StubData.MockMember.getLoginFailDto();
 
@@ -115,7 +115,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("Access token 재발급 성공")
-    void accessTokenReissrueSuccessTest() throws Exception {
+    void authIntegrationTest3() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
@@ -136,7 +136,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("Refresh token 불일치로 Access token 재발급 실패")
-    void accessTokenReissrueFailTest() throws Exception {
+    void authIntegrationTest4() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
@@ -160,7 +160,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("Header에 Refresh token이 존재하지 않으면 Access token 재발급 실패")
-    void accessTokenReissrueFailTest2() throws Exception {
+    void authIntegrationTest5() throws Exception {
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/reissue")
                 .build().toUri().toString();
@@ -176,7 +176,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("로그아웃")
-    void logoutTest() throws Exception {
+    void authIntegrationTest6() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);

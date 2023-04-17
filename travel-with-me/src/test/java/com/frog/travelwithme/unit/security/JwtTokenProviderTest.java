@@ -48,7 +48,7 @@ class JwtTokenProviderTest {
 
     @DisplayName("Secret Key 암호화")
     @Test
-    void encodeBase64SecretKeyTest() throws Exception {
+    void jwtTokenProviderTest1() throws Exception {
         log.info(base64EncodedSecretKey);
 
         // then
@@ -57,7 +57,7 @@ class JwtTokenProviderTest {
 
     @DisplayName("Secret Key 복호화")
     @Test
-    void decodeSecretKeyTest() throws Exception {
+    void jwtTokenProviderTest2() throws Exception {
         log.info(base64EncodedSecretKey);
         String decodeSecretKey = new String(Decoders.BASE64.decode(base64EncodedSecretKey));
 
@@ -67,7 +67,7 @@ class JwtTokenProviderTest {
 
     @DisplayName("Access Token 생성")
     @Test
-    void genreateAccessTokenTest() throws Exception {
+    void jwtTokenProviderTest3() throws Exception {
         // when
         String accessToken = this.getAccessToken();
         log.info("accessToken : " + accessToken);
@@ -78,7 +78,7 @@ class JwtTokenProviderTest {
 
     @DisplayName("Refresh Token 생성")
     @Test
-    void generateRefreshTokenTest() throws Exception {
+    void jwtTokenProviderTest4() throws Exception {
         // when
         String refreshToken = this.getRefreshToken();
         log.info("refreshToken : " + refreshToken);
@@ -89,7 +89,7 @@ class JwtTokenProviderTest {
 
     @DisplayName("JWS를 검증할 때 예외가 발생하지 않음")
     @Test
-    void verifySignatureTest() {
+    void jwtTokenProviderTest5() {
         HttpServletResponse response = new Response();
         String accessToken = this.getAccessToken();
 
@@ -98,7 +98,7 @@ class JwtTokenProviderTest {
 
     @DisplayName("JWS를 검증할 때 예외가 발생함")
     @Test
-    void verifyExpirationTest() throws InterruptedException {
+    void jwtTokenProviderTest6() throws InterruptedException {
         // given
         MockHttpServletResponse response = new MockHttpServletResponse();
         String accessToken = getAccessToken();

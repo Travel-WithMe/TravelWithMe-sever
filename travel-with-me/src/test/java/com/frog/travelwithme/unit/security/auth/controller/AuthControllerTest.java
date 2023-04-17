@@ -47,9 +47,9 @@ class AuthControllerTest {
     protected JwtTokenProvider jwtTokenProvider;
 
     @Test
-    @DisplayName("Access token reissue success")
+    @DisplayName("Access token 재발급")
     @WithMockCustomUser
-    void accessTokenReissrueTest() throws Exception {
+    void authControllerTest1() throws Exception {
         // given
         given(jwtTokenProvider.resolveAccessToken(any(HttpServletRequest.class))).willReturn("access token");
         given(authService.reissueAccessToken(any())).willReturn("access token");
@@ -66,9 +66,9 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("logout controller test")
+    @DisplayName("로그 아웃")
     @WithMockCustomUser
-    void logoutTest() throws Exception {
+    void authControllerTest2() throws Exception {
         // given
         doNothing().when(authService).logout(any(), any());
 
