@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * 작성자: 이재혁
@@ -18,12 +17,13 @@ public class BuddyDto {
     @Getter
     @Builder
     @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class PostRecruitment {
-        private final String title;
-        private final String content;
-        private final String travelNationality;
-        private final String travelStartDate;
-        private final String travelEndDate;
+        private String title;
+        private String content;
+        private String travelNationality;
+        private String travelStartDate;
+        private String travelEndDate;
     }
 
     @Getter
