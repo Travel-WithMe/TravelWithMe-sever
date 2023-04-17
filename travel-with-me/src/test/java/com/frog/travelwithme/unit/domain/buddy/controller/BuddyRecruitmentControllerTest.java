@@ -1,9 +1,18 @@
 package com.frog.travelwithme.unit.domain.buddy.controller;
 
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.BuddyMatchingController;
+import com.frog.travelwithme.domain.buddyrecuirtment.controller.BuddyRecruitmentController;
+import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
+import com.frog.travelwithme.domain.buddyrecuirtment.mapper.BuddyMapper;
 import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyRecruitmentService;
+import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyRecruitmentServiceImpl;
+import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
+import com.frog.travelwithme.utils.ObjectMapperUtils;
+import com.frog.travelwithme.utils.ResultActionsUtils;
+import com.frog.travelwithme.utils.StubData;
 import com.frog.travelwithme.utils.security.WithMockCustomUser;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,9 +22,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * 작성자: 이재혁
@@ -24,12 +41,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  **/
 
 @WebMvcTest(
-        controllers = BuddyMatchingController.class,
+        controllers = {
+                BuddyRecruitmentController.class
+        },
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfigurer.class)
         }
 )
-@ExtendWith(RestDocumentationExtension.class)
 class BuddyRecruitmentControllerTest {
 
     private final String BASE_URL = "/recruitments";
@@ -44,16 +62,30 @@ class BuddyRecruitmentControllerTest {
     protected CustomUserDetails userDetails;
 
     @Test
-    @DisplayName("Test Example Controller")
+    @DisplayName("동행 글 작성")
     @WithMockCustomUser
-    void test() throws Exception {
+    void buddyRecruitmentControllerTest1() throws Exception {
         // given
+        BuddyDto.PostRecruitment postRecruitmentDto = StubData.MockBuddy.getPostRecruitment();
+        BuddyDto.ResponseRecruitment responseRecruitmentDto = StubData.MockBuddy.getResponseRecruitment();
 
+        given(buddyRecruitmentService.createdRecruitment(any(),any())).willReturn(responseRecruitmentDto);
 
         // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
+                .build().toUri().toString();
+
+        String json = ObjectMapperUtils.dtoToJsonString(postRecruitmentDto);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentAndUserDetails(mvc, uri, json, userDetails);
 
         // then
-        
+        BuddyDto.ResponseRecruitment response = ObjectMapperUtils.actionsSingleToDto(actions,
+                BuddyDto.ResponseRecruitment.class);
+
+        actions
+                .andExpect(status().isCreated());
+        assertThat(response.getTitle()).isEqualTo(postRecruitmentDto.getTitle());
+        assertThat(response.getContent()).isEqualTo(postRecruitmentDto.getContent());
     }
 
 }

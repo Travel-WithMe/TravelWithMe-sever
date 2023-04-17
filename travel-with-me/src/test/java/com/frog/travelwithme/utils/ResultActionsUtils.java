@@ -54,6 +54,18 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
+    public static ResultActions postRequestWithContentAndUserDetails(MockMvc mockMvc,
+                                                                     String url,
+                                                                     String json,
+                                                                     CustomUserDetails userDetails) throws Exception {
+        return mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .with(csrf())
+                        .with(user(userDetails)))
+                .andDo(print());
+    }
+
     public static ResultActions postRequestWithContentAndHeaders(MockMvc mockMvc,
                                             String url,
                                             String json,

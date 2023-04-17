@@ -29,7 +29,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfigurer.class)
         }
 )
-@ExtendWith(RestDocumentationExtension.class)
 class BuddyMatchingControllerTest {
 
     private final String BASE_URL = "/matching";
