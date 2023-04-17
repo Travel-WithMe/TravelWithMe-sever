@@ -15,6 +15,7 @@ import com.frog.travelwithme.global.utils.TimeUtils;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * StubData 설명: 테스트를 위한 Stub data 관리
