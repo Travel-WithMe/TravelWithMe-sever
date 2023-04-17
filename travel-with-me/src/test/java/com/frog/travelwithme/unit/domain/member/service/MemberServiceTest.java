@@ -24,6 +24,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
+/**
+ * 작성자: 김찬빈
+ * 버전 정보: 1.0.0
+ * 작성일자: 2023/04/17
+ **/
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
