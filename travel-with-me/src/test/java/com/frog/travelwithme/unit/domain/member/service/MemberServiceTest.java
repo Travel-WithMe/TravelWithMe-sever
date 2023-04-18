@@ -4,7 +4,7 @@ import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.mapper.MemberMapper;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
-import com.frog.travelwithme.domain.member.service.MemberServiceImpl;
+import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.utils.StubData;
 import org.junit.jupiter.api.DisplayName;
@@ -33,7 +33,7 @@ import static org.mockito.BDDMockito.given;
 class MemberServiceTest {
 
     @InjectMocks
-    private MemberServiceImpl memberServiceImpl;
+    private MemberService memberService;
 
     @Mock
     private MemberRepository memberRepository;
@@ -57,7 +57,7 @@ class MemberServiceTest {
         given(memberMapper.toDto(any(Member.class))).willReturn(expectedResponse);
 
         // when
-        MemberDto.Response response = memberServiceImpl.signUp(signUpDto);
+        MemberDto.Response response = memberService.signUp(signUpDto);
 
         // then
         assertNotNull(response);
@@ -80,7 +80,7 @@ class MemberServiceTest {
         given(memberMapper.toDto(any(Member.class))).willReturn(expectedResponse);
 
         // when
-        MemberDto.Response response = memberServiceImpl.findMemberByEmail(email);
+        MemberDto.Response response = memberService.findMemberByEmail(email);
 
         // then
         assertNotNull(response);
@@ -103,7 +103,7 @@ class MemberServiceTest {
         given(memberMapper.toDto(any(Member.class))).willReturn(expectedResponse);
 
         // when
-        MemberDto.Response response = memberServiceImpl.findMemberById(id);
+        MemberDto.Response response = memberService.findMemberById(id);
 
         // then
         assertNotNull(response);
@@ -127,7 +127,7 @@ class MemberServiceTest {
         given(memberMapper.toDto(any(Member.class))).willReturn(expectedResponse);
 
         // when
-        MemberDto.Response response = memberServiceImpl.updateMember(patchDto, email);
+        MemberDto.Response response = memberService.updateMember(patchDto, email);
 
         // then
         assertNotNull(response);
@@ -151,7 +151,7 @@ class MemberServiceTest {
 
         // when // then
         assertThrows(BusinessLogicException.class,
-                () -> memberServiceImpl.signUp(signUpDto));
+                () -> memberService.signUp(signUpDto));
     }
 
     @Test
@@ -163,7 +163,7 @@ class MemberServiceTest {
 
         // when // then
         assertThrows(BusinessLogicException.class,
-                () -> memberServiceImpl.findMemberByEmail(email));
+                () -> memberService.findMemberByEmail(email));
     }
 
     @Test
@@ -175,7 +175,7 @@ class MemberServiceTest {
 
         // when // then
         assertThrows(BusinessLogicException.class,
-                () -> memberServiceImpl.findMemberById(id));
+                () -> memberService.findMemberById(id));
     }
 
     @Test
@@ -190,7 +190,7 @@ class MemberServiceTest {
 
         // when // then
         assertThrows(BusinessLogicException.class,
-                () -> memberServiceImpl.updateMember(patchDto, email));
+                () -> memberService.updateMember(patchDto, email));
     }
 
     @Test
@@ -202,6 +202,6 @@ class MemberServiceTest {
 
         // when // then
         assertThrows(BusinessLogicException.class,
-                () -> memberServiceImpl.deleteMember(email));
+                () -> memberService.deleteMember(email));
     }
 }
