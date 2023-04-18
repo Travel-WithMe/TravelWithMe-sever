@@ -40,7 +40,7 @@ class BuddyRecruitmentRepositoryTest {
     protected BuddyRecruitmentRepository buddyRecruitmentRepository;
 
     @Test
-    @DisplayName("Create Test")
+    @DisplayName("동행 레포지토리 저장 테스트")
     void buddyRecruitmentRepositoryTest1() {
         // given
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
@@ -57,7 +57,7 @@ class BuddyRecruitmentRepositoryTest {
     }
 
     @Test
-    @DisplayName("Update Test")
+    @DisplayName("동행 레포지토리 수정 테스트")
     void buddyRecruitmentRepositoryTest2() {
         // given
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
@@ -75,13 +75,13 @@ class BuddyRecruitmentRepositoryTest {
     }
 
     @Test
-    @DisplayName("Read Test")
+    @DisplayName("동행 레포지토리 조회 테스트")
     void buddyRecruitmentRepositoryTest3() {
         // given
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
+        BuddyRecruitment saveBuddyRecruitment = buddyRecruitmentRepository.save(buddyRecruitment);
 
         // when
-        BuddyRecruitment saveBuddyRecruitment = buddyRecruitmentRepository.save(buddyRecruitment);
         BuddyRecruitment findBuddyRecruitment = buddyRecruitmentRepository.findById(saveBuddyRecruitment.getId()).get();
 
         // then
@@ -93,7 +93,7 @@ class BuddyRecruitmentRepositoryTest {
     }
 
     @Test
-    @DisplayName("Delete Test")
+    @DisplayName("동행 레포지토리 삭제 테스트")
     void buddyRecruitmentRepositoryTest4() {
         // given
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
