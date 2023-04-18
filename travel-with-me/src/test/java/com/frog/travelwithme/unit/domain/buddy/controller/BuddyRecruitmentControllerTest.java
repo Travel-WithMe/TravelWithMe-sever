@@ -1,29 +1,21 @@
 package com.frog.travelwithme.unit.domain.buddy.controller;
 
-import com.frog.travelwithme.domain.buddyrecuirtment.controller.BuddyMatchingController;
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.BuddyRecruitmentController;
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
-import com.frog.travelwithme.domain.buddyrecuirtment.mapper.BuddyMapper;
 import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyRecruitmentService;
-import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyRecruitmentServiceImpl;
-import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.ResultActionsUtils;
 import com.frog.travelwithme.utils.StubData;
 import com.frog.travelwithme.utils.security.WithMockCustomUser;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -62,7 +54,7 @@ class BuddyRecruitmentControllerTest {
     protected CustomUserDetails userDetails;
 
     @Test
-    @DisplayName("동행 글 작성")
+    @DisplayName("동행 모집글 작성")
     @WithMockCustomUser
     void buddyRecruitmentControllerTest1() throws Exception {
         // given

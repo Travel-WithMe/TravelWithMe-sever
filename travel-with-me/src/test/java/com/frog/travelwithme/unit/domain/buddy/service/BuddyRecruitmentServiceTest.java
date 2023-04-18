@@ -4,7 +4,7 @@ import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyRecruitment;
 import com.frog.travelwithme.domain.buddyrecuirtment.mapper.BuddyMapper;
 import com.frog.travelwithme.domain.buddyrecuirtment.repository.BuddyRecruitmentRepository;
-import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyRecruitmentServiceImpl;
+import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyRecruitmentService;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.utils.StubData;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 class BuddyRecruitmentServiceTest {
 
     @InjectMocks
-    protected BuddyRecruitmentServiceImpl buddyRecruitmentService;
+    protected BuddyRecruitmentService buddyRecruitmentService;
 
     @Mock
     protected BuddyRecruitmentRepository buddyRecruitmentRepository;
@@ -42,7 +42,7 @@ class BuddyRecruitmentServiceTest {
     protected MemberService memberService;
 
     @Test
-    @DisplayName("createdRecruitment() 테스트")
+    @DisplayName("동행 모집글 작성")
     void buddyRecruitmentServiceTest1() {
         //given
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();

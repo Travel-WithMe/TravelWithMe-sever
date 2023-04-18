@@ -1,6 +1,6 @@
 package com.frog.travelwithme.unit.domain.buddy.service;
 
-import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyMatchingServiceImpl;
+import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyMatchingService;
 import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyRecruitmentService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class BuddyMatchingServiceTest {
 
     @InjectMocks
-    protected BuddyMatchingServiceImpl buddyMatchingService;
+    protected BuddyMatchingService buddyMatchingService;
 
     @Mock
     protected BuddyRecruitmentService buddyRecruitmentService;
