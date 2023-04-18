@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 @DataJpaTest
+@ActiveProfiles("test")
 @Import(QuerydslConfig.class)
 @ExtendWith(SpringExtension.class)
 class BuddyRecruitmentRepositoryTest {
@@ -40,7 +42,7 @@ class BuddyRecruitmentRepositoryTest {
     protected BuddyRecruitmentRepository buddyRecruitmentRepository;
 
     @Test
-    @DisplayName("동행 레포지토리 저장 테스트")
+    @DisplayName("동행 레포지토리 저장")
     void buddyRecruitmentRepositoryTest1() {
         // given
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
@@ -57,7 +59,7 @@ class BuddyRecruitmentRepositoryTest {
     }
 
     @Test
-    @DisplayName("동행 레포지토리 수정 테스트")
+    @DisplayName("동행 레포지토리 수정")
     void buddyRecruitmentRepositoryTest2() {
         // given
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
@@ -75,7 +77,7 @@ class BuddyRecruitmentRepositoryTest {
     }
 
     @Test
-    @DisplayName("동행 레포지토리 조회 테스트")
+    @DisplayName("동행 레포지토리 조회")
     void buddyRecruitmentRepositoryTest3() {
         // given
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
@@ -93,7 +95,7 @@ class BuddyRecruitmentRepositoryTest {
     }
 
     @Test
-    @DisplayName("동행 레포지토리 삭제 테스트")
+    @DisplayName("동행 레포지토리 삭제")
     void buddyRecruitmentRepositoryTest4() {
         // given
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();

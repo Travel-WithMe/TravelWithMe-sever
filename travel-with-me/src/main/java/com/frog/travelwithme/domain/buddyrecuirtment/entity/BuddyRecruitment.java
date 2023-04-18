@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@DynamicInsert
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BuddyRecruitment extends BaseTimeEntity {
@@ -42,10 +41,8 @@ public class BuddyRecruitment extends BaseTimeEntity {
 
     private LocalDateTime travelEndDate;
 
-//    @ColumnDefault(value = "0")
     private long viewCount;
 
-//    @ColumnDefault(value = "0")
     private long commentCount;
 
     @Embedded

@@ -1,13 +1,11 @@
 package com.frog.travelwithme.domain.buddyrecuirtment.controller;
 
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
-import com.frog.travelwithme.domain.buddyrecuirtment.mapper.BuddyMapper;
 import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyRecruitmentService;
 import com.frog.travelwithme.global.dto.SingleResponseDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
