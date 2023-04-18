@@ -3,10 +3,8 @@ package com.frog.travelwithme.unit.domain.buddy.service;
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyRecruitment;
 import com.frog.travelwithme.domain.buddyrecuirtment.mapper.BuddyMapper;
-import com.frog.travelwithme.domain.buddyrecuirtment.mapper.BuddyMapperImpl;
 import com.frog.travelwithme.domain.buddyrecuirtment.repository.BuddyRecruitmentRepository;
-import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyMatchingService;
-import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyRecruitmentServiceImpl;
+import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyRecruitmentService;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.utils.StubData;
@@ -16,13 +14,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.annotation.Import;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 /**
@@ -33,10 +27,10 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-public class BuddyRecruimentServiceTest {
+class BuddyRecruitmentServiceTest {
 
     @InjectMocks
-    protected BuddyRecruitmentServiceImpl buddyRecruitmentService;
+    protected BuddyRecruitmentService buddyRecruitmentService;
 
     @Mock
     protected BuddyRecruitmentRepository buddyRecruitmentRepository;
@@ -48,20 +42,20 @@ public class BuddyRecruimentServiceTest {
     protected MemberService memberService;
 
     @Test
-    @DisplayName("createdRecruitment() 테스트")
-    void buddyRecruimentServiceTest1() {
+    @DisplayName("동행 모집글 작성")
+    void buddyRecruitmentServiceTest1() {
         //given
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
         BuddyDto.PostRecruitment postRecruitmentDto = StubData.MockBuddy.getPostRecruitment();
         BuddyDto.ResponseRecruitment responseRecruitmentDto = StubData.MockBuddy.getResponseRecruitment();
         Member member = StubData.MockMember.getMember();
         buddyRecruitment.addMember(member);
-
-        //when
         when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
         when(buddyMapper.toEntity(postRecruitmentDto)).thenReturn(buddyRecruitment);
         when(buddyRecruitmentRepository.save(buddyRecruitment)).thenReturn(buddyRecruitment);
         when(buddyMapper.toDto(buddyRecruitment)).thenReturn(responseRecruitmentDto);
+
+        //when
         BuddyDto.ResponseRecruitment responseRecruitment = buddyRecruitmentService.createdRecruitment(
                 postRecruitmentDto, member.getEmail()
         );
