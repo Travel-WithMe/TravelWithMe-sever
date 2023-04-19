@@ -47,16 +47,16 @@ class BuddyRecruitmentServiceTest {
         //given
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
         BuddyDto.PostRecruitment postRecruitmentDto = StubData.MockBuddy.getPostRecruitment();
-        BuddyDto.ResponseRecruitment responseRecruitmentDto = StubData.MockBuddy.getResponseRecruitment();
+        BuddyDto.PostResponseRecruitment responseRecruitmentDto = StubData.MockBuddy.getPostResponseRecruitment();
         Member member = StubData.MockMember.getMember();
         buddyRecruitment.addMember(member);
         when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
         when(buddyMapper.toEntity(postRecruitmentDto)).thenReturn(buddyRecruitment);
         when(buddyRecruitmentRepository.save(buddyRecruitment)).thenReturn(buddyRecruitment);
-        when(buddyMapper.toDto(buddyRecruitment)).thenReturn(responseRecruitmentDto);
+        when(buddyMapper.toPostResponseRecruitmentDto(buddyRecruitment)).thenReturn(responseRecruitmentDto);
 
         //when
-        BuddyDto.ResponseRecruitment responseRecruitment = buddyRecruitmentService.createdRecruitment(
+        BuddyDto.PostResponseRecruitment responseRecruitment = buddyRecruitmentService.createBuddyRecruitment(
                 postRecruitmentDto, member.getEmail()
         );
 

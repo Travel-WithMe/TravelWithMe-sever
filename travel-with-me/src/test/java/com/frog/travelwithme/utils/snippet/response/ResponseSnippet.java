@@ -1,6 +1,7 @@
 package com.frog.travelwithme.utils.snippet.response;
 
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class ResponseSnippet {
                 );
     }
 
-    public static ResponseFieldsSnippet getRecruitmentSnippet() {
+    public static ResponseFieldsSnippet getPostRecruitmentSnippet() {
         return responseFields(
                 List.of(
                         fieldWithPath("data.title").type(JsonFieldType.STRING).description("동행모집 게시글 제목"),
@@ -59,6 +60,26 @@ public class ResponseSnippet {
     public static ResponseFieldsSnippet getMailVerificationSnippet() {
         return responseFields(
                 fieldWithPath("data.success").type(JsonFieldType.BOOLEAN).description("이메일 인증 성공 여부")
+        );
+    }
+    public static ResponseFieldsSnippet getPatchRecruitmentSnippet() {
+        return responseFields(
+                List.of(
+                        fieldWithPath("data.title").type(JsonFieldType.STRING).description("동행모집 게시글 제목"),
+                        fieldWithPath("data.content").type(JsonFieldType.STRING).description("동행모집 게시글 내용"),
+                        fieldWithPath("data.travelNationality").type(JsonFieldType.STRING).description("동행모집 국가"),
+                        fieldWithPath("data.travelStartDate").type(JsonFieldType.STRING).description("동행모집 여행 시작날짜"),
+                        fieldWithPath("data.travelEndDate").type(JsonFieldType.STRING).description("동행모집 여행 종료날짜")
+                )
+        );
+    }
+
+    public static ResponseFieldsSnippet getDeleteRecruitmentSnippet() {
+        return responseFields(
+                List.of(
+                        fieldWithPath("data.isDeleted").type(JsonFieldType.BOOLEAN).description("동행모집 게시글 삭제상태"),
+                        fieldWithPath("data.deletedAt").type(JsonFieldType.STRING).description("동행모집 게시글 삭제 시간")
+                )
         );
     }
 }

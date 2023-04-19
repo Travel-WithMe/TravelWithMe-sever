@@ -2,15 +2,15 @@ package com.frog.travelwithme.domain.buddyrecuirtment.entity;
 
 import com.frog.travelwithme.domain.buddyrecuirtment.common.BaseTimeEntity;
 import com.frog.travelwithme.domain.buddyrecuirtment.common.DeletionEntity;
+import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.global.enums.EnumCollection.BuddyRecruitmentStatus;
+import com.frog.travelwithme.global.utils.TimeUtils;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * 작성자: 이재혁
@@ -64,7 +64,7 @@ public class BuddyRecruitment extends BaseTimeEntity {
     @Builder
     public BuddyRecruitment(Long id, String title, String content, String travelNationality,
                             LocalDateTime travelStartDate, LocalDateTime travelEndDate,
-                            BuddyRecruitmentStatus buddyRecruitmentStatus) {
+                            BuddyRecruitmentStatus buddyRecruitmentStatus, DeletionEntity deletionEntity) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -72,18 +72,36 @@ public class BuddyRecruitment extends BaseTimeEntity {
         this.travelStartDate = travelStartDate;
         this.travelEndDate = travelEndDate;
         this.buddyRecruitmentStatus = buddyRecruitmentStatus;
+        this.deletionEntity = deletionEntity;
     }
 
     public void addMember(Member member) {
-        if(member == null) {
-            return;
-        } else {
+        if(member != null) {
             this.member = member;
         }
     }
 
+    public void updateBuddyRecruitment(BuddyDto.PatchRecruitment patchRecruitment) {
+        Optional.ofNullable(patchRecruitment.getTitle())
+                .ifPresent(title -> this.title = title);
+        Optional.ofNullable(patchRecruitment.getContent())
+                .ifPresent(content -> this.content = content);
+        Optional.ofNullable(patchRecruitment.getTravelNationality())
+                .ifPresent(travelNationality -> this.travelNationality = travelNationality);
+        Optional.ofNullable(patchRecruitment.getTravelStartDate())
+                .ifPresent(travelStartDate -> this.travelStartDate = TimeUtils.stringToLocalDateTime(travelStartDate));
+        Optional.ofNullable(patchRecruitment.getTravelEndDate())
+                .ifPresent(travelEndDate -> this.travelEndDate = TimeUtils.stringToLocalDateTime(travelEndDate));
+    }
+
     public void changeStatus(BuddyRecruitmentStatus buddyRecruitmentStatus) {
         this.buddyRecruitmentStatus = buddyRecruitmentStatus;
+    }
+
+    public DeletionEntity updateDeletionEntity() {
+        this.deletionEntity.setIsDeleted(true);
+        this.deletionEntity.setDeletedAt(LocalDateTime.now());
+        return deletionEntity;
     }
 
 }

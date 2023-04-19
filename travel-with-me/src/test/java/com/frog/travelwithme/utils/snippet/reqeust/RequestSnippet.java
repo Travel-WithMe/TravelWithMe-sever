@@ -46,7 +46,19 @@ public class RequestSnippet {
         );
     }
 
-    public static RequestFieldsSnippet getRecruitmentSnippet() {
+    public static RequestFieldsSnippet getPostRecruitmentSnippet() {
+        return requestFields(
+                List.of(
+                        fieldWithPath("title").type(JsonFieldType.STRING).description("동행모집 게시글 제목"),
+                        fieldWithPath("content").type(JsonFieldType.STRING).description("동행모집 게시글 내용"),
+                        fieldWithPath("travelNationality").type(JsonFieldType.STRING).description("동행모집 국가"),
+                        fieldWithPath("travelStartDate").type(JsonFieldType.STRING).description("동행모집 여행 시작날짜"),
+                        fieldWithPath("travelEndDate").type(JsonFieldType.STRING).description("동행모집 여행 종료날짜")
+                )
+        );
+    }
+
+    public static RequestFieldsSnippet getPatchRecruitmentSnippet() {
         return requestFields(
                 List.of(
                         fieldWithPath("title").type(JsonFieldType.STRING).description("동행모집 게시글 제목"),

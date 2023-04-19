@@ -9,10 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 
 /**
  * 작성자: 이재혁
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 
 @Slf4j
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/recruitments")
@@ -29,12 +31,47 @@ public class BuddyRecruitmentController {
     private final BuddyRecruitmentService buddyRecruitmentService;
 
     @PostMapping
-    public ResponseEntity postBuddyRecruitment(@RequestBody BuddyDto.PostRecruitment postRecruitmentDto,
+    public ResponseEntity postBuddyRecruitment(@Valid @RequestBody BuddyDto.PostRecruitment postRecruitmentDto,
                                                @AuthenticationPrincipal CustomUserDetails user) {
 
         String email = user.getEmail();
-        BuddyDto.ResponseRecruitment response = buddyRecruitmentService.createdRecruitment(postRecruitmentDto, email);
+        BuddyDto.PostResponseRecruitment response = buddyRecruitmentService.createBuddyRecruitment(
+                postRecruitmentDto, email
+        );
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/{recruitments-id}")
+    public ResponseEntity patchBuddyRecruitment(@Positive @PathVariable("recruitments-id") Long recruitmentsId,
+                                                @RequestBody BuddyDto.PatchRecruitment patchRecruitmentDto,
+                                                @AuthenticationPrincipal CustomUserDetails user) {
+
+        String email = user.getEmail();
+        buddyRecruitmentService.checkWriterAndModifier(recruitmentsId, email);
+        BuddyDto.PatchResponseRecruitment response = buddyRecruitmentService.updateBuddyRecruitment(
+                patchRecruitmentDto, recruitmentsId
+        );
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+    }
+
+    @PostMapping("/{recruitments-id}/deleted")
+    public ResponseEntity deleteBuddyRecruitment(@Positive @PathVariable("recruitments-id") Long recruitmentsId,
+                                                 @AuthenticationPrincipal CustomUserDetails user) {
+
+        String email = user.getEmail();
+        buddyRecruitmentService.checkWriterAndModifier(recruitmentsId, email);
+        BuddyDto.DeleteResponseRecruitment response = buddyRecruitmentService.deleteBuddyRecruitment(recruitmentsId);
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/{recruitments-id}")
+    public ResponseEntity getBuddyRecruitment(@Positive @PathVariable("recruitments-id") Long recruitmentsId,
+                                              @AuthenticationPrincipal CustomUserDetails user) {
+
+        String email = user.getEmail();
+        BuddyDto.GetResponseRecruitment response = buddyRecruitmentService.findBuddyRecruitment(recruitmentsId, email);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
 }

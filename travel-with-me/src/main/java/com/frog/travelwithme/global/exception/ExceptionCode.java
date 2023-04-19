@@ -17,6 +17,10 @@ public enum ExceptionCode {
     UNABLE_TO_SEND_EMAIL(404, "메일을 전송할 수 없습니다."),
     NO_SUCH_ALGORITHM(400, "인증 번호 생성을 위한 알고리즘을 찾을 수 없습니다."),
 
+    // Buddy
+    BUDDY_RECRUITMENT_NOT_FOUND(404, "해당 동행모집글을 찾을 수 없습니다."),
+    BUDDY_RECRUITMENT_WRITER_NOT_MATCH(404, "해당 동행모집글을 작성한 유저가 아닙니다."),
+
     // Security, JWT
     NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),
     TOKEN_SIGNATURE_INVALID(400, "토큰 Signature가 올바르지 않습니다."),
@@ -36,7 +40,11 @@ public enum ExceptionCode {
     // Redis
     NOT_FOUND_AVAILABLE_PORT(404, "사용 가능한 Port를 찾을 수 없습니다. port: 10000 ~ 65535"),
     ERROR_EXECUTING_EMBEDDED_REDIS(404, "EmbeddedRedis 실행 중 에러 발생"),
-    REDIS_SERVER_EXCUTABLE_NOT_FOUND(404, "Redis Server Executable not found");
+    REDIS_SERVER_EXCUTABLE_NOT_FOUND(404, "Redis Server Executable not found"),
+
+    // Utils
+    STRING_IS_NOT_LOCAL_DATE_FORMAT(404,"문자열 데이터 형식이 LocalDate 형식이 아닙니다."),
+    STRING_IS_NOT_LOCAL_DATE_TIME_FORMAT(404,"문자열 데이터 형식이 LocalDateTime 형식이 아닙니다.");
 
     @Getter
     private final int status;
