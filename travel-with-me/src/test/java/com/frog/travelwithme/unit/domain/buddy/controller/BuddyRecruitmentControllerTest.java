@@ -59,9 +59,9 @@ class BuddyRecruitmentControllerTest {
     void buddyRecruitmentControllerTest1() throws Exception {
         // given
         BuddyDto.PostRecruitment postRecruitmentDto = StubData.MockBuddy.getPostRecruitment();
-        BuddyDto.ResponseRecruitment responseRecruitmentDto = StubData.MockBuddy.getResponseRecruitment();
+        BuddyDto.PostResponseRecruitment responseRecruitmentDto = StubData.MockBuddy.getPostResponseRecruitment();
 
-        given(buddyRecruitmentService.createdRecruitment(any(),any())).willReturn(responseRecruitmentDto);
+        given(buddyRecruitmentService.createBuddyRecruitment(any(),any())).willReturn(responseRecruitmentDto);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
@@ -71,8 +71,8 @@ class BuddyRecruitmentControllerTest {
         ResultActions actions = ResultActionsUtils.postRequestWithContentAndUserDetails(mvc, uri, json, userDetails);
 
         // then
-        BuddyDto.ResponseRecruitment response = ObjectMapperUtils.actionsSingleToDto(actions,
-                BuddyDto.ResponseRecruitment.class);
+        BuddyDto.PostResponseRecruitment response = ObjectMapperUtils.actionsSingleToDto(actions,
+                BuddyDto.PostResponseRecruitment.class);
 
         actions
                 .andExpect(status().isCreated());

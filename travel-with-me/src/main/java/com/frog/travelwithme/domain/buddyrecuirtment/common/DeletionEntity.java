@@ -13,10 +13,11 @@ import java.time.LocalDateTime;
  * 작성일자: 2023/04/12
  **/
 
+@Setter
 @Getter
 @Embeddable
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class DeletionEntity {
 
     @ColumnDefault(value = "false")

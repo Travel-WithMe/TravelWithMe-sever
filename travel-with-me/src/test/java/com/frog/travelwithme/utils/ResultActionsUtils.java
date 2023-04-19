@@ -54,6 +54,19 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
+    public static ResultActions postRequestWithUserDetails(MockMvc mockMvc,
+                                                           String url,
+                                                           String accessToken,
+                                                           String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .with(csrf())
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
     public static ResultActions postRequestWithContentAndUserDetails(MockMvc mockMvc,
                                                                      String url,
                                                                      String json,
