@@ -14,7 +14,6 @@ import com.frog.travelwithme.utils.StubData;
 import com.frog.travelwithme.utils.snippet.reqeust.RequestSnippet;
 import com.frog.travelwithme.utils.snippet.response.ResponseSnippet;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,14 +42,9 @@ class MemberIntegrationTest extends BaseIntegrationTest {
     private AES128Config aes128Config;
 
     @BeforeEach
-    void befroeEach() {
+    void beforeEach() {
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
         memberService.signUp(signUpDto);
-    }
-
-    @AfterEach
-    void afterEach() {
-        memberService.deleteMember(EMAIL);
     }
 
     @Test
