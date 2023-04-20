@@ -2,7 +2,6 @@ package com.frog.travelwithme.domain.member.controller.dto;
 
 import lombok.*;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -21,7 +20,9 @@ public class MemberDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class SignUp {
         @NotBlank
-        @Email
+        @Pattern(message = "로컬 최대 64자, 로컬에서 밑줄(_) 하이픈(-) 점(.) 허용, 로컬 시작과 끝에 점(.) 사용 불가능, " +
+                "로컬 점(.) 연속 두 개 사용 불가능",
+                regexp = "^(?=.{1,64}@)[A-Za-z0-9-]+(.[A-Za-z0-9-]+)@[^-][A-Za-z0-9-]+(.[A-Za-z0-9-]+)(.[A-Za-z]{2,})$")
         private String email;
         // TODO: Password 정규식 분리하여 유효성 검사
         @Pattern(message = "최소 8자 및 최대 20자, 대문자 하나 이상, 소문자 하나 이상, 숫자 하나 및 특수 문자 하나 이상",

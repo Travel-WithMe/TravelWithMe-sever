@@ -11,6 +11,7 @@ import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDt
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -24,7 +25,7 @@ public class StubData {
     public static class MockMember {
         static Long id = 1L;
         @Getter
-        static String email = "email@gmail.com";
+        static String email = "e_ma-il@gmail.com";
         static String password = "Password1234!";
         static String nickname = "nickname";
         static String image = "image";
@@ -39,6 +40,32 @@ public class StubData {
             return SignUp.builder()
                     .email(email)
                     .password(password)
+                    .nickname(nickname)
+                    .address(address)
+                    .introduction(introduction)
+                    .image(image)
+                    .nation(nation)
+                    .role(role)
+                    .build();
+        }
+
+        public static SignUp getFailedSignUpDtoByEmail(String failedEmail) {
+            return SignUp.builder()
+                    .email(failedEmail)
+                    .password(password)
+                    .nickname(nickname)
+                    .address(address)
+                    .introduction(introduction)
+                    .image(image)
+                    .nation(nation)
+                    .role(role)
+                    .build();
+        }
+
+        public static SignUp getFailedSignUpDtoByPassword(String failedPassword) {
+            return SignUp.builder()
+                    .email(email)
+                    .password(failedPassword)
                     .nickname(nickname)
                     .address(address)
                     .introduction(introduction)

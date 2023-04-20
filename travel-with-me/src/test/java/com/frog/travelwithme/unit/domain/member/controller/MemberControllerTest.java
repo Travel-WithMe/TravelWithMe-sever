@@ -120,4 +120,172 @@ class MemberControllerTest {
         actions
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    @DisplayName("이메일 유효성 검사: 연속 .은 허용되지 않음")
+    @WithMockCustomUser
+    void memberControllerTest5() throws Exception {
+        // given
+        String failedEmail = "ema..il@gmail.com";
+        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByEmail(failedEmail);
+        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
+                .build().toUri().toString();
+        String json = ObjectMapperUtils.asJsonString(signUpDto);
+        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+
+        // then
+        actions
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("이메일 유효성 검사: 로컬 시작에 .을 허용하지 않음")
+    @WithMockCustomUser
+    void memberControllerTest6() throws Exception {
+        // given
+        String failedEmail = ".email@gmail.com";
+        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByEmail(failedEmail);
+        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
+                .build().toUri().toString();
+        String json = ObjectMapperUtils.asJsonString(signUpDto);
+        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+
+        // then
+        actions
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("이메일 유효성 검사: 로컬 끝에 .을 허용하지 않음")
+    @WithMockCustomUser
+    void memberControllerTest7() throws Exception {
+        // given
+        String failedEmail = "email.@gmail.com";
+        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByEmail(failedEmail);
+        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
+                .build().toUri().toString();
+        String json = ObjectMapperUtils.asJsonString(signUpDto);
+        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+
+        // then
+        actions
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("이메일 유효성 검사: 64자를 넘으면 예외 발생")
+    @WithMockCustomUser
+    void memberControllerTest8() throws Exception {
+        // given
+        String failedEmail = "emailemailemailemailemailemailemailemailemailemailemailemailemail@gmail.com";
+        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByEmail(failedEmail);
+        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
+                .build().toUri().toString();
+        String json = ObjectMapperUtils.asJsonString(signUpDto);
+        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+
+        // then
+        actions
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("비밀번호 유효성 검사: 대문자를 하나 이상 포함하지 않으면 예외 발생")
+    @WithMockCustomUser
+    void memberControllerTest9() throws Exception {
+        // given
+        String failedPassword = "password1!";
+        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByPassword(failedPassword);
+        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
+                .build().toUri().toString();
+        String json = ObjectMapperUtils.asJsonString(signUpDto);
+        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+
+        // then
+        actions
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("비밀번호 유효성 검사: 소문자를 하나 이상 포함하지 않으면 예외 발생")
+    @WithMockCustomUser
+    void memberControllerTest10() throws Exception {
+        // given
+        String failedPassword = "PASSWORD1!";
+        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByPassword(failedPassword);
+        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
+                .build().toUri().toString();
+        String json = ObjectMapperUtils.asJsonString(signUpDto);
+        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+
+        // then
+        actions
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("비밀번호 유효성 검사: 숫자를 하나 이상 포함하지 않으면 예외 발생")
+    @WithMockCustomUser
+    void memberControllerTest11() throws Exception {
+        // given
+        String failedPassword = "Password!";
+        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByPassword(failedPassword);
+        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
+                .build().toUri().toString();
+        String json = ObjectMapperUtils.asJsonString(signUpDto);
+        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+
+        // then
+        actions
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("비밀번호 유효성 검사: 특수 문자를 하나 이상 포함하지 않으면 예외 발생")
+    @WithMockCustomUser
+    void memberControllerTest12() throws Exception {
+        // given
+        String failedPassword = "Password1";
+        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByPassword(failedPassword);
+        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
+                .build().toUri().toString();
+        String json = ObjectMapperUtils.asJsonString(signUpDto);
+        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+
+        // then
+        actions
+                .andExpect(status().is4xxClientError());
+    }
 }
