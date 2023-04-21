@@ -67,9 +67,9 @@ public class ResultActionsUtils {
     }
 
     public static ResultActions postRequestWithContentAndHeaders(MockMvc mockMvc,
-                                            String url,
-                                            String json,
-                                            HttpHeaders headers) throws Exception {
+                                                                 String url,
+                                                                 String json,
+                                                                 HttpHeaders headers) throws Exception {
         return mockMvc.perform(post(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
@@ -104,8 +104,8 @@ public class ResultActionsUtils {
     }
 
     public static ResultActions patchRequestWithToken(MockMvc mockMvc,
-                                             String url,
-                                             String encryptedRefreshToken) throws Exception {
+                                                      String url,
+                                                      String encryptedRefreshToken) throws Exception {
         return mockMvc.perform(patch(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -143,9 +143,9 @@ public class ResultActionsUtils {
     }
 
     public static ResultActions patchRequestWithContentAndUserDetails(MockMvc mockMvc,
-                                             String url,
-                                             String json,
-                                             CustomUserDetails userDetails) throws Exception {
+                                                                      String url,
+                                                                      String json,
+                                                                      CustomUserDetails userDetails) throws Exception {
         return mockMvc.perform(patch(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
@@ -215,6 +215,24 @@ public class ResultActionsUtils {
                         .with(csrf())
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
                         .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions getRequestWithParams(MockMvc mockMvc,
+                                                     String url,
+                                                     MultiValueMap<String, String> paprams) throws Exception {
+        return mockMvc.perform(get(url)
+                        .params(paprams))
+                .andDo(print());
+    }
+
+    public static ResultActions getRequestWithTwoParams(MockMvc mockMvc,
+                                                        String url,
+                                                        MultiValueMap<String, String> firstParam,
+                                                        MultiValueMap<String, String> secondParam) throws Exception {
+        return mockMvc.perform(get(url)
+                        .params(firstParam)
+                        .params(secondParam))
                 .andDo(print());
     }
 

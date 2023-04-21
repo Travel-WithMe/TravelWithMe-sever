@@ -21,12 +21,13 @@ import java.security.NoSuchAlgorithmException;
 public class MailController {
     private final MailService mailService;
 
-    @PostMapping("/verification-requests")
+    @GetMapping("/verification-requests")
     public ResponseEntity sendMessage(@Valid @CustomEmail @RequestParam("email") String email)
             throws NoSuchAlgorithmException {
         mailService.sendEmail(email);
+        String response = "이메일 인증 번호가 전송되었습니다. 인증 번호의 유효시간은 30분입니다.";
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/verifications")
