@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  **/
 class AuthIntegrationTest extends BaseIntegrationTest {
     private final String BASE_URL = "/auth";
-    private final String EMAIL = "email@gmail.com";
+    private final String EMAIL = StubData.MockMember.getEmail();
     @Autowired
     private MemberService memberService;
 
@@ -142,7 +142,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
         String refreshToken = tokenDto.getRefreshToken();
         String failRefreshToken = refreshToken + "fail";
-        redisService.setValues("email@gmail.com", failRefreshToken, Duration.ofMillis(10000));
+        redisService.setValues(EMAIL, failRefreshToken, Duration.ofMillis(10000));
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
         // when
