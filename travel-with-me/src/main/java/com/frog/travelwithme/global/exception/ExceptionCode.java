@@ -23,6 +23,7 @@ public enum ExceptionCode {
     MEMBER_NOT_FOUND(404, "Member not found"),
     HEADER_REFRESH_TOKEN_NOT_EXISTS(404, "No refresh token in header"),
     TOKEN_IS_NOT_SAME(404, "Token is not same"),
+    AUTH_CODE_IS_NOT_SAME(404, "Auth code is not smae"),
 
     // AES
     ENCRYPTION_FAILED(404, "Encryption failed"),
