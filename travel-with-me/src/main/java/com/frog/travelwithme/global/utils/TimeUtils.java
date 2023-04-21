@@ -38,4 +38,7 @@ public class TimeUtils {
         return localDateTime.toString();
     }
 
+    public static String localDateToString(LocalDate localDate) {
+        return localDate.toString();
+    }
 }

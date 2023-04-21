@@ -76,16 +76,6 @@ public interface BuddyMapper {
                 .build();
     };
 
-    default BuddyDto.DeleteResponseRecruitment toDeleteResponseRecruitmentDto(DeletionEntity deletionEntity) {
-        if (deletionEntity == null) {
-            return null;
-        }
-        return BuddyDto.DeleteResponseRecruitment.builder()
-                .isDeleted(deletionEntity.getIsDeleted())
-                .deletedAt(deletionEntity.getDeletedAt())
-                .build();
-    };
-
     default BuddyDto.GetResponseRecruitment toGetResponseRecruitmentDto(BuddyRecruitment buddyRecruitment) {
         if (buddyRecruitment == null) {
             return null;

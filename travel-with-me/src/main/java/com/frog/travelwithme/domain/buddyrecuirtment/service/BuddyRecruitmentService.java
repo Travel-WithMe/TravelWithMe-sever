@@ -37,7 +37,7 @@ public class BuddyRecruitmentService {
     private final BuddyMapper buddyMapper;
 
     public BuddyDto.PostResponseRecruitment createBuddyRecruitment(BuddyDto.PostRecruitment postRecruitmentDto,
-                                                               String email) {
+                                                                   String email) {
 
         Member findMember = memberService.findMemberAndCheckMemberExists(email);
         BuddyRecruitment mappedBuddyRecruitment = buddyMapper.toEntity(postRecruitmentDto);
@@ -48,7 +48,7 @@ public class BuddyRecruitmentService {
     }
 
     public BuddyDto.PatchResponseRecruitment updateBuddyRecruitment(BuddyDto.PatchRecruitment patchRecruitmentDto,
-                                                               Long recruitmentsId) {
+                                                                    Long recruitmentsId) {
 
         BuddyRecruitment buddyRecruitment = this.findBuddyRecruitmentById(recruitmentsId);
         buddyRecruitment.updateBuddyRecruitment(patchRecruitmentDto);
@@ -56,10 +56,9 @@ public class BuddyRecruitmentService {
 
     }
 
-    public BuddyDto.DeleteResponseRecruitment deleteBuddyRecruitment(Long recruitmentsId) {
+    public void deleteBuddyRecruitment(Long recruitmentsId) {
         BuddyRecruitment buddyRecruitment = this.findBuddyRecruitmentById(recruitmentsId);
-        DeletionEntity deletionEntity = buddyRecruitment.updateDeletionEntity();
-        return buddyMapper.toDeleteResponseRecruitmentDto(deletionEntity);
+        buddyRecruitment.updateDeletionEntity();
     }
 
     public BuddyDto.GetResponseRecruitment findBuddyRecruitment(Long recruitmentsId, String email) {

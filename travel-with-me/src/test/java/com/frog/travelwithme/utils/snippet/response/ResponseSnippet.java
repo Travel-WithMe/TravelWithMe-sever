@@ -73,13 +73,4 @@ public class ResponseSnippet {
                 )
         );
     }
-
-    public static ResponseFieldsSnippet getDeleteRecruitmentSnippet() {
-        return responseFields(
-                List.of(
-                        fieldWithPath("data.isDeleted").type(JsonFieldType.BOOLEAN).description("동행모집 게시글 삭제상태"),
-                        fieldWithPath("data.deletedAt").type(JsonFieldType.STRING).description("동행모집 게시글 삭제 시간")
-                )
-        );
-    }
 }
