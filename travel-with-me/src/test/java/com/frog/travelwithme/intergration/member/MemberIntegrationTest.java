@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class MemberIntegrationTest extends BaseIntegrationTest {
 
     private final String BASE_URL = "/members";
-    private final String EMAIL = "email@gmail.com";
+    private final String EMAIL = StubData.MockMember.getEmail();
     @Autowired
     private MemberService memberService;
 

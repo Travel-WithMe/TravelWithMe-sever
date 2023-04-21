@@ -29,7 +29,7 @@ public class CustomAnnotationCollection {
     }
 
     @Documented
-    @Constraint(validatedBy = EmailValdator.class)
+    @Constraint(validatedBy = PasswordValidator.class)
     @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
     @Retention(RUNTIME)
     public @interface Password {
