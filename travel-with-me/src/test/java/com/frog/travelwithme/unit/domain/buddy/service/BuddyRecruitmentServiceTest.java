@@ -7,6 +7,7 @@ import com.frog.travelwithme.domain.buddyrecuirtment.repository.BuddyRecruitment
 import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyRecruitmentService;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
+import com.frog.travelwithme.global.utils.TimeUtils;
 import com.frog.travelwithme.utils.StubData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,6 +53,7 @@ class BuddyRecruitmentServiceTest {
         BuddyDto.PostResponseRecruitment responseRecruitmentDto = StubData.MockBuddy.getPostResponseRecruitment();
         Member member = StubData.MockMember.getMember();
         buddyRecruitment.addMember(member);
+
         when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
         when(buddyMapper.toEntity(postRecruitmentDto)).thenReturn(buddyRecruitment);
         when(buddyRecruitmentRepository.save(buddyRecruitment)).thenReturn(buddyRecruitment);
@@ -70,4 +74,52 @@ class BuddyRecruitmentServiceTest {
         );
     }
 
+    @Test
+    @DisplayName("동행 모집글 수정")
+    void buddyRecruitmentServiceTest2() {
+        //given
+        BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
+        BuddyDto.PatchRecruitment patchRecruitmentDto = StubData.MockBuddy.getPatchRecruitment();
+        BuddyDto.PatchResponseRecruitment responseRecruitmentDto = StubData.MockBuddy.getPatchResponseRecruitment();
+        Member member = StubData.MockMember.getMember();
+        buddyRecruitment.addMember(member);
+
+        when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
+        when(buddyRecruitmentRepository.findById(buddyRecruitment.getId())).thenReturn(Optional.of(buddyRecruitment));
+        when(buddyMapper.toPatchResponseRecruitmentDto(buddyRecruitment)).thenReturn(responseRecruitmentDto);
+
+        //when
+        buddyRecruitmentService.checkWriterAndModifier(buddyRecruitment.getId(), member.getEmail());
+        BuddyDto.PatchResponseRecruitment responseRecruitment = buddyRecruitmentService.updateBuddyRecruitment(
+                patchRecruitmentDto, buddyRecruitment.getId()
+        );
+
+        //then
+        assertAll(
+                () -> assertEquals(responseRecruitment.getTitle(), buddyRecruitment.getTitle()),
+                () -> assertEquals(responseRecruitment.getContent(), buddyRecruitment.getContent()),
+                () -> assertEquals(responseRecruitment.getTravelNationality(), buddyRecruitment.getTravelNationality()),
+                () -> assertEquals(responseRecruitment.getTravelStartDate(), TimeUtils.localDateTimeToLocalDate(buddyRecruitment.getTravelStartDate())),
+                () -> assertEquals(responseRecruitment.getTravelEndDate(), TimeUtils.localDateTimeToLocalDate(buddyRecruitment.getTravelEndDate()))
+        );
+    }
+
+    @Test
+    @DisplayName("동행 모집글 삭제")
+    void buddyRecruitmentServiceTest3() {
+        //given
+        BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
+        Member member = StubData.MockMember.getMember();
+        buddyRecruitment.addMember(member);
+
+        when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
+        when(buddyRecruitmentRepository.findById(buddyRecruitment.getId())).thenReturn(Optional.of(buddyRecruitment));
+
+        //when
+        buddyRecruitmentService.checkWriterAndModifier(buddyRecruitment.getId(), member.getEmail());
+        buddyRecruitmentService.deleteBuddyRecruitment(buddyRecruitment.getId());
+
+        //then
+
+    }
 }

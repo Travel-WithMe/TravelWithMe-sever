@@ -57,13 +57,16 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
 
     @BeforeEach
     void beforeEach() {
-        // email@gmail.com 회원 추가
+        // e_ma-il@gmail.com 회원 추가
         MemberDto.SignUp memberOne = StubData.MockMember.getSignUpDto();
         memberService.signUp(memberOne);
         EMAIL = memberOne.getEmail();
 
-        // emailOther@gmail.com 회원 추가
-        MemberDto.SignUp memberTwo = StubData.MockMember.getSignUpDtoOther();
+        // dhfif718@gmail.com 회원 추가
+        MemberDto.SignUp memberTwo = StubData.MockMember.getSignUpDtoByEmailAndNickname(
+                "dhfif718@gmail.com",
+                "이재혁"
+        );
         memberService.signUp(memberTwo);
         EMAIL_OTHER = memberTwo.getEmail();
     }
@@ -176,23 +179,17 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
                 .path(BASE_URL + "/" + saveBuddyRecruitment.getId() + "/" + "deleted")
                 .build().toUri().toString();
 
-        ResultActions actions = ResultActionsUtils.postRequestWithUserDetails(
+        ResultActions actions = ResultActionsUtils.postRequestWithToken(
                 mvc, uri, accessToken, encryptedRefreshToken
         );
 
 
         // then
-        BuddyDto.DeleteResponseRecruitment response = ObjectMapperUtils.actionsSingleToDto(actions,
-                BuddyDto.DeleteResponseRecruitment.class);
-
-        assertThat(response.getIsDeleted()).isEqualTo(true);
-
         actions
                 .andExpect(status().isNoContent())
                 .andDo(document("delete-recruitment",
                         getRequestPreProcessor(),
-                        getResponsePreProcessor(),
-                        ResponseSnippet.getDeleteRecruitmentSnippet()
+                        getResponsePreProcessor()
                 ));
     }
 }

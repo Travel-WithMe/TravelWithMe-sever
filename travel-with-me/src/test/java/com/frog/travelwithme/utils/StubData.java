@@ -74,6 +74,19 @@ public class StubData {
                     .build();
         }
 
+        public static SignUp getSignUpDtoByEmailAndNickname(String email, String nickname) {
+            return SignUp.builder()
+                    .email(email)
+                    .password(password)
+                    .nickname(nickname)
+                    .address(address)
+                    .introduction(introduction)
+                    .image(image)
+                    .nation(nation)
+                    .role(role)
+                    .build();
+        }
+
         public static SignUp getFailedSignUpDtoByPassword(String failedPassword) {
             return SignUp.builder()
                     .email(email)

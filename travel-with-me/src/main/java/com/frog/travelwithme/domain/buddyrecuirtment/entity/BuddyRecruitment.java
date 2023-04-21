@@ -98,10 +98,9 @@ public class BuddyRecruitment extends BaseTimeEntity {
         this.buddyRecruitmentStatus = buddyRecruitmentStatus;
     }
 
-    public DeletionEntity updateDeletionEntity() {
+    public void updateDeletionEntity() {
         this.deletionEntity.setIsDeleted(true);
         this.deletionEntity.setDeletedAt(LocalDateTime.now());
-        return deletionEntity;
     }
 
 }

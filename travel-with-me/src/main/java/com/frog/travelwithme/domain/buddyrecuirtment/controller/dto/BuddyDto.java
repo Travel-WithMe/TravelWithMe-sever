@@ -80,15 +80,6 @@ public class BuddyDto {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class DeleteResponseRecruitment {
-        private Boolean isDeleted;
-        private LocalDateTime deletedAt;
-    }
-
-    @Getter
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetResponseRecruitment {
         private String title;
         private String content;

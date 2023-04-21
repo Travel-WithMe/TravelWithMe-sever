@@ -61,8 +61,8 @@ public class BuddyRecruitmentController {
 
         String email = user.getEmail();
         buddyRecruitmentService.checkWriterAndModifier(recruitmentsId, email);
-        BuddyDto.DeleteResponseRecruitment response = buddyRecruitmentService.deleteBuddyRecruitment(recruitmentsId);
-        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.NO_CONTENT);
+        buddyRecruitmentService.deleteBuddyRecruitment(recruitmentsId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/{recruitments-id}")
