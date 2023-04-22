@@ -11,25 +11,25 @@ import lombok.Getter;
 public enum ExceptionCode {
 
     // Member
-    MEMBER_ROLE_DOES_NOT_EXISTS(404, "Member role does not exists"),
-    MEMBER_EXISTS(404, "Member exists"),
+    MEMBER_ROLE_DOES_NOT_EXISTS(404, "회원의 권한이 존재하지 않습니다."),
+    MEMBER_EXISTS(404, "이미 존재하는 회원입니다."),
+    AUTH_CODE_IS_NOT_SAME(404, "인증 번호가 일치하지 않습니다."),
 
     // Security, JWT
-    NO_ACCESS_TOKEN(403, "Token without permission information"),
-    TOKEN_SIGNATURE_INVALID(400, "Token signature invalid"),
-    TOKEN_EXPIRED(400, "Token expired"),
-    TOKEN_UNSUPPORTED(400, "Token unsupported"),
-    TOKEN_ILLEGAL_ARGUMENT(400, "Token illegal argumnet"),
-    MEMBER_NOT_FOUND(404, "Member not found"),
-    HEADER_REFRESH_TOKEN_NOT_EXISTS(404, "No refresh token in header"),
-    TOKEN_IS_NOT_SAME(404, "Token is not same"),
-    AUTH_CODE_IS_NOT_SAME(404, "Auth code is not smae"),
+    NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),
+    TOKEN_SIGNATURE_INVALID(400, "토큰 Signature가 올바르지 않습니다."),
+    TOKEN_EXPIRED(400, "토큰이 만료되었습니다."),
+    TOKEN_UNSUPPORTED(400, "지원하지 않는 형식의 토큰입니다."),
+    TOKEN_ILLEGAL_ARGUMENT(400, "올바르지 않은 토큰입니다."),
+    MEMBER_NOT_FOUND(404, "회원을 찾을 수 없습니다."),
+    HEADER_REFRESH_TOKEN_NOT_EXISTS(404, "헤더에 Refresh token이 존재하지 않습니다."),
+    TOKEN_IS_NOT_SAME(404, "토큰이 일치하지 않습니다."),
 
     // AES
-    ENCRYPTION_FAILED(404, "Encryption failed"),
-    DECRYPTION_FAILED(404, "Decryption failed."),
-    SECRET_KEY_INVALID(400, "Secret key invalid"),
-    MEMBER_ROLE_INVALID(400, "Member role invalid"),
+    ENCRYPTION_FAILED(404, "암호화에 실패했습니다."),
+    DECRYPTION_FAILED(404, "복호화에 실패했습니다."),
+    SECRET_KEY_INVALID(400, "Secret key가 올바르지 않습니다."),
+    MEMBER_ROLE_INVALID(400, "회원의 권한 정보가 올바르지 않습니다."),
 
     // Redis
     NOT_FOUND_AVAILABLE_PORT(404, "사용 가능한 Port를 찾을 수 없습니다. port: 10000 ~ 65535"),
