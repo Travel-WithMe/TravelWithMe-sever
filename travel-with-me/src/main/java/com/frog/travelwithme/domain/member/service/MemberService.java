@@ -1,13 +1,14 @@
 package com.frog.travelwithme.domain.member.service;
 
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
+import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.mapper.MemberMapper;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
-import com.frog.travelwithme.global.redis.RedisService;
 import com.frog.travelwithme.global.mail.MailService;
+import com.frog.travelwithme.global.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -140,10 +141,11 @@ public class MemberService {
         }
     }
 
-    public boolean verifiedCode(String email, String authCode) {
+    public EmailVerificationResult verifiedCode(String email, String authCode) {
         this.checkDuplicatedEmail(email);
         String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
+        boolean authResult = redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode);
 
-        return redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode);
+        return EmailVerificationResult.of(authResult);
     }
 }
