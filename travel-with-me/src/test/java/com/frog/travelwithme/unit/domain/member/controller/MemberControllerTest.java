@@ -2,6 +2,7 @@ package com.frog.travelwithme.unit.domain.member.controller;
 
 import com.frog.travelwithme.domain.member.controller.MemberController;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
+import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
@@ -11,6 +12,7 @@ import com.frog.travelwithme.utils.security.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -18,6 +20,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -39,12 +43,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 class MemberControllerTest {
     private final String BASE_URL = "/members";
+
+    private static final String EMAIL_KEY = StubData.MockMember.getEmailKey();
+
+    private static final String EMAIL_VALUE = StubData.MockMember.getEmail();
+
+    private static final String CODE_KEY = StubData.MockMember.getCodeKey();
+
+    private static final String CODE_VALUE = StubData.MockMember.getCodeValue();
+
     @Autowired
-    protected MockMvc mvc;
+    private MockMvc mvc;
+
     @MockBean
-    protected MemberService memberService;
+    private MemberService memberService;
+
     @Mock
-    protected CustomUserDetails userDetails;
+    private CustomUserDetails userDetails;
 
     @Test
     @DisplayName("회원가입")
@@ -287,5 +302,45 @@ class MemberControllerTest {
         // then
         actions
                 .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("메일을 전송합니다")
+    @WithMockCustomUser
+    void memberControllerTest13() throws Exception {
+        // given
+        MultiValueMap<String, String> papram = new LinkedMultiValueMap<>();
+        papram.add(EMAIL_KEY, EMAIL_VALUE);
+        doNothing().when(memberService).sendCodeToEmail(Mockito.any());
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/emails/verification-requests")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.postRequestWithParams(mvc, uri, papram);
+
+        // then
+        actions.andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("인증 번호를 통해 메일을 인증합니다")
+    @WithMockCustomUser
+    void memberControllerTest14() throws Exception {
+        // given
+        MultiValueMap<String, String> emailPapram = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> codePapram = new LinkedMultiValueMap<>();
+        emailPapram.add(EMAIL_KEY, EMAIL_VALUE);
+        codePapram.add(CODE_KEY, CODE_VALUE);
+        EmailVerificationResult response =
+                StubData.MockMember.getEmailVerificationResult(true);
+        given(memberService.verifiedCode(Mockito.any(), Mockito.any())).willReturn(response);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/emails/verifications")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.getRequestWithTwoParams(mvc, uri, emailPapram, codePapram);
+
+        // then
+        actions.andExpect(status().isOk());
     }
 }
