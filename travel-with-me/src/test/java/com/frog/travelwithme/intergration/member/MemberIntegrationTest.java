@@ -1,9 +1,11 @@
 package com.frog.travelwithme.intergration.member;
 
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
+import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.Response;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
+import com.frog.travelwithme.global.redis.RedisService;
 import com.frog.travelwithme.global.security.auth.controller.dto.TokenDto;
 import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
@@ -19,6 +21,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
@@ -31,7 +35,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class MemberIntegrationTest extends BaseIntegrationTest {
 
     private final String BASE_URL = "/members";
+
     private final String EMAIL = StubData.MockMember.getEmail();
+
+    private final String EMAIL_KEY = StubData.MockMember.getEmailKey();
+
+    private final String EMAIL_VALUE = StubData.MockMember.getEmail();
+
+    private final String CODE_KEY = StubData.MockMember.getCodeKey();
+
+    private final String CODE_VALUE = StubData.MockMember.getCodeValue();
+
+    private final String AUTH_CODE_PREFIX = StubData.MockMember.getAuthCodePrefix();
+
     @Autowired
     private MemberService memberService;
 
@@ -40,6 +56,9 @@ class MemberIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private AES128Config aes128Config;
+
+    @Autowired
+    private RedisService redisService;
 
     @BeforeEach
     void beforeEach() {
@@ -159,5 +178,87 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 .andExpect(status().isNoContent())
                 .andDo(document("delete-member"));
         memberService.signUp(signUpDto);
+    }
+
+    @Test
+    @DisplayName("메일을 전송합니다")
+    void memberIntegrationTest5() throws Exception {
+        // given
+        memberService.deleteMember(EMAIL);
+        MultiValueMap<String, String> papram = new LinkedMultiValueMap<>();
+        papram.add(EMAIL_KEY, EMAIL_VALUE);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/emails/verification-requests")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.postRequestWithParams(mvc, uri, papram);
+
+        // then
+        actions.andExpect(status().isOk())
+                .andDo(document("email-verification-request",
+                        getRequestPreProcessor(),
+                        RequestSnippet.getMailVerificiationRequestSnippet()));
+
+        redisService.deleteValues(AUTH_CODE_PREFIX + EMAIL_VALUE);
+    }
+
+    @Test
+    @DisplayName("인증 번호를 통해 메일을 인증합니다")
+    void memberIntegrationTest6() throws Exception {
+        // given
+        redisService.setValues(AUTH_CODE_PREFIX + EMAIL_VALUE, CODE_VALUE);
+        memberService.deleteMember(EMAIL);
+        MultiValueMap<String, String> emailPapram = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> codePapram = new LinkedMultiValueMap<>();
+        emailPapram.add(EMAIL_KEY, EMAIL_VALUE);
+        codePapram.add(CODE_KEY, CODE_VALUE);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/emails/verifications")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.getRequestWithTwoParams(mvc, uri, emailPapram, codePapram);
+
+        // then
+        EmailVerificationResult response = ObjectMapperUtils.
+                actionsSingleToDto(actions, EmailVerificationResult.class);
+        assertThat(response.isSuccess()).isTrue();
+        actions.andExpect(status().isOk())
+                .andDo(document("email-verification-request",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getMailVerificiationSnippet(),
+                        ResponseSnippet.getMailVerificationSnippet()));
+
+        redisService.deleteValues(AUTH_CODE_PREFIX + EMAIL_VALUE);
+    }
+
+    @Test
+    @DisplayName("인증 번호가 다르면 인증에 실패합니다")
+    void memberIntegrationTest7() throws Exception {
+        // given
+        redisService.setValues(AUTH_CODE_PREFIX + EMAIL_VALUE, CODE_VALUE);
+        memberService.deleteMember(EMAIL);
+        MultiValueMap<String, String> emailPapram = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> codePapram = new LinkedMultiValueMap<>();
+        emailPapram.add(EMAIL_KEY, EMAIL_VALUE);
+        codePapram.add(CODE_KEY, "fail" + CODE_VALUE);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/emails/verifications")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.getRequestWithTwoParams(mvc, uri, emailPapram, codePapram);
+
+        // then
+        EmailVerificationResult response = ObjectMapperUtils.
+                actionsSingleToDto(actions, EmailVerificationResult.class);
+        assertThat(response.isSuccess()).isFalse();
+        actions.andExpect(status().isOk())
+                .andDo(document("email-verification-request",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getMailVerificiationSnippet(),
+                        ResponseSnippet.getMailVerificationSnippet()));
+
+        redisService.deleteValues(AUTH_CODE_PREFIX + EMAIL_VALUE);
     }
 }

@@ -78,6 +78,15 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
+    public static ResultActions postRequestWithParams(MockMvc mockMvc,
+                                                      String url,
+                                                      MultiValueMap<String, String> paprams) throws Exception {
+        return mockMvc.perform(post(url)
+                        .params(paprams)
+                        .with(csrf()))
+                .andDo(print());
+    }
+
     public static ResultActions postRequestWithContentAndToken(MockMvc mockMvc,
                                                                String url,
                                                                String json,
@@ -215,14 +224,6 @@ public class ResultActionsUtils {
                         .with(csrf())
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
                         .header(REFRESH_HEADER, encryptedRefreshToken))
-                .andDo(print());
-    }
-
-    public static ResultActions getRequestWithParams(MockMvc mockMvc,
-                                                     String url,
-                                                     MultiValueMap<String, String> paprams) throws Exception {
-        return mockMvc.perform(get(url)
-                        .params(paprams))
                 .andDo(print());
     }
 

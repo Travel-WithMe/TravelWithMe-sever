@@ -61,7 +61,8 @@ public class RequestSnippet {
     public static Snippet getMailVerificiationRequestSnippet() {
         return requestParameters(
                 List.of(
-                        parameterWithName("email").description("인증 번호를 전달 받은 이메일 주소")
+                        parameterWithName("email").description("인증 번호를 전달 받은 이메일 주소"),
+                        parameterWithName("_csrf").ignored()
                 )
         );
     }

@@ -3,6 +3,7 @@ package com.frog.travelwithme.utils;
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyRecruitment;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
+import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.global.enums.EnumCollection;
@@ -23,7 +24,7 @@ import java.time.LocalTime;
  **/
 public class StubData {
     public static class MockMember {
-        static Long id = 1L;
+        static final Long id = 1L;
         @Getter
         static String email = "e_ma-il@gmail.com";
         static String password = "Password1234!";
@@ -35,6 +36,14 @@ public class StubData {
         static String role = "USER";
         static LocalDateTime createdAt = LocalDateTime.now();
         static LocalDateTime lastModifiedAt = LocalDateTime.now();
+        @Getter
+        static String emailKey = "email";
+        @Getter
+        static String codeKey = "code";
+        @Getter
+        static String codeValue = "123456";
+        @Getter
+        static String authCodePrefix = "AuthCode ";
 
         public static SignUp getSignUpDto() {
             return SignUp.builder()
@@ -140,6 +149,10 @@ public class StubData {
 
         public static CustomUserDetails getUserDetails() {
             return CustomUserDetails.of(email, role);
+        }
+
+        public static EmailVerificationResult getEmailVerificationResult(boolean authResult) {
+            return EmailVerificationResult.of(authResult);
         }
     }
 
