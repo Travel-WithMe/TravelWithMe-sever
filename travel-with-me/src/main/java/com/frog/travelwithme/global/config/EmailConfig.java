@@ -1,4 +1,4 @@
-package com.frog.travelwithme.global.security.config;
+package com.frog.travelwithme.global.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
