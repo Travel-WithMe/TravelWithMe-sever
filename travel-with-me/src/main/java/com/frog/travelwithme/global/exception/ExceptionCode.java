@@ -14,6 +14,8 @@ public enum ExceptionCode {
     MEMBER_ROLE_DOES_NOT_EXISTS(404, "회원의 권한이 존재하지 않습니다."),
     MEMBER_EXISTS(404, "이미 존재하는 회원입니다."),
     AUTH_CODE_IS_NOT_SAME(404, "인증 번호가 일치하지 않습니다."),
+    UNABLE_TO_SEND_EMAIL(404, "메일을 전송할 수 없습니다."),
+    NO_SUCH_ALGORITHM(400, "인증 번호 생성을 위한 알고리즘을 찾을 수 없습니다."),
 
     // Security, JWT
     NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),
