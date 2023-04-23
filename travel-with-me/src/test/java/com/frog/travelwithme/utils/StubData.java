@@ -114,6 +114,20 @@ public class StubData {
                     .build();
         }
 
+        public static Member getMemberByEmailAndNickname(String email, String nickname) {
+            return Member.builder()
+                    .id(id)
+                    .email(email)
+                    .password(password)
+                    .nickname(nickname)
+                    .image(image)
+                    .address(address)
+                    .introduction(introduction)
+                    .nation(nation)
+                    .role(role)
+                    .build();
+        }
+
         public static Member getMember() {
             return Member.builder()
                     .id(id)

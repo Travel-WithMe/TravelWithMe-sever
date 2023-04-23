@@ -7,8 +7,10 @@ import com.frog.travelwithme.domain.buddyrecuirtment.repository.BuddyRecruitment
 import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyRecruitmentService;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
+import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.utils.TimeUtils;
 import com.frog.travelwithme.utils.StubData;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,9 +20,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * 작성자: 이재혁
@@ -28,7 +30,7 @@ import static org.mockito.Mockito.when;
  * 작성일자: 2023/04/11
  **/
 
-
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 class BuddyRecruitmentServiceTest {
 
@@ -104,8 +106,33 @@ class BuddyRecruitmentServiceTest {
     }
 
     @Test
-    @DisplayName("동행 모집글 삭제")
+    @DisplayName("동행 모집글 수정 - 작성자, 유저 불일치")
     void buddyRecruitmentServiceTest3() {
+        //given
+        BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
+        BuddyDto.PatchRecruitment patchRecruitmentDto = StubData.MockBuddy.getPatchRecruitment();
+        BuddyDto.PatchResponseRecruitment responseRecruitmentDto = StubData.MockBuddy.getPatchResponseRecruitment();
+        Member writer = StubData.MockMember.getMemberByEmailAndNickname("dhfif718@naver.com", "LJH");
+        Member user = StubData.MockMember.getMemberByEmailAndNickname("kkd718@gmail.com", "KCB");
+        buddyRecruitment.addMember(writer);
+
+        when(memberService.findMemberAndCheckMemberExists(user.getEmail())).thenReturn(user);
+        when(buddyRecruitmentRepository.findById(buddyRecruitment.getId())).thenReturn(Optional.of(buddyRecruitment));
+
+        //when
+        //then
+        assertThatThrownBy(
+                () -> buddyRecruitmentService.updateBuddyRecruitment(
+                        patchRecruitmentDto,
+                        buddyRecruitment.getId(),
+                        user.getEmail()
+                )
+        ).isInstanceOf(BusinessLogicException.class);
+    }
+
+    @Test
+    @DisplayName("동행 모집글 삭제")
+    void buddyRecruitmentServiceTest4() {
         //given
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
         Member member = StubData.MockMember.getMember();
@@ -119,5 +146,24 @@ class BuddyRecruitmentServiceTest {
 
         //then
 
+    }
+
+    @Test
+    @DisplayName("동행 모집글 삭제 - 작성자, 유저 불일치")
+    void buddyRecruitmentServiceTest5() {
+        //given
+        BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
+        Member writer = StubData.MockMember.getMemberByEmailAndNickname("dhfif718@naver.com", "LJH");
+        Member user = StubData.MockMember.getMemberByEmailAndNickname("kkd718@gmail.com", "KCB");
+        buddyRecruitment.addMember(writer);
+
+        when(memberService.findMemberAndCheckMemberExists(user.getEmail())).thenReturn(user);
+        when(buddyRecruitmentRepository.findById(buddyRecruitment.getId())).thenReturn(Optional.of(buddyRecruitment));
+
+        //when
+        //then
+        assertThatThrownBy(
+                () -> buddyRecruitmentService.deleteBuddyRecruitment(buddyRecruitment.getId(), user.getEmail())
+        ).isInstanceOf(BusinessLogicException.class);
     }
 }

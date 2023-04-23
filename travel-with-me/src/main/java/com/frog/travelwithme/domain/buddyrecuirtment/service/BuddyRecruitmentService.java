@@ -58,8 +58,7 @@ public class BuddyRecruitmentService {
     }
 
     public void deleteBuddyRecruitment(Long recruitmentsId, String email) {
-        this.checkEqualWriterAndUser(recruitmentsId, email);
-        BuddyRecruitment buddyRecruitment = this.findBuddyRecruitmentById(recruitmentsId);
+        BuddyRecruitment buddyRecruitment = this.checkEqualWriterAndUser(recruitmentsId, email);
         buddyRecruitment.updateDeletionEntity();
     }
 
@@ -82,7 +81,7 @@ public class BuddyRecruitmentService {
     }
 
     @Transactional(readOnly = true)
-    public void checkEqualWriterAndUser(Long recruitmentsId, String email) {
+    public BuddyRecruitment checkEqualWriterAndUser(Long recruitmentsId, String email) {
         BuddyRecruitment findBuddyRecruitment = this.findBuddyRecruitmentById(recruitmentsId);
         Member writer = findBuddyRecruitment.getMember();
         Member user = memberService.findMemberAndCheckMemberExists(email);
@@ -91,6 +90,7 @@ public class BuddyRecruitmentService {
                     "recruitmentsId: {}, email: {}", recruitmentsId, email);
             throw new BusinessLogicException(ExceptionCode.BUDDY_RECRUITMENT_WRITER_NOT_MATCH);
         }
+        return findBuddyRecruitment;
     }
 
     private Boolean checkBuddyRecruitmentWriterByEmail(BuddyRecruitment buddyRecruitment, String email) {
