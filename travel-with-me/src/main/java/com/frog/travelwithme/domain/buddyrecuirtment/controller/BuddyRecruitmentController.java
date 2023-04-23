@@ -48,9 +48,8 @@ public class BuddyRecruitmentController {
                                                 @AuthenticationPrincipal CustomUserDetails user) {
 
         String email = user.getEmail();
-        buddyRecruitmentService.checkWriterAndModifier(recruitmentsId, email);
         BuddyDto.PatchResponseRecruitment response = buddyRecruitmentService.updateBuddyRecruitment(
-                patchRecruitmentDto, recruitmentsId
+                patchRecruitmentDto, recruitmentsId, email
         );
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
@@ -60,8 +59,7 @@ public class BuddyRecruitmentController {
                                                  @AuthenticationPrincipal CustomUserDetails user) {
 
         String email = user.getEmail();
-        buddyRecruitmentService.checkWriterAndModifier(recruitmentsId, email);
-        buddyRecruitmentService.deleteBuddyRecruitment(recruitmentsId);
+        buddyRecruitmentService.deleteBuddyRecruitment(recruitmentsId, email);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

@@ -94,7 +94,7 @@ class BuddyRecruitmentControllerTest {
         BuddyDto.PatchRecruitment patchRecruitmentDto = StubData.MockBuddy.getPatchRecruitment();
         BuddyDto.PatchResponseRecruitment responseRecruitmentDto = StubData.MockBuddy.getPatchResponseRecruitment();
 
-        given(buddyRecruitmentService.updateBuddyRecruitment(any(),any())).willReturn(responseRecruitmentDto);
+        given(buddyRecruitmentService.updateBuddyRecruitment(any(),any(),any())).willReturn(responseRecruitmentDto);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1)
@@ -121,7 +121,7 @@ class BuddyRecruitmentControllerTest {
     @WithMockCustomUser
     void buddyRecruitmentControllerTest3() throws Exception {
         // given
-        doNothing().when(buddyRecruitmentService).deleteBuddyRecruitment(any());
+        doNothing().when(buddyRecruitmentService).deleteBuddyRecruitment(any(), any());
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1 + "/" + "deleted")

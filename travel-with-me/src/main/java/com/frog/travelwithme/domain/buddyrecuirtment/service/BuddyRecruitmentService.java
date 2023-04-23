@@ -48,15 +48,17 @@ public class BuddyRecruitmentService {
     }
 
     public BuddyDto.PatchResponseRecruitment updateBuddyRecruitment(BuddyDto.PatchRecruitment patchRecruitmentDto,
-                                                                    Long recruitmentsId) {
-
+                                                                    Long recruitmentsId,
+                                                                    String email) {
+        this.checkEqualWriterAndUser(recruitmentsId, email);
         BuddyRecruitment buddyRecruitment = this.findBuddyRecruitmentById(recruitmentsId);
         buddyRecruitment.updateBuddyRecruitment(patchRecruitmentDto);
         return buddyMapper.toPatchResponseRecruitmentDto(buddyRecruitment);
 
     }
 
-    public void deleteBuddyRecruitment(Long recruitmentsId) {
+    public void deleteBuddyRecruitment(Long recruitmentsId, String email) {
+        this.checkEqualWriterAndUser(recruitmentsId, email);
         BuddyRecruitment buddyRecruitment = this.findBuddyRecruitmentById(recruitmentsId);
         buddyRecruitment.updateDeletionEntity();
     }
@@ -80,13 +82,13 @@ public class BuddyRecruitmentService {
     }
 
     @Transactional(readOnly = true)
-    public void checkWriterAndModifier(Long recruitmentsId, String email) {
+    public void checkEqualWriterAndUser(Long recruitmentsId, String email) {
         BuddyRecruitment findBuddyRecruitment = this.findBuddyRecruitmentById(recruitmentsId);
         Member writer = findBuddyRecruitment.getMember();
-        Member modifier = memberService.findMemberAndCheckMemberExists(email);
-        if(!writer.equals(modifier)) {
+        Member user = memberService.findMemberAndCheckMemberExists(email);
+        if(!writer.equals(user)) {
             log.debug("BuddyRecruitmentService.checkWriterAndModifier exception occur " +
-                    "writerMember: {}, modifierMember: {}", writer, modifier);
+                    "recruitmentsId: {}, email: {}", recruitmentsId, email);
             throw new BusinessLogicException(ExceptionCode.BUDDY_RECRUITMENT_WRITER_NOT_MATCH);
         }
     }

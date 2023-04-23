@@ -89,9 +89,8 @@ class BuddyRecruitmentServiceTest {
         when(buddyMapper.toPatchResponseRecruitmentDto(buddyRecruitment)).thenReturn(responseRecruitmentDto);
 
         //when
-        buddyRecruitmentService.checkWriterAndModifier(buddyRecruitment.getId(), member.getEmail());
         BuddyDto.PatchResponseRecruitment responseRecruitment = buddyRecruitmentService.updateBuddyRecruitment(
-                patchRecruitmentDto, buddyRecruitment.getId()
+                patchRecruitmentDto, buddyRecruitment.getId(), member.getEmail()
         );
 
         //then
@@ -116,8 +115,7 @@ class BuddyRecruitmentServiceTest {
         when(buddyRecruitmentRepository.findById(buddyRecruitment.getId())).thenReturn(Optional.of(buddyRecruitment));
 
         //when
-        buddyRecruitmentService.checkWriterAndModifier(buddyRecruitment.getId(), member.getEmail());
-        buddyRecruitmentService.deleteBuddyRecruitment(buddyRecruitment.getId());
+        buddyRecruitmentService.deleteBuddyRecruitment(buddyRecruitment.getId(), member.getEmail());
 
         //then
 
