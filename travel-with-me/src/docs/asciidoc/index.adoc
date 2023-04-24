@@ -1,0 +1,185 @@
+= Travel with me API
+:sectnums:
+:Toc: left
+:toclevels: 4
+:toc-title: Table of Contets
+:source-highlighter: prettify
+
+Chan Bin Kim <chanbin.backend@gmail.com>
+
+v1.0.0, 2023.04.24
+
+***
+== MemberController
+=== 회원 등록
+.curl-request
+include::{snippets}/signup/curl-request.adoc[]
+
+.http-request
+include::{snippets}/signup/http-request.adoc[]
+
+.request-fields
+include::{snippets}/signup/request-fields.adoc[]
+
+.http-response
+include::{snippets}/signup/http-response.adoc[]
+
+.response-fields
+include::{snippets}/signup/response-fields.adoc[]
+
+=== 회원 정보 수정
+.curl-request
+include::{snippets}/patch-member/curl-request.adoc[]
+
+.http-request
+include::{snippets}/patch-member/http-request.adoc[]
+
+.request-fields
+include::{snippets}/patch-member/request-fields.adoc[]
+
+.http-response
+include::{snippets}/patch-member/http-response.adoc[]
+
+.response-fields
+include::{snippets}/patch-member/response-fields.adoc[]
+
+=== 회원 조회
+.curl-request
+include::{snippets}/get-member/curl-request.adoc[]
+
+.http-request
+include::{snippets}/get-member/http-request.adoc[]
+
+.http-response
+include::{snippets}/get-member/http-response.adoc[]
+
+.response-fields
+include::{snippets}/get-member/response-fields.adoc[]
+
+=== 회원 삭제
+.curl-request
+include::{snippets}/delete-member/curl-request.adoc[]
+
+.http-request
+include::{snippets}/delete-member/http-request.adoc[]
+
+.http-response
+include::{snippets}/delete-member/http-response.adoc[]
+
+=== 이메일 인증 요청
+.curl-request
+include::{snippets}/email-verification-request/curl-request.adoc[]
+
+.http-request
+include::{snippets}/email-verification-request/http-request.adoc[]
+
+.requst-parameters
+include::{snippets}/email-verification-request/request-parameters.adoc[]
+
+.http-response
+include::{snippets}/email-verification-request/http-response.adoc[]
+
+=== 이메일 인증 성공
+.curl-request
+include::{snippets}/email-verification-success/curl-request.adoc[]
+
+.http-request
+include::{snippets}/email-verification-success/http-request.adoc[]
+
+.request-parameters
+include::{snippets}/email-verification-success/request-parameters.adoc[]
+
+.http-response
+include::{snippets}/email-verification-success/http-response.adoc[]
+
+.response-fileds
+include::{snippets}/email-verification-success/response-fields.adoc[]
+
+=== 이메일 인증 실패
+.curl-request
+include::{snippets}/email-verification-fail/curl-request.adoc[]
+
+.http-request
+include::{snippets}/email-verification-fail/http-request.adoc[]
+
+.request-parameters
+include::{snippets}/email-verification-fail/request-parameters.adoc[]
+
+.http-response
+include::{snippets}/email-verification-fail/http-response.adoc[]
+
+.response-fileds
+include::{snippets}/email-verification-fail/response-fields.adoc[]
+
+== AuthController
+=== 로그인 성공
+.curl-request
+include::{snippets}/login-success/curl-request.adoc[]
+
+.http-request
+include::{snippets}/login-success/http-request.adoc[]
+
+.request-fields
+include::{snippets}/login-success/request-fields.adoc[]
+
+.http-response
+include::{snippets}/login-success/http-response.adoc[]
+
+.response-fields
+include::{snippets}/login-success/response-fields.adoc[]
+
+=== 로그인 실패
+.curl-request
+include::{snippets}/login-fail/curl-request.adoc[]
+
+.http-request
+include::{snippets}/login-fail/http-request.adoc[]
+
+.request-fields
+include::{snippets}/login-fail/request-fields.adoc[]
+
+.http-response
+include::{snippets}/login-fail/http-response.adoc[]
+
+.response-fields
+include::{snippets}/login-fail/response-fields.adoc[]
+
+=== 로그아웃
+.curl-request
+include::{snippets}/logout/curl-request.adoc[]
+
+.http-request
+include::{snippets}/logout/http-request.adoc[]
+
+.http-response
+include::{snippets}/logout/http-response.adoc[]
+
+=== Access Token 재발급
+.curl-request
+include::{snippets}/access-token-reissue-success/curl-request.adoc[]
+
+.http-request
+include::{snippets}/access-token-reissue-success/http-request.adoc[]
+
+.http-response
+include::{snippets}/access-token-reissue-success/http-response.adoc[]
+
+=== Access Token 재발급 실패1
+.curl-request
+include::{snippets}/reissue-fail-by-no-refresh-token-in-header/curl-request.adoc[]
+
+.http-request
+include::{snippets}/reissue-fail-by-no-refresh-token-in-header/http-request.adoc[]
+
+.http-response
+include::{snippets}/reissue-fail-by-no-refresh-token-in-header/http-response.adoc[]
+
+=== Access Token 재발급 실패2
+.curl-request
+include::{snippets}/reissue-fail-by-token-not-same/curl-request.adoc[]
+
+.http-request
+include::{snippets}/reissue-fail-by-token-not-same/http-request.adoc[]
+
+.http-response
+include::{snippets}/reissue-fail-by-token-not-same/http-response.adoc[]
