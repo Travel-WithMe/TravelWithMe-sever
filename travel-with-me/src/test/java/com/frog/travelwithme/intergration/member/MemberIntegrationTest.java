@@ -223,7 +223,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 actionsSingleToDto(actions, EmailVerificationResult.class);
         assertThat(response.isSuccess()).isTrue();
         actions.andExpect(status().isOk())
-                .andDo(document("email-verification-request",
+                .andDo(document("email-verification-success",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getMailVerificiationSnippet(),
@@ -253,7 +253,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 actionsSingleToDto(actions, EmailVerificationResult.class);
         assertThat(response.isSuccess()).isFalse();
         actions.andExpect(status().isOk())
-                .andDo(document("email-verification-request",
+                .andDo(document("email-verification-fail",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getMailVerificiationSnippet(),
