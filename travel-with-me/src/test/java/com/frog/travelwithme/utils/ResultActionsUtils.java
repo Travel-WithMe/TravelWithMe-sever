@@ -54,6 +54,29 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
+    public static ResultActions postRequestWithToken(MockMvc mockMvc,
+                                                     String url,
+                                                     String accessToken,
+                                                     String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .with(csrf())
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions postRequestWithUserDetails(MockMvc mockMvc,
+                                                           String url,
+                                                           CustomUserDetails userDetails) throws Exception {
+        return mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+                        .with(user(userDetails)))
+                .andDo(print());
+    }
+
     public static ResultActions postRequestWithContentAndUserDetails(MockMvc mockMvc,
                                                                      String url,
                                                                      String json,
@@ -144,6 +167,7 @@ public class ResultActionsUtils {
 
         return mockMvc.perform(patch(url)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
                         .content(json)
                         .with(csrf())
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
@@ -174,6 +198,18 @@ public class ResultActionsUtils {
                                                              String url,
                                                              CustomUserDetails userDetails) throws Exception {
         return mockMvc.perform(delete(url)
+                        .with(csrf())
+                        .with(user(userDetails)))
+                .andDo(print());
+    }
+
+    public static ResultActions deleteRequestWithContentAndUserDetails(MockMvc mockMvc,
+                                                                       String url,
+                                                                       String json,
+                                                                       CustomUserDetails userDetails) throws Exception {
+        return mockMvc.perform(delete(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
                         .with(csrf())
                         .with(user(userDetails)))
                 .andDo(print());
