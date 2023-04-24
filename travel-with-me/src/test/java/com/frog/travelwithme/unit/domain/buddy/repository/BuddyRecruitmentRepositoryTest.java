@@ -63,9 +63,9 @@ class BuddyRecruitmentRepositoryTest {
     void buddyRecruitmentRepositoryTest2() {
         // given
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
+        BuddyRecruitment saveBuddyRecruitment = buddyRecruitmentRepository.save(buddyRecruitment);
 
         // when
-        BuddyRecruitment saveBuddyRecruitment = buddyRecruitmentRepository.save(buddyRecruitment);
         saveBuddyRecruitment.changeStatus(EnumCollection.BuddyRecruitmentStatus.COMPLETE);
 
         BuddyRecruitment findBuddyRecruitment = buddyRecruitmentRepository.findById(saveBuddyRecruitment.getId()).get();
@@ -98,9 +98,9 @@ class BuddyRecruitmentRepositoryTest {
     void buddyRecruitmentRepositoryTest4() {
         // given
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
+        BuddyRecruitment saveBuddyRecruitment = buddyRecruitmentRepository.save(buddyRecruitment);
 
         // when
-        BuddyRecruitment saveBuddyRecruitment = buddyRecruitmentRepository.save(buddyRecruitment);
         buddyRecruitmentRepository.delete(saveBuddyRecruitment);
 
         Optional<BuddyRecruitment> findBuddyRecruitment = buddyRecruitmentRepository

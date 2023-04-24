@@ -1,19 +1,20 @@
 package com.frog.travelwithme.utils;
 
+import com.frog.travelwithme.domain.buddyrecuirtment.common.DeletionEntity;
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyRecruitment;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
+import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
+import com.frog.travelwithme.global.utils.TimeUtils;
 import lombok.Getter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 /**
  * StubData 설명: 테스트를 위한 Stub data 관리
@@ -23,8 +24,9 @@ import java.time.LocalTime;
  **/
 public class StubData {
     public static class MockMember {
-        static Long id = 1L;
-        static String email = "email@gmail.com";
+        static final Long id = 1L;
+        @Getter
+        static String email = "e_ma-il@gmail.com";
         static String password = "Password1234!";
         static String nickname = "nickname";
         static String image = "image";
@@ -34,11 +36,61 @@ public class StubData {
         static String role = "USER";
         static LocalDateTime createdAt = LocalDateTime.now();
         static LocalDateTime lastModifiedAt = LocalDateTime.now();
+        @Getter
+        static String emailKey = "email";
+        @Getter
+        static String codeKey = "code";
+        @Getter
+        static String codeValue = "123456";
+        @Getter
+        static String authCodePrefix = "AuthCode ";
+
+        static String emailOther = "emailOther@gmail.com";
+        static String nicknameOther = "nicknameOther";
 
         public static SignUp getSignUpDto() {
             return SignUp.builder()
                     .email(email)
                     .password(password)
+                    .nickname(nickname)
+                    .address(address)
+                    .introduction(introduction)
+                    .image(image)
+                    .nation(nation)
+                    .role(role)
+                    .build();
+        }
+
+        public static SignUp getFailedSignUpDtoByEmail(String failedEmail) {
+            return SignUp.builder()
+                    .email(failedEmail)
+                    .password(password)
+                    .nickname(nickname)
+                    .address(address)
+                    .introduction(introduction)
+                    .image(image)
+                    .nation(nation)
+                    .role(role)
+                    .build();
+        }
+
+        public static SignUp getSignUpDtoByEmailAndNickname(String email, String nickname) {
+            return SignUp.builder()
+                    .email(email)
+                    .password(password)
+                    .nickname(nickname)
+                    .address(address)
+                    .introduction(introduction)
+                    .image(image)
+                    .nation(nation)
+                    .role(role)
+                    .build();
+        }
+
+        public static SignUp getFailedSignUpDtoByPassword(String failedPassword) {
+            return SignUp.builder()
+                    .email(email)
+                    .password(failedPassword)
                     .nickname(nickname)
                     .address(address)
                     .introduction(introduction)
@@ -59,6 +111,20 @@ public class StubData {
             return LoginDto.builder()
                     .email("fail@gmail.com")
                     .password(password)
+                    .build();
+        }
+
+        public static Member getMemberByEmailAndNickname(String email, String nickname) {
+            return Member.builder()
+                    .id(id)
+                    .email(email)
+                    .password(password)
+                    .nickname(nickname)
+                    .image(image)
+                    .address(address)
+                    .introduction(introduction)
+                    .nation(nation)
+                    .role(role)
                     .build();
         }
 
@@ -114,33 +180,43 @@ public class StubData {
         public static CustomUserDetails getUserDetails() {
             return CustomUserDetails.of(email, role);
         }
+
+        public static EmailVerificationResult getEmailVerificationResult(boolean authResult) {
+            return EmailVerificationResult.of(authResult);
+        }
     }
 
     public static class MockBuddy {
 
+        // 1번 Mock BuddyRecruitment 정보
         static Long id = 1L;
         static String title = "바하마 배편 동행 구해요";
         static String content = "1인 방예약이 너무비싸 쉐어하실분 구합니다!";
         static String travelNationality = "The Bahamas";
-        static String travelStartDate = "2023-01-01"; //LocalDate.of(2023,01,01);
-        static String travelEndDate = "2023-01-03"; //LocalDate.of(2023,01,03);
+        static String travelStartDate = "2023-01-01";
+        static String travelEndDate = "2023-01-03";
         static Long viewCount = 0L;
         static Long commentCount = 0L;
-        static LocalTime localTime = LocalTime.of(0, 0);
+
+        // 2번 Mock BuddyRecruitment 정보
+        static String patchTitle = "페루여행 쿠스코에서 콜릭티보 동행";
+        static String patchContent = "콜렉티보 흥정이랑 같이 마추픽추까지 이동하실분 구해요!";
+        static String patchTravelNationality = "Peru";
+        static String patchTravelStartDate = "2023-01-30";
+        static String patchTravelEndDate = "2023-01-31";
 
 
         public static BuddyRecruitment getBuddyRecruitment() {
-            BuddyRecruitment buddyRecruitment = BuddyRecruitment.builder()
+            return BuddyRecruitment.builder()
                     .id(id)
                     .title(title)
                     .content(content)
                     .travelNationality(travelNationality)
-                    .travelStartDate(LocalDateTime.of(LocalDate.parse(travelStartDate),localTime))
-                    .travelEndDate(LocalDateTime.of(LocalDate.parse(travelEndDate),localTime))
+                    .travelStartDate(TimeUtils.stringToLocalDateTime(travelStartDate))
+                    .travelEndDate(TimeUtils.stringToLocalDateTime(travelEndDate))
                     .buddyRecruitmentStatus(EnumCollection.BuddyRecruitmentStatus.IN_PROGRESS)
+                    .deletionEntity(new DeletionEntity())
                     .build();
-
-            return buddyRecruitment;
         }
 
         public static BuddyDto.PostRecruitment getPostRecruitment() {
@@ -153,17 +229,37 @@ public class StubData {
                     .build();
         }
 
-        public static BuddyDto.ResponseRecruitment getResponseRecruitment() {
-            return BuddyDto.ResponseRecruitment.builder()
+        public static BuddyDto.PatchRecruitment getPatchRecruitment() {
+            return BuddyDto.PatchRecruitment.builder()
+                    .title(patchTitle)
+                    .content(patchContent)
+                    .travelNationality(patchTravelNationality)
+                    .travelStartDate(patchTravelStartDate)
+                    .travelEndDate(patchTravelEndDate)
+                    .build();
+        }
+
+        public static BuddyDto.PostResponseRecruitment getPostResponseRecruitment() {
+            return BuddyDto.PostResponseRecruitment.builder()
                     .title(title)
                     .content(content)
                     .travelNationality(travelNationality)
-                    .travelStartDate(LocalDate.parse(travelStartDate))
-                    .travelEndDate(LocalDate.parse(travelEndDate))
+                    .travelStartDate(TimeUtils.stringToLocalDate(travelStartDate))
+                    .travelEndDate(TimeUtils.stringToLocalDate(travelEndDate))
                     .viewCount(viewCount)
                     .commentCount(commentCount)
                     .nickname(MockMember.nickname)
                     .memberImage(MockMember.image)
+                    .build();
+        }
+
+        public static BuddyDto.PatchResponseRecruitment getPatchResponseRecruitment() {
+            return BuddyDto.PatchResponseRecruitment.builder()
+                    .title(patchTitle)
+                    .content(patchContent)
+                    .travelNationality(patchTravelNationality)
+                    .travelStartDate(TimeUtils.stringToLocalDate(patchTravelStartDate))
+                    .travelEndDate(TimeUtils.stringToLocalDate(patchTravelEndDate))
                     .build();
         }
     }

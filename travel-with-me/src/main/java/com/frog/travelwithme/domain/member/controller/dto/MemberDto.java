@@ -1,11 +1,11 @@
 package com.frog.travelwithme.domain.member.controller.dto;
 
+import com.frog.travelwithme.global.validation.CustomAnnotationCollection.CustomEmail;
+import com.frog.travelwithme.global.validation.CustomAnnotationCollection.Password;
 import lombok.*;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 /**
@@ -21,11 +21,10 @@ public class MemberDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class SignUp {
         @NotBlank
-        @Email
+        @CustomEmail
         private String email;
         // TODO: Password 정규식 분리하여 유효성 검사
-        @Pattern(message = "최소 8자 및 최대 20자, 대문자 하나 이상, 소문자 하나 이상, 숫자 하나 및 특수 문자 하나 이상",
-                regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$")
+        @Password
         private String password;
         @NotBlank(message = "이름은 공백이 아니어야 합니다.")
         private String nickname;
@@ -67,5 +66,16 @@ public class MemberDto {
         private String role;
         private LocalDateTime createdAt;
         private LocalDateTime lastModifiedAt;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class EmailVerificationResult {
+        private boolean success;
+
+        public static EmailVerificationResult of(boolean authResult) {
+            return new EmailVerificationResult(authResult);
+        }
     }
 }

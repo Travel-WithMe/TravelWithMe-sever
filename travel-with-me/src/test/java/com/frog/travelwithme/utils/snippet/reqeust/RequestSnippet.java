@@ -8,6 +8,8 @@ import java.util.List;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 
 /**
  * RequestPostSnippet 설명: requestFields 관리
@@ -44,7 +46,7 @@ public class RequestSnippet {
         );
     }
 
-    public static RequestFieldsSnippet getRecruitmentSnippet() {
+    public static RequestFieldsSnippet getPostRecruitmentSnippet() {
         return requestFields(
                 List.of(
                         fieldWithPath("title").type(JsonFieldType.STRING).description("동행모집 게시글 제목"),
@@ -56,4 +58,33 @@ public class RequestSnippet {
         );
     }
 
+    public static RequestFieldsSnippet getPatchRecruitmentSnippet() {
+        return requestFields(
+                List.of(
+                        fieldWithPath("title").type(JsonFieldType.STRING).description("동행모집 게시글 제목"),
+                        fieldWithPath("content").type(JsonFieldType.STRING).description("동행모집 게시글 내용"),
+                        fieldWithPath("travelNationality").type(JsonFieldType.STRING).description("동행모집 국가"),
+                        fieldWithPath("travelStartDate").type(JsonFieldType.STRING).description("동행모집 여행 시작날짜"),
+                        fieldWithPath("travelEndDate").type(JsonFieldType.STRING).description("동행모집 여행 종료날짜")
+                )
+        );
+    }
+
+    public static Snippet getMailVerificiationRequestSnippet() {
+        return requestParameters(
+                List.of(
+                        parameterWithName("email").description("인증 번호를 전달 받은 이메일 주소"),
+                        parameterWithName("_csrf").ignored()
+                )
+        );
+    }
+
+    public static Snippet getMailVerificiationSnippet() {
+        return requestParameters(
+                List.of(
+                        parameterWithName("email").description("인증 번호를 전달 받은 이메일 주소"),
+                        parameterWithName("code").description("사용자가 인증 요청한 인증 번호")
+                )
+        );
+    }
 }

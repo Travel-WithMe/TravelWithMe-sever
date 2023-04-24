@@ -17,7 +17,6 @@ import java.util.Optional;
  **/
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseTimeEntity {
     @Id
@@ -38,7 +37,9 @@ public class Member extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String address;
+
     private String image;
+
     private String introduction;
 
     @Embedded

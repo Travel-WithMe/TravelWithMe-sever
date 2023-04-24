@@ -54,6 +54,29 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
+    public static ResultActions postRequestWithToken(MockMvc mockMvc,
+                                                     String url,
+                                                     String accessToken,
+                                                     String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .with(csrf())
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions postRequestWithUserDetails(MockMvc mockMvc,
+                                                           String url,
+                                                           CustomUserDetails userDetails) throws Exception {
+        return mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+                        .with(user(userDetails)))
+                .andDo(print());
+    }
+
     public static ResultActions postRequestWithContentAndUserDetails(MockMvc mockMvc,
                                                                      String url,
                                                                      String json,
@@ -67,13 +90,22 @@ public class ResultActionsUtils {
     }
 
     public static ResultActions postRequestWithContentAndHeaders(MockMvc mockMvc,
-                                            String url,
-                                            String json,
-                                            HttpHeaders headers) throws Exception {
+                                                                 String url,
+                                                                 String json,
+                                                                 HttpHeaders headers) throws Exception {
         return mockMvc.perform(post(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .headers(headers)
+                        .with(csrf()))
+                .andDo(print());
+    }
+
+    public static ResultActions postRequestWithParams(MockMvc mockMvc,
+                                                      String url,
+                                                      MultiValueMap<String, String> paprams) throws Exception {
+        return mockMvc.perform(post(url)
+                        .params(paprams)
                         .with(csrf()))
                 .andDo(print());
     }
@@ -104,8 +136,8 @@ public class ResultActionsUtils {
     }
 
     public static ResultActions patchRequestWithToken(MockMvc mockMvc,
-                                             String url,
-                                             String encryptedRefreshToken) throws Exception {
+                                                      String url,
+                                                      String encryptedRefreshToken) throws Exception {
         return mockMvc.perform(patch(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -135,6 +167,7 @@ public class ResultActionsUtils {
 
         return mockMvc.perform(patch(url)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
                         .content(json)
                         .with(csrf())
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
@@ -143,9 +176,9 @@ public class ResultActionsUtils {
     }
 
     public static ResultActions patchRequestWithContentAndUserDetails(MockMvc mockMvc,
-                                             String url,
-                                             String json,
-                                             CustomUserDetails userDetails) throws Exception {
+                                                                      String url,
+                                                                      String json,
+                                                                      CustomUserDetails userDetails) throws Exception {
         return mockMvc.perform(patch(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
@@ -165,6 +198,18 @@ public class ResultActionsUtils {
                                                              String url,
                                                              CustomUserDetails userDetails) throws Exception {
         return mockMvc.perform(delete(url)
+                        .with(csrf())
+                        .with(user(userDetails)))
+                .andDo(print());
+    }
+
+    public static ResultActions deleteRequestWithContentAndUserDetails(MockMvc mockMvc,
+                                                                       String url,
+                                                                       String json,
+                                                                       CustomUserDetails userDetails) throws Exception {
+        return mockMvc.perform(delete(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
                         .with(csrf())
                         .with(user(userDetails)))
                 .andDo(print());
@@ -215,6 +260,16 @@ public class ResultActionsUtils {
                         .with(csrf())
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
                         .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions getRequestWithTwoParams(MockMvc mockMvc,
+                                                        String url,
+                                                        MultiValueMap<String, String> firstParam,
+                                                        MultiValueMap<String, String> secondParam) throws Exception {
+        return mockMvc.perform(get(url)
+                        .params(firstParam)
+                        .params(secondParam))
                 .andDo(print());
     }
 

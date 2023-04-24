@@ -1,9 +1,11 @@
 package com.frog.travelwithme.domain.member.controller;
 
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
+import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.dto.SingleResponseDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
+import com.frog.travelwithme.global.validation.CustomAnnotationCollection.CustomEmail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -55,5 +57,20 @@ public class MemberController {
         memberService.deleteMember(email);
 
         return new ResponseEntity<>(new SingleResponseDto<>("Member deleted successfully"), HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/emails/verification-requests")
+    public ResponseEntity sendMessage(@RequestParam("email") @Valid @CustomEmail String email) {
+        memberService.sendCodeToEmail(email);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/emails/verifications")
+    public ResponseEntity verificationEmail(@RequestParam("email") @Valid @CustomEmail String email,
+                                            @RequestParam("code") String authCode) {
+        EmailVerificationResult response = memberService.verifiedCode(email, authCode);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
 }
