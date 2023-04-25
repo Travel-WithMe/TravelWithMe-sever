@@ -1,11 +1,7 @@
 package com.frog.travelwithme.domain.buddyrecuirtment.entity;
 
 import com.frog.travelwithme.domain.member.entity.Member;
-import com.frog.travelwithme.global.enums.EnumCollection;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -37,4 +33,22 @@ public class BuddyMatching {
     @ManyToOne
     @JoinColumn(name = "buddy_recruitment_id")
     private BuddyRecruitment buddyRecruitment;
+
+    @Builder
+    public BuddyMatching(BuddyMatchingStatus status) {
+        this.status = status;
+    }
+
+    public void changeStatus(BuddyMatchingStatus status) {
+        this.status = status;
+    }
+
+    public void addMember(Member member) {
+        this.member = member;
+    }
+
+    public void addBuddyRecruitment(BuddyRecruitment buddyRecruitment) {
+        this.buddyRecruitment = buddyRecruitment;
+    }
+
 }
