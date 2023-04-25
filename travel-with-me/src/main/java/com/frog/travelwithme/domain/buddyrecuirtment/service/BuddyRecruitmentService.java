@@ -9,6 +9,7 @@ import com.frog.travelwithme.domain.buddyrecuirtment.mapper.BuddyMapper;
 import com.frog.travelwithme.domain.buddyrecuirtment.repository.BuddyRecruitmentRepository;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
+import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+
+import static com.frog.travelwithme.global.enums.EnumCollection.*;
 
 /**
  * 작성자: 이재혁
@@ -48,23 +51,23 @@ public class BuddyRecruitmentService {
     }
 
     public BuddyDto.PatchResponseRecruitment updateBuddyRecruitment(BuddyDto.PatchRecruitment patchRecruitmentDto,
-                                                                    Long recruitmentsId,
+                                                                    Long recruitmentId,
                                                                     String email) {
-        this.checkEqualWriterAndUser(recruitmentsId, email);
-        BuddyRecruitment buddyRecruitment = this.findBuddyRecruitmentById(recruitmentsId);
+        this.checkEqualWriterAndUser(recruitmentId, email);
+        BuddyRecruitment buddyRecruitment = this.findBuddyRecruitmentById(recruitmentId);
         buddyRecruitment.updateBuddyRecruitment(patchRecruitmentDto);
         return buddyMapper.toPatchResponseRecruitmentDto(buddyRecruitment);
 
     }
 
-    public void deleteBuddyRecruitment(Long recruitmentsId, String email) {
-        BuddyRecruitment buddyRecruitment = this.checkEqualWriterAndUser(recruitmentsId, email);
+    public void deleteBuddyRecruitment(Long recruitmentId, String email) {
+        BuddyRecruitment buddyRecruitment = this.checkEqualWriterAndUser(recruitmentId, email);
         buddyRecruitment.updateDeletionEntity();
     }
 
-    public BuddyDto.GetResponseRecruitment findBuddyRecruitment(Long recruitmentsId, String email) {
+    public BuddyDto.GetResponseRecruitment findBuddyRecruitment(Long recruitmentId, String email) {
 
-        BuddyRecruitment findBuddyRecruitment = this.findBuddyRecruitmentById(recruitmentsId);
+        BuddyRecruitment findBuddyRecruitment = this.findBuddyRecruitmentById(recruitmentId);
         Boolean recruitmentRequestStatus = this.checkBuddyRecruitmentWriterByEmail(findBuddyRecruitment, email);
         // TODO : 버디 매칭상태를 확인해서 모집 요청상태 만들기
         // TODO : 버디 매칭상태에서 승인완료된 사람들을 참여인원 찾기
@@ -81,16 +84,26 @@ public class BuddyRecruitmentService {
     }
 
     @Transactional(readOnly = true)
-    public BuddyRecruitment checkEqualWriterAndUser(Long recruitmentsId, String email) {
-        BuddyRecruitment findBuddyRecruitment = this.findBuddyRecruitmentById(recruitmentsId);
+    public BuddyRecruitment checkEqualWriterAndUser(Long recruitmentId, String email) {
+        BuddyRecruitment findBuddyRecruitment = this.findBuddyRecruitmentById(recruitmentId);
         Member writer = findBuddyRecruitment.getMember();
         Member user = memberService.findMemberAndCheckMemberExists(email);
         if(!writer.equals(user)) {
             log.debug("BuddyRecruitmentService.checkWriterAndModifier exception occur " +
-                    "recruitmentsId: {}, email: {}", recruitmentsId, email);
+                    "recruitmentsId: {}, email: {}", recruitmentId, email);
             throw new BusinessLogicException(ExceptionCode.BUDDY_RECRUITMENT_WRITER_NOT_MATCH);
         }
         return findBuddyRecruitment;
+    }
+
+    @Transactional(readOnly = true)
+    public void checkExpiredBuddyRecruitment(BuddyRecruitment buddyRecruitment) {
+        BuddyRecruitmentStatus status = buddyRecruitment.getBuddyRecruitmentStatus();
+        if(status.equals(BuddyRecruitmentStatus.END)) {
+            log.debug("BuddyRecruitmentService.checkExpiredBuddyRecruitment exception occur " +
+                    "buddyRecruitment: {}", buddyRecruitment);
+            throw new BusinessLogicException(ExceptionCode.BUDDY_RECRUITMENT_EXPIRED);
+        }
     }
 
     private Boolean checkBuddyRecruitmentWriterByEmail(BuddyRecruitment buddyRecruitment, String email) {

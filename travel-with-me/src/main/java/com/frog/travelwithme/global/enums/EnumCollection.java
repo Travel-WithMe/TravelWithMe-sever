@@ -78,7 +78,25 @@ public class EnumCollection {
     @AllArgsConstructor
     public enum BuddyRecruitmentStatus implements EnumType {
         IN_PROGRESS("동행 모집중 상태"),
-        COMPLETE("동행 모집완료 상태");
+        END("동행 모집종료 상태");
+
+        private final String description;
+
+        @Override
+        public String getName() {
+            return this.name();
+        }
+
+        @Override
+        public String getDescription() {
+            return this.description;
+        }
+    }
+
+    @AllArgsConstructor
+    public enum ResponseBody implements EnumType {
+        NEW_REQUEST_MATCHING("동행 매칭신청이 완료되었습니다."),
+        RETRY_REQUEST_MATCHING("동행 재신청이 완료되었습니다.");
 
         private final String description;
 
