@@ -42,33 +42,33 @@ public class BuddyRecruitmentController {
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{recruitments-id}")
-    public ResponseEntity patchBuddyRecruitment(@Positive @PathVariable("recruitments-id") Long recruitmentsId,
+    @PatchMapping("/{recruitment-id}")
+    public ResponseEntity patchBuddyRecruitment(@Positive @PathVariable("recruitment-id") Long recruitmentId,
                                                 @RequestBody BuddyDto.PatchRecruitment patchRecruitmentDto,
                                                 @AuthenticationPrincipal CustomUserDetails user) {
 
         String email = user.getEmail();
         BuddyDto.PatchResponseRecruitment response = buddyRecruitmentService.updateBuddyRecruitment(
-                patchRecruitmentDto, recruitmentsId, email
+                patchRecruitmentDto, recruitmentId, email
         );
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
 
-    @PostMapping("/{recruitments-id}/deleted")
-    public ResponseEntity deleteBuddyRecruitment(@Positive @PathVariable("recruitments-id") Long recruitmentsId,
+    @PostMapping("/{recruitment-id}/deleted")
+    public ResponseEntity deleteBuddyRecruitment(@Positive @PathVariable("recruitment-id") Long recruitmentId,
                                                  @AuthenticationPrincipal CustomUserDetails user) {
 
         String email = user.getEmail();
-        buddyRecruitmentService.deleteBuddyRecruitment(recruitmentsId, email);
+        buddyRecruitmentService.deleteBuddyRecruitment(recruitmentId, email);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/{recruitments-id}")
-    public ResponseEntity getBuddyRecruitment(@Positive @PathVariable("recruitments-id") Long recruitmentsId,
+    @GetMapping("/{recruitment-id}")
+    public ResponseEntity getBuddyRecruitment(@Positive @PathVariable("recruitment-id") Long recruitmentId,
                                               @AuthenticationPrincipal CustomUserDetails user) {
 
         String email = user.getEmail();
-        BuddyDto.GetResponseRecruitment response = buddyRecruitmentService.findBuddyRecruitment(recruitmentsId, email);
+        BuddyDto.GetResponseRecruitment response = buddyRecruitmentService.findBuddyRecruitment(recruitmentId, email);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }

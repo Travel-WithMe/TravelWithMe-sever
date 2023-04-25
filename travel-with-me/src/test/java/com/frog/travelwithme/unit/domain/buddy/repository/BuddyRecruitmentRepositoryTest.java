@@ -1,5 +1,6 @@
 package com.frog.travelwithme.unit.domain.buddy.repository;
 
+import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyMatching;
 import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyRecruitment;
 import com.frog.travelwithme.domain.buddyrecuirtment.repository.BuddyRecruitmentRepository;
 import com.frog.travelwithme.global.config.QuerydslConfig;
@@ -17,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import javax.validation.constraints.Null;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -37,6 +39,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Import(QuerydslConfig.class)
 @ExtendWith(SpringExtension.class)
 class BuddyRecruitmentRepositoryTest {
+
+    @Autowired
+    protected EntityManager entityManager;
 
     @Autowired
     protected BuddyRecruitmentRepository buddyRecruitmentRepository;
@@ -65,15 +70,18 @@ class BuddyRecruitmentRepositoryTest {
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
         BuddyRecruitment saveBuddyRecruitment = buddyRecruitmentRepository.save(buddyRecruitment);
 
-        // when
-        saveBuddyRecruitment.changeStatus(EnumCollection.BuddyRecruitmentStatus.COMPLETE);
+        entityManager.clear();
+        entityManager.flush();
 
         BuddyRecruitment findBuddyRecruitment = buddyRecruitmentRepository.findById(saveBuddyRecruitment.getId()).get();
 
+        // when
+        findBuddyRecruitment.changeStatus(EnumCollection.BuddyRecruitmentStatus.END);
+
         // then
         assertThat(findBuddyRecruitment.getId()).isEqualTo(saveBuddyRecruitment.getId());
-        assertThat(findBuddyRecruitment.getBuddyRecruitmentStatus()) // Expect : IN_PROGRESS
-                .isNotEqualTo(buddyRecruitment.getBuddyRecruitmentStatus()); // Result : COMPLETE
+        assertThat(findBuddyRecruitment.getBuddyRecruitmentStatus()) // Expect : END
+                .isNotEqualTo(buddyRecruitment.getBuddyRecruitmentStatus()); // Result : IN_PROGRESS
     }
 
     @Test

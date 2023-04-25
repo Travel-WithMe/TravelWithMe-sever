@@ -78,7 +78,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         ResultActions actions = ResultActionsUtils.getRequestWithContent(mvc, uri, json);
 
         // then
-        LoginResponse responseDto = ObjectMapperUtils.actionsSingleToDto(actions, LoginResponse.class);
+        LoginResponse responseDto = ObjectMapperUtils.actionsSingleToResponseWithData(actions, LoginResponse.class);
         assertThat(expectedResponseDto.getEmail()).isEqualTo(responseDto.getEmail());
         assertThat(expectedResponseDto.getNickname()).isEqualTo(responseDto.getNickname());
         assertThat(expectedResponseDto.getRole()).isEqualTo(responseDto.getRole());

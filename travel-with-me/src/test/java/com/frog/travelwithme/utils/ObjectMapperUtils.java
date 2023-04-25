@@ -33,12 +33,24 @@ public class ObjectMapperUtils {
         return objectMapper.registerModule(new JavaTimeModule()).writeValueAsString(obj);
     }
 
-    public static <T> T actionsSingleToDto(ResultActions actions, Class<T> responseClass) throws Exception {
+    public static <T> T actionsSingleToResponse(ResultActions actions, Class<T> responseClass) throws Exception {
         String response = resultActionsToResponseAsString(actions);
         return objectMapper.registerModule(new JavaTimeModule()).readValue(response, responseClass);
     }
 
+
+    public static <T> T actionsSingleToResponseWithData(ResultActions actions, Class<T> responseClass) throws Exception {
+        String response = resultActionsToResponseAsStringWithData(actions);
+        return objectMapper.registerModule(new JavaTimeModule()).readValue(response, responseClass);
+    }
+
     private static String resultActionsToResponseAsString(ResultActions actions) throws UnsupportedEncodingException {
+        return actions.andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8);
+    }
+
+    private static String resultActionsToResponseAsStringWithData(ResultActions actions) throws UnsupportedEncodingException {
         String response = actions.andReturn()
                 .getResponse()
                 .getContentAsString(StandardCharsets.UTF_8)

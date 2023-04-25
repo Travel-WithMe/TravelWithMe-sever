@@ -2,12 +2,15 @@ package com.frog.travelwithme.utils;
 
 import com.frog.travelwithme.domain.buddyrecuirtment.common.DeletionEntity;
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
+import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyMatching;
 import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyRecruitment;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.global.enums.EnumCollection;
+import com.frog.travelwithme.global.enums.EnumCollection.BuddyMatchingStatus;
+import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
@@ -140,6 +143,7 @@ public class StubData {
                     .introduction(introduction)
                     .nation(nation)
                     .role(role)
+                    .oauthstatus(OAuthStatus.NORMAL)
                     .build();
         }
 
@@ -179,6 +183,10 @@ public class StubData {
         }
 
         public static CustomUserDetails getUserDetails() {
+            return CustomUserDetails.of(email, role);
+        }
+
+        public static CustomUserDetails getUserDetailsByEmailAndRole(String email, String role) {
             return CustomUserDetails.of(email, role);
         }
 
@@ -261,6 +269,12 @@ public class StubData {
                     .travelNationality(patchTravelNationality)
                     .travelStartDate(TimeUtils.stringToLocalDate(patchTravelStartDate))
                     .travelEndDate(TimeUtils.stringToLocalDate(patchTravelEndDate))
+                    .build();
+        }
+
+        public static BuddyMatching getBuddyMatching() {
+            return BuddyMatching.builder()
+                    .status(BuddyMatchingStatus.WAIT)
                     .build();
         }
     }
