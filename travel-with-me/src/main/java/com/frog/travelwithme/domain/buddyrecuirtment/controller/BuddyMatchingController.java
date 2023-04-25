@@ -1,6 +1,7 @@
 package com.frog.travelwithme.domain.buddyrecuirtment.controller;
 
 import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyMatchingService;
+import com.frog.travelwithme.global.dto.MessageResponseDto;
 import com.frog.travelwithme.global.dto.SingleResponseDto;
 import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
@@ -36,7 +37,7 @@ public class BuddyMatchingController {
 
         String email = user.getEmail();
         EnumCollection.ResponseBody response = buddyMatchingService.requestMatching(recruitmentsId, email);
-        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+        return new ResponseEntity<>(new MessageResponseDto(response.getDescription()), HttpStatus.OK);
     }
 
 }

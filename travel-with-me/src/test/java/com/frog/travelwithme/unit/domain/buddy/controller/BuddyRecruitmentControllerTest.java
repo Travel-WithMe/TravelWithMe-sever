@@ -71,7 +71,7 @@ class BuddyRecruitmentControllerTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
 
-        String json = ObjectMapperUtils.dtoToJsonString(postRecruitmentDto);
+        String json = ObjectMapperUtils.objectToJsonString(postRecruitmentDto);
         ResultActions actions = ResultActionsUtils.postRequestWithContentAndUserDetails(mvc, uri, json, userDetails);
 
         // then
@@ -101,7 +101,7 @@ class BuddyRecruitmentControllerTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1)
                 .build().toUri().toString();
 
-        String json = ObjectMapperUtils.dtoToJsonString(patchRecruitmentDto);
+        String json = ObjectMapperUtils.objectToJsonString(patchRecruitmentDto);
         ResultActions actions = ResultActionsUtils.patchRequestWithContentAndUserDetails(mvc, uri, json, userDetails);
 
         // then

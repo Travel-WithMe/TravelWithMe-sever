@@ -106,9 +106,8 @@ class BuddyMatchingIntegrationTest extends BaseIntegrationTest {
         );
 
         // then
-        ResponseBody response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, ResponseBody.class);
-
-        assertThat(response).isEqualTo(ResponseBody.NEW_REQUEST_MATCHING);
+        String response = ObjectMapperUtils.actionsSingleToStringBySubstring(actions, 12);
+        assertThat(response).isEqualTo(ResponseBody.NEW_REQUEST_MATCHING.getDescription());
         actions
                 .andExpect(status().isOk())
                 .andDo(document("post-matching-request-new",
@@ -148,9 +147,8 @@ class BuddyMatchingIntegrationTest extends BaseIntegrationTest {
         );
 
         // then
-        ResponseBody response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, ResponseBody.class);
-
-        assertThat(response).isEqualTo(ResponseBody.RETRY_REQUEST_MATCHING);
+        String response = ObjectMapperUtils.actionsSingleToStringBySubstring(actions, 12);
+        assertThat(response).isEqualTo(ResponseBody.RETRY_REQUEST_MATCHING.getDescription());
         actions
                 .andExpect(status().isOk())
                 .andDo(document("post-matching-request-retry",
