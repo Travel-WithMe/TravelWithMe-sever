@@ -29,15 +29,19 @@ public class ObjectMapperUtils {
         }
     }
 
-    public static String dtoToJsonString(Object obj) throws JsonProcessingException {
+    public static String objectToJsonString(Object obj) throws JsonProcessingException {
         return objectMapper.registerModule(new JavaTimeModule()).writeValueAsString(obj);
+    }
+
+    public static String actionsSingleToStringBySubstring(ResultActions actions, int start) throws Exception {
+        String response = resultActionsToResponseAsString(actions);
+        return response.substring(start, response.length() - 2);
     }
 
     public static <T> T actionsSingleToResponse(ResultActions actions, Class<T> responseClass) throws Exception {
         String response = resultActionsToResponseAsString(actions);
         return objectMapper.registerModule(new JavaTimeModule()).readValue(response, responseClass);
     }
-
 
     public static <T> T actionsSingleToResponseWithData(ResultActions actions, Class<T> responseClass) throws Exception {
         String response = resultActionsToResponseAsStringWithData(actions);

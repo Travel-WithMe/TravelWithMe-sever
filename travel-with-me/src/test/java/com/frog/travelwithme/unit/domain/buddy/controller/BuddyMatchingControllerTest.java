@@ -56,7 +56,7 @@ class BuddyMatchingControllerTest {
     @Test
     @DisplayName("동행 매칭신청")
     @WithMockCustomUser
-    void test() throws Exception {
+    void buddyMatchingControllerTest1() throws Exception {
         // given
         EnumCollection.ResponseBody requestMatching = EnumCollection.ResponseBody.NEW_REQUEST_MATCHING;
         given(buddyMatchingService.requestMatching(any(),any())).willReturn(requestMatching);
@@ -68,13 +68,10 @@ class BuddyMatchingControllerTest {
         ResultActions actions = ResultActionsUtils.postRequestWithUserDetails(mvc, uri, userDetails);
 
         // then
-        EnumCollection.ResponseBody response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
-                EnumCollection.ResponseBody.class);
-
+        String response = ObjectMapperUtils.actionsSingleToStringBySubstring(actions, 12);
+        assertThat(response).isEqualTo(requestMatching.getDescription());
         actions
                 .andExpect(status().isOk());
-        assertThat(response.getName()).isEqualTo(requestMatching.getName());
-        assertThat(response.getDescription()).isEqualTo(requestMatching.getDescription());
     }
 
 }

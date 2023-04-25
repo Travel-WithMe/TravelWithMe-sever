@@ -85,7 +85,7 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
-        String json = ObjectMapperUtils.dtoToJsonString(postRecruitmentDto);
+        String json = ObjectMapperUtils.objectToJsonString(postRecruitmentDto);
 
         ResultActions actions = ResultActionsUtils.postRequestWithContentAndToken(
                 mvc, uri, json, accessToken, encryptedRefreshToken
@@ -136,7 +136,7 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + saveBuddyRecruitment.getId())
                 .build().toUri().toString();
-        String json = ObjectMapperUtils.dtoToJsonString(patchRecruitmentDto);
+        String json = ObjectMapperUtils.objectToJsonString(patchRecruitmentDto);
 
         ResultActions actions = ResultActionsUtils.patchRequestWithContentAndToken(
                 mvc, uri, json, accessToken, encryptedRefreshToken
