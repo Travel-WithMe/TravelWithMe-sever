@@ -75,7 +75,7 @@ class BuddyRecruitmentControllerTest {
         ResultActions actions = ResultActionsUtils.postRequestWithContentAndUserDetails(mvc, uri, json, userDetails);
 
         // then
-        BuddyDto.PostResponseRecruitment response = ObjectMapperUtils.actionsSingleToDto(actions,
+        BuddyDto.PostResponseRecruitment response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
                 BuddyDto.PostResponseRecruitment.class);
 
         actions
@@ -105,7 +105,7 @@ class BuddyRecruitmentControllerTest {
         ResultActions actions = ResultActionsUtils.patchRequestWithContentAndUserDetails(mvc, uri, json, userDetails);
 
         // then
-        BuddyDto.PostResponseRecruitment response = ObjectMapperUtils.actionsSingleToDto(actions,
+        BuddyDto.PostResponseRecruitment response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
                 BuddyDto.PostResponseRecruitment.class);
 
         actions

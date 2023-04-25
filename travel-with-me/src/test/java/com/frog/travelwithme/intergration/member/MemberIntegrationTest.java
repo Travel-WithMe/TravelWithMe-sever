@@ -80,7 +80,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
 
         // then
-        Response response = ObjectMapperUtils.actionsSingleToDto(actions, Response.class);
+        Response response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, Response.class);
         assertThat(signUpDto.getEmail()).isEqualTo(response.getEmail());
         assertThat(signUpDto.getNickname()).isEqualTo(response.getNickname());
         assertThat(signUpDto.getAddress()).isEqualTo(response.getAddress());
@@ -116,7 +116,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 patchRequestWithContentAndToken(mvc, uri, json, accessToken, encryptedRefreshToken);
 
         // then
-        Response response = ObjectMapperUtils.actionsSingleToDto(actions, Response.class);
+        Response response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, Response.class);
         assertThat(originMemberDto.getNickname()).isNotEqualTo(response.getNickname());
         assertThat(originMemberDto.getAddress()).isNotEqualTo(response.getAddress());
         assertThat(originMemberDto.getIntroduction()).isNotEqualTo(response.getIntroduction());
@@ -220,7 +220,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
 
         // then
         EmailVerificationResult response = ObjectMapperUtils.
-                actionsSingleToDto(actions, EmailVerificationResult.class);
+                actionsSingleToResponseWithData(actions, EmailVerificationResult.class);
         assertThat(response.isSuccess()).isTrue();
         actions.andExpect(status().isOk())
                 .andDo(document("email-verification-success",
@@ -250,7 +250,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
 
         // then
         EmailVerificationResult response = ObjectMapperUtils.
-                actionsSingleToDto(actions, EmailVerificationResult.class);
+                actionsSingleToResponseWithData(actions, EmailVerificationResult.class);
         assertThat(response.isSuccess()).isFalse();
         actions.andExpect(status().isOk())
                 .andDo(document("email-verification-fail",

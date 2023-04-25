@@ -92,8 +92,9 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
         );
 
         // then
-        BuddyDto.PostResponseRecruitment response = ObjectMapperUtils.actionsSingleToDto(actions,
+        BuddyDto.PostResponseRecruitment response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
                 BuddyDto.PostResponseRecruitment.class);
+        assertThat(response.getId()).isNotNull();
         assertThat(response.getTitle()).isEqualTo(postRecruitmentDto.getTitle());
         assertThat(response.getContent()).isEqualTo(postRecruitmentDto.getContent());
         assertThat(response.getTravelNationality()).isEqualTo(postRecruitmentDto.getTravelNationality());
@@ -111,7 +112,8 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getPostRecruitmentSnippet(),
-                        ResponseSnippet.getPostRecruitmentSnippet()));
+                        ResponseSnippet.getPostRecruitmentSnippet()
+                ));
     }
 
     @Test
@@ -141,9 +143,10 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
         );
 
         // then
-        BuddyDto.PatchResponseRecruitment response = ObjectMapperUtils.actionsSingleToDto(actions,
+        BuddyDto.PatchResponseRecruitment response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
                 BuddyDto.PatchResponseRecruitment.class);
 
+        assertThat(response.getId()).isEqualTo(saveBuddyRecruitment.getId());
         assertThat(response.getTitle()).isEqualTo(patchRecruitmentDto.getTitle());
         assertThat(response.getContent()).isEqualTo(patchRecruitmentDto.getContent());
         assertThat(response.getTravelNationality()).isEqualTo(patchRecruitmentDto.getTravelNationality());
@@ -156,7 +159,8 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getPatchRecruitmentSnippet(),
-                        ResponseSnippet.getPatchRecruitmentSnippet()));
+                        ResponseSnippet.getPatchRecruitmentSnippet()
+                ));
     }
 
     @Test

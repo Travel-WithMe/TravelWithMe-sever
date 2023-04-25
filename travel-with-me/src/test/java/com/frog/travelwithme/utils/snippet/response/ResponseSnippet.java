@@ -44,6 +44,7 @@ public class ResponseSnippet {
     public static ResponseFieldsSnippet getPostRecruitmentSnippet() {
         return responseFields(
                 List.of(
+                        fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("동행모집 게시글 아이디"),
                         fieldWithPath("data.title").type(JsonFieldType.STRING).description("동행모집 게시글 제목"),
                         fieldWithPath("data.content").type(JsonFieldType.STRING).description("동행모집 게시글 내용"),
                         fieldWithPath("data.travelNationality").type(JsonFieldType.STRING).description("동행모집 국가"),
@@ -65,12 +66,19 @@ public class ResponseSnippet {
     public static ResponseFieldsSnippet getPatchRecruitmentSnippet() {
         return responseFields(
                 List.of(
+                        fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("동행모집 게시글 아이디"),
                         fieldWithPath("data.title").type(JsonFieldType.STRING).description("동행모집 게시글 제목"),
                         fieldWithPath("data.content").type(JsonFieldType.STRING).description("동행모집 게시글 내용"),
                         fieldWithPath("data.travelNationality").type(JsonFieldType.STRING).description("동행모집 국가"),
                         fieldWithPath("data.travelStartDate").type(JsonFieldType.STRING).description("동행모집 여행 시작날짜"),
                         fieldWithPath("data.travelEndDate").type(JsonFieldType.STRING).description("동행모집 여행 종료날짜")
                 )
+        );
+    }
+
+    public static ResponseFieldsSnippet getBuddyMatchingSnippet() {
+        return responseFields(
+                fieldWithPath("data").type(JsonFieldType.STRING).description("매칭 신청 성공 메세지")
         );
     }
 }

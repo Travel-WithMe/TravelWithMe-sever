@@ -47,6 +47,7 @@ public interface BuddyMapper {
         LocalDateTime travelEndDate = buddyRecruitment.getTravelEndDate();
 
         return BuddyDto.PostResponseRecruitment.builder()
+                .id(buddyRecruitment.getId())
                 .title(buddyRecruitment.getTitle())
                 .content(buddyRecruitment.getContent())
                 .travelNationality(buddyRecruitment.getTravelNationality())
@@ -68,6 +69,7 @@ public interface BuddyMapper {
         LocalDateTime travelEndDate = buddyRecruitment.getTravelEndDate();
 
         return BuddyDto.PatchResponseRecruitment.builder()
+                .id(buddyRecruitment.getId())
                 .title(buddyRecruitment.getTitle())
                 .content(buddyRecruitment.getContent())
                 .travelNationality(buddyRecruitment.getTravelNationality())
@@ -85,6 +87,7 @@ public interface BuddyMapper {
         LocalDateTime travelEndDate = buddyRecruitment.getTravelEndDate();
 
         return BuddyDto.GetResponseRecruitment.builder()
+                .id(buddyRecruitment.getId())
                 .title(buddyRecruitment.getTitle())
                 .content(buddyRecruitment.getContent())
                 .travelNationality(buddyRecruitment.getTravelNationality())
