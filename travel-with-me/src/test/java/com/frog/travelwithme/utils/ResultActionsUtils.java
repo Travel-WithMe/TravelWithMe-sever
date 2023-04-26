@@ -296,12 +296,27 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
-    public static ResultActions patchRequestWithUserDetailsAndMultiPart(MockMvc mockMvc,
-                                                          String url,
-                                                          CustomUserDetails userDetails,
-                                                          MockMultipartFile file) throws Exception {
+    public static ResultActions patchRequestWithMultiPartAndToken(MockMvc mockMvc,
+                                                                  String url,
+                                                                  MockMultipartFile file,
+                                                                  String accessToken,
+                                                                  String encryptedRefreshToken) throws Exception {
         return mockMvc.perform(multipart(HttpMethod.PATCH, url)
                         .file(file)
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                        .with(csrf())
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions patchRequestWithUserDetailsAndMultiPart(MockMvc mockMvc,
+                                                                        String url,
+                                                                        CustomUserDetails userDetails,
+                                                                        MockMultipartFile file) throws Exception {
+        return mockMvc.perform(multipart(HttpMethod.PATCH, url)
+                        .file(file)
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                         .with(user(userDetails))
                         .with(csrf()))
                 .andDo(print());
