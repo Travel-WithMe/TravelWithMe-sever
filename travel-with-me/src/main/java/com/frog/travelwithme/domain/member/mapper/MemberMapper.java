@@ -3,13 +3,15 @@ package com.frog.travelwithme.domain.member.mapper;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 /**
  * 작성자: 김찬빈
  * 버전 정보: 1.0.0
  * 작성일자: 2023/04/02
  **/
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public
 interface MemberMapper {
     default Member toEntity(MemberDto.SignUp signUpDto) {
@@ -18,9 +20,9 @@ interface MemberMapper {
                 .email(signUpDto.getEmail())
                 .password(signUpDto.getPassword())
                 .nickname(signUpDto.getNickname())
+                .gender(signUpDto.getGender())
                 .nation(signUpDto.getNation())
                 .address(signUpDto.getAddress())
-                .image(signUpDto.getImage())
                 .introduction(signUpDto.getIntroduction())
                 .role(signUpDto.getRole());
 
@@ -29,5 +31,6 @@ interface MemberMapper {
 
     Member toEntity(MemberDto.Patch patchDto);
 
+    @Mapping(target = "gender", expression = "java(member.getGender().getDescription())")
     MemberDto.Response toDto(Member member);
 }

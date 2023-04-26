@@ -1,5 +1,6 @@
 package com.frog.travelwithme.domain.member.controller.dto;
 
+import com.frog.travelwithme.global.enums.EnumCollection.Gender;
 import com.frog.travelwithme.global.validation.CustomAnnotationCollection.CustomEmail;
 import com.frog.travelwithme.global.validation.CustomAnnotationCollection.Password;
 import lombok.*;
@@ -28,11 +29,12 @@ public class MemberDto {
         private String password;
         @NotBlank(message = "이름은 공백이 아니어야 합니다.")
         private String nickname;
+        @NotNull(message = "성별을 입력해야 합니다. (남자, 여자)")
+        private Gender gender;
         @NotNull(message = "국가를 입력해야 합니다.")
         private String nation;
         @NotNull(message = "주소를 입력해야 합니다.")
         private String address;
-        private String image;
         private String introduction;
         @NotBlank(message = "권한은 공백이 아니어야 합니다.")
         private String role;
@@ -45,9 +47,9 @@ public class MemberDto {
     public static class Patch {
         private String password;
         private String nickname;
+        private Gender gender;
         private String nation;
         private String address;
-        private String image;
         private String introduction;
     }
 
@@ -60,8 +62,8 @@ public class MemberDto {
         private String email;
         private String nickname;
         private String nation;
+        private String gender;
         private String address;
-        private String image;
         private String introduction;
         private String role;
         private LocalDateTime createdAt;
@@ -74,7 +76,7 @@ public class MemberDto {
     public static class EmailVerificationResult {
         private boolean success;
 
-        public static EmailVerificationResult of(boolean authResult) {
+        public static EmailVerificationResult from(boolean authResult) {
             return new EmailVerificationResult(authResult);
         }
     }
