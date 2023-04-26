@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -203,5 +204,32 @@ class MemberServiceTest {
         // when // then
         assertThrows(BusinessLogicException.class,
                 () -> memberService.deleteMember(email));
+    }
+
+    @Test
+    @DisplayName("프로필 이미지 변경")
+    void memberServiceTest10() {
+        // given
+        MockMultipartFile file = new MockMultipartFile("file",
+                "originalFilename", "text/plain", "fileContent".getBytes());
+        String email = "email";
+        Member originMember = StubData.MockMember.getMember();
+        originMember.changeImage(StubData.MockMember.getImage());
+        MemberDto.Response expectedResponse = StubData.MockMember.getResponseDto();
+        given(memberRepository.findByEmail(any())).willReturn(Optional.of(originMember));
+        given(memberMapper.toDto(any(Member.class))).willReturn(expectedResponse);
+
+        // when
+        MemberDto.Response response = memberService.changeProfileImage(file, email);
+
+        // then
+        assertNotNull(response);
+        assertThat(response.getImage()).isEqualTo(expectedResponse.getImage());
+        assertThat(response.getEmail()).isEqualTo(expectedResponse.getEmail());
+        assertThat(response.getNickname()).isEqualTo(expectedResponse.getNickname());
+        assertThat(response.getNation()).isEqualTo(expectedResponse.getNation());
+        assertThat(response.getAddress()).isEqualTo(expectedResponse.getAddress());
+        assertThat(response.getIntroduction()).isEqualTo(expectedResponse.getIntroduction());
+        assertThat(response.getRole()).isEqualTo(expectedResponse.getRole());
     }
 }
