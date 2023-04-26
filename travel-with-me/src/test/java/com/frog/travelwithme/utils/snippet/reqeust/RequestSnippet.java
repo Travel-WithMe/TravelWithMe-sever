@@ -8,8 +8,7 @@ import java.util.List;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 
 /**
  * RequestPostSnippet 설명: requestFields 관리
@@ -84,6 +83,14 @@ public class RequestSnippet {
                 List.of(
                         parameterWithName("email").description("인증 번호를 전달 받은 이메일 주소"),
                         parameterWithName("code").description("사용자가 인증 요청한 인증 번호")
+                )
+        );
+    }
+
+    public static Snippet getSignUpMultipartSnippet() {
+        return requestParts(
+                List.of(
+                        partWithName("file").description("회원의 프로필 이미지").optional()
                 )
         );
     }
