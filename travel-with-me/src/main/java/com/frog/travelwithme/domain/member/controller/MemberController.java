@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -28,7 +29,9 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public ResponseEntity signUp(@Valid @RequestBody MemberDto.SignUp signUpDto) {
+    public ResponseEntity signUp(@RequestPart(value = "file", required = false) MultipartFile multipartFile,
+                                 @Valid @RequestBody MemberDto.SignUp signUpDto) {
+        // TODO: multipartFile S3에 저장 후 url 반환 로직 추가
         MemberDto.Response response = memberService.signUp(signUpDto);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
@@ -47,6 +50,16 @@ public class MemberController {
                                       @RequestBody MemberDto.Patch patchDto) {
         String email = user.getEmail();
         MemberDto.Response response = memberService.updateMember(patchDto, email);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+    }
+
+    @PatchMapping("/images")
+    public ResponseEntity patchMember(@AuthenticationPrincipal CustomUserDetails user,
+                                      @RequestPart("file") MultipartFile multipartFile) {
+        // TODO: multipartFile S3에 저장 후 url 반환 로직 추가
+        String email = user.getEmail();
+        MemberDto.Response response = memberService.changeProfileImage(multipartFile, email);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }

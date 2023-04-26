@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -99,6 +100,14 @@ public class MemberService {
         memberRepository.deleteByEmail(email);
     }
 
+    public MemberDto.Response changeProfileImage(MultipartFile multipartFile, String email) {
+        Member findMember = this.findMemberAndCheckMemberExists(email);
+        // TODO: 수정된 image url 변경 예정
+        findMember.changeImage("newImageUrl");
+
+        return memberMapper.toDto(findMember);
+    }
+
     @Transactional(readOnly = true)
     public Member findMemberAndCheckMemberExists(String email) {
         return memberRepository.findByEmail(email)
@@ -146,6 +155,6 @@ public class MemberService {
         String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
         boolean authResult = redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode);
 
-        return EmailVerificationResult.of(authResult);
+        return EmailVerificationResult.from(authResult);
     }
 }
