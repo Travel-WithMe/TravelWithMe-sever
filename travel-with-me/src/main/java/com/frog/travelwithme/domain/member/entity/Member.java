@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -21,6 +22,7 @@ import java.util.Optional;
  **/
 @Entity
 @Getter
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseTimeEntity {
     @Id
@@ -69,6 +71,8 @@ public class Member extends BaseTimeEntity {
         this.gender = gender;
         this.nation = nation;
         this.address = address;
+        // TODO: File 로직 구현 후 실제 url로 변경
+        this.image = "defaultImageUrl";
         this.introduction = introduction;
         this.role = role;
         this.oauthstatus = oauthstatus;
@@ -95,5 +99,9 @@ public class Member extends BaseTimeEntity {
                 .ifPresent(updateAddress -> this.address = updateAddress);
         Optional.ofNullable(patchDto.getIntroduction())
                 .ifPresent(updateIntroduction -> this.introduction = updateIntroduction);
+    }
+
+    public void changeImage(String newImage) {
+        this.image = newImage;
     }
 }
