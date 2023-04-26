@@ -26,7 +26,7 @@ public class RequestSnippet {
                         fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
                         fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호"),
                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
-                        fieldWithPath("gender").type(JsonFieldType.STRING).description("회원 성별"),
+                        fieldWithPath("gender").type(JsonFieldType.STRING).description("회원 성별 (남자/여자)"),
                         fieldWithPath("address").type(JsonFieldType.STRING).description("회원 주소"),
                         fieldWithPath("introduction").type(JsonFieldType.STRING).description("자기 소개"),
                         fieldWithPath("nation").type(JsonFieldType.STRING).description("회원 국가"),
@@ -42,7 +42,7 @@ public class RequestSnippet {
                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
                         fieldWithPath("address").type(JsonFieldType.STRING).description("회원 주소"),
                         fieldWithPath("introduction").type(JsonFieldType.STRING).description("자기 소개"),
-                        fieldWithPath("gender").type(JsonFieldType.STRING).description("회원 성별"),
+                        fieldWithPath("gender").type(JsonFieldType.STRING).description("회원 성별 (남자/여자)"),
                         fieldWithPath("nation").type(JsonFieldType.STRING).description("회원 국가")
                 )
         );
