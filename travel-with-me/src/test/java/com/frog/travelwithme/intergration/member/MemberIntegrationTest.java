@@ -304,4 +304,29 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                         RequestSnippet.getSignUpMultipartSnippet(),
                         ResponseSnippet.getMemberSnippet()));
     }
+
+    @Test
+    @DisplayName("회원가입 시 성별은 남자, 여자만 입력 가능")
+    void memberIntegrationTest9() throws Exception {
+        // given
+        MockMultipartFile file = new MockMultipartFile("file",
+                "originalFilename", "text/plain", "fileContent".getBytes());
+        memberService.deleteMember(EMAIL);
+        MemberDto.SignUp failedSignUpDto = StubData.MockMember.getFailedSignUpDtoByGender("중성");
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
+                .build().toUri().toString();
+        String json = ObjectMapperUtils.asJsonString(failedSignUpDto);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentandMultiPart(mvc, uri, json, file);
+
+        // then
+        actions
+                .andExpect(status().is4xxClientError())
+                .andDo(document("signup-fail1",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getSignUpMultipartSnippet(),
+                        RequestSnippet.getSignUpSnippet()));
+    }
 }

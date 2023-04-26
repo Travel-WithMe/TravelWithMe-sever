@@ -109,6 +109,19 @@ public class StubData {
                     .build();
         }
 
+        public static SignUp getFailedSignUpDtoByGender(String failedGender) {
+            return SignUp.builder()
+                    .email(email)
+                    .password(password)
+                    .nickname(nickname)
+                    .address(address)
+                    .introduction(introduction)
+                    .gender(failedGender)
+                    .nation(nation)
+                    .role(role)
+                    .build();
+        }
+
         public static LoginDto getLoginSuccessDto() {
             return LoginDto.builder()
                     .email(email)
