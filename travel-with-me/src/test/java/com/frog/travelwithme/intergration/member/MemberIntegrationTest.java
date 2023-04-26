@@ -135,6 +135,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 .andDo(document("patch-member",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getMemberPatchSnippet(),
                         ResponseSnippet.getMemberSnippet()));
     }
@@ -158,7 +159,9 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         actions
                 .andExpect(status().isOk())
                 .andDo(document("get-member",
+                        getRequestPreProcessor(),
                         getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
                         ResponseSnippet.getMemberSnippet()));
     }
 
@@ -181,7 +184,9 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         // then
         actions
                 .andExpect(status().isNoContent())
-                .andDo(document("delete-member"));
+                .andDo(document("delete-member",
+                        getRequestPreProcessor(),
+                        RequestSnippet.getTokenSnippet()));
         memberService.signUp(signUpDto);
     }
 
@@ -295,6 +300,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 .andDo(document("patch-profile-image",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getSignUpMultipartSnippet(),
                         ResponseSnippet.getMemberSnippet()));
     }
