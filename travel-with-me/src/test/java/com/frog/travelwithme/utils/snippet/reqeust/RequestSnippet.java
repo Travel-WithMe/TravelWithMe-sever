@@ -1,11 +1,14 @@
 package com.frog.travelwithme.utils.snippet.reqeust;
 
+import com.google.common.net.HttpHeaders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.snippet.Snippet;
 
 import java.util.List;
 
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -91,6 +94,23 @@ public class RequestSnippet {
         return requestParts(
                 List.of(
                         partWithName("file").description("회원의 프로필 이미지").optional()
+                )
+        );
+    }
+
+    public static Snippet getTokenSnippet() {
+        return requestHeaders(
+                List.of(
+                        headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token, 만료 시간: 2시간"),
+                        headerWithName(HttpHeaders.REFRESH).description("암호화된 Refresh Token, 만료 시간: 2주")
+                )
+        );
+    }
+
+    public static Snippet getRefreshTokenSnippet() {
+        return requestHeaders(
+                List.of(
+                        headerWithName(HttpHeaders.REFRESH).description("암호화된 Refresh Token, 만료 시간: 2주")
                 )
         );
     }
