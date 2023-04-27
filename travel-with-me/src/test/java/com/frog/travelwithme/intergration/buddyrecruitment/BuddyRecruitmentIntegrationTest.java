@@ -13,12 +13,12 @@ import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.intergration.BaseIntegrationTest;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
-import com.frog.travelwithme.utils.StubData;
 import com.frog.travelwithme.utils.ResultActionsUtils;
+import com.frog.travelwithme.utils.StubData;
+import com.frog.travelwithme.utils.StubData.MockMember;
 import com.frog.travelwithme.utils.snippet.reqeust.RequestSnippet;
 import com.frog.travelwithme.utils.snippet.response.ResponseSnippet;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,12 +58,12 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
     @BeforeEach
     void beforeEach() {
         // e_ma-il@gmail.com 회원 추가
-        MemberDto.SignUp memberOne = StubData.MockMember.getSignUpDto();
+        MemberDto.SignUp memberOne = MockMember.getSignUpDto();
         memberService.signUp(memberOne);
         EMAIL = memberOne.getEmail();
 
         // dhfif718@gmail.com 회원 추가
-        MemberDto.SignUp memberTwo = StubData.MockMember.getSignUpDtoByEmailAndNickname(
+        MemberDto.SignUp memberTwo = MockMember.getSignUpDtoByEmailAndNickname(
                 "dhfif718@gmail.com",
                 "이재혁"
         );
@@ -75,7 +75,7 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
     @DisplayName("동행 작성 테스트")
     void BuddyRecruitmentIntegrationTest1() throws Exception {
         // given
-        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        CustomUserDetails userDetails = MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
@@ -103,7 +103,7 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getViewCount()).isEqualTo(0L);
         assertThat(response.getCommentCount()).isEqualTo(0L);
         assertThat(response.getNickname()).isEqualTo("nickname");
-        assertThat(response.getMemberImage()).isEqualTo("image");
+        assertThat(response.getMemberImage()).isEqualTo(MockMember.getImage());
 
 
         actions
@@ -120,7 +120,7 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
     @DisplayName("동행 수정 테스트")
     void BuddyRecruitmentIntegrationTest2() throws Exception {
         // given
-        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        CustomUserDetails userDetails = MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
@@ -167,7 +167,7 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
     @DisplayName("동행 삭제 테스트")
     void BuddyRecruitmentIntegrationTest3() throws Exception {
         // given
-        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        CustomUserDetails userDetails = MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();

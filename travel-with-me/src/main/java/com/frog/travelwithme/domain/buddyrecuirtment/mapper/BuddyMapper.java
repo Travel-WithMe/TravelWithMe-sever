@@ -9,7 +9,7 @@ import org.mapstruct.ReportingPolicy;
 
 import java.time.LocalDateTime;
 
-import static com.frog.travelwithme.global.enums.EnumCollection.*;
+import static com.frog.travelwithme.global.enums.EnumCollection.BuddyRecruitmentStatus;
 
 /**
  * 작성자: 이재혁
@@ -36,7 +36,7 @@ public interface BuddyMapper {
                 .buddyRecruitmentStatus(BuddyRecruitmentStatus.IN_PROGRESS)
                 .deletionEntity(deletionEntity)
                 .build();
-    };
+    }
 
     default BuddyDto.PostResponseRecruitment toPostResponseRecruitmentDto(BuddyRecruitment buddyRecruitment){
         if(buddyRecruitment == null) {
@@ -99,5 +99,4 @@ public interface BuddyMapper {
                 .memberImage(buddyRecruitment.getMember().getImage())
                 .build();
     }
-
 }

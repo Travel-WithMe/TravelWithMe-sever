@@ -16,7 +16,7 @@ public enum ExceptionCode {
     AUTH_CODE_IS_NOT_SAME(404, "인증 번호가 일치하지 않습니다."),
     UNABLE_TO_SEND_EMAIL(404, "메일을 전송할 수 없습니다."),
     NO_SUCH_ALGORITHM(400, "인증 번호 생성을 위한 알고리즘을 찾을 수 없습니다."),
-    INVALID_GENDER(404, "잘못된 성별입니다. 성별은 남성, 여성만 허용됩니다."),
+    INVALID_GENDER(404, "성별이 올바르지 않습니다. 성별은 남자, 여자만 허용됩니다."),
 
     // Buddy
     BUDDY_RECRUITMENT_NOT_FOUND(404, "해당 동행모집글을 찾을 수 없습니다."),

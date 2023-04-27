@@ -1,12 +1,12 @@
 package com.frog.travelwithme.utils.snippet.response;
 
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 
 import java.util.List;
 
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 public class ResponseSnippet {
     public static ResponseFieldsSnippet getMemberSnippet() {
@@ -21,6 +21,7 @@ public class ResponseSnippet {
                         fieldWithPath("data.image").type(JsonFieldType.STRING).description("프로필 이미지 url"),
                         fieldWithPath("data.introduction").type(JsonFieldType.STRING).description("자기소개"),
                         fieldWithPath("data.role").type(JsonFieldType.STRING).description("회원 역할"),
+                        fieldWithPath("data.gender").type(JsonFieldType.STRING).description("회원 성별"),
                         fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("회원 가입일"),
                         fieldWithPath("data.lastModifiedAt").type(JsonFieldType.STRING).description("회원 정보 수정일")
                 )
