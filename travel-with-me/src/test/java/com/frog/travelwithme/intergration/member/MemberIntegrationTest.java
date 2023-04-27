@@ -293,7 +293,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 mvc, uri, file, accessToken, encryptedRefreshToken);
 
         // then
-        Response response = ObjectMapperUtils.actionsSingleToDto(actions, Response.class);
+        Response response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, Response.class);
         assertThat(response.getImage()).isNotEqualTo(originMemberDto.getImage());
         actions
                 .andExpect(status().isOk())
