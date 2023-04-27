@@ -3,6 +3,7 @@ package com.frog.travelwithme.unit.domain.buddy.controller;
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.BuddyMatchingController;
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyMatchingService;
+import com.frog.travelwithme.global.dto.MessageResponseDto;
 import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.global.utils.TimeUtils;
@@ -68,7 +69,7 @@ class BuddyMatchingControllerTest {
         ResultActions actions = ResultActionsUtils.postRequestWithUserDetails(mvc, uri, userDetails);
 
         // then
-        String response = ObjectMapperUtils.actionsSingleToStringBySubstring(actions, 12);
+        String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
         assertThat(response).isEqualTo(requestMatching.getDescription());
         actions
                 .andExpect(status().isOk());

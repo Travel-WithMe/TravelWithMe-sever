@@ -11,6 +11,7 @@ import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
+import com.frog.travelwithme.global.dto.MessageResponseDto;
 import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ErrorResponse;
@@ -106,7 +107,7 @@ class BuddyMatchingIntegrationTest extends BaseIntegrationTest {
         );
 
         // then
-        String response = ObjectMapperUtils.actionsSingleToStringBySubstring(actions, 12);
+        String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
         assertThat(response).isEqualTo(ResponseBody.NEW_REQUEST_MATCHING.getDescription());
         actions
                 .andExpect(status().isOk())
@@ -147,7 +148,7 @@ class BuddyMatchingIntegrationTest extends BaseIntegrationTest {
         );
 
         // then
-        String response = ObjectMapperUtils.actionsSingleToStringBySubstring(actions, 12);
+        String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
         assertThat(response).isEqualTo(ResponseBody.RETRY_REQUEST_MATCHING.getDescription());
         actions
                 .andExpect(status().isOk())
