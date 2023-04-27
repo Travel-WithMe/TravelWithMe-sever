@@ -16,10 +16,13 @@ public enum ExceptionCode {
     AUTH_CODE_IS_NOT_SAME(404, "인증 번호가 일치하지 않습니다."),
     UNABLE_TO_SEND_EMAIL(404, "메일을 전송할 수 없습니다."),
     NO_SUCH_ALGORITHM(400, "인증 번호 생성을 위한 알고리즘을 찾을 수 없습니다."),
+    INVALID_GENDER(404, "성별이 올바르지 않습니다. 성별은 남자, 여자만 허용됩니다."),
 
     // Buddy
     BUDDY_RECRUITMENT_NOT_FOUND(404, "해당 동행모집글을 찾을 수 없습니다."),
     BUDDY_RECRUITMENT_WRITER_NOT_MATCH(404, "해당 동행모집글을 작성한 유저가 아닙니다."),
+    BUDDY_RECRUITMENT_EXPIRED(404, "동행모집이 종료된 게시글 입니다."),
+    BUDDY_MATCHING_REQUEST_NOT_ALLOWED(404, "동행매칭 요청이 불가능한 상태입니다."),
 
     // Security, JWT
     NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),

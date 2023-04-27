@@ -28,11 +28,12 @@ public class MemberDto {
         private String password;
         @NotBlank(message = "이름은 공백이 아니어야 합니다.")
         private String nickname;
-        @NotNull(message = "국가를 입력해야 합니다.")
+        @NotNull(message = "성별을 선택해야 합니다.")
+        private String gender;
+        @NotNull(message = "국가를 선택해야 합니다.")
         private String nation;
         @NotNull(message = "주소를 입력해야 합니다.")
         private String address;
-        private String image;
         private String introduction;
         @NotBlank(message = "권한은 공백이 아니어야 합니다.")
         private String role;
@@ -45,9 +46,9 @@ public class MemberDto {
     public static class Patch {
         private String password;
         private String nickname;
+        private String gender;
         private String nation;
         private String address;
-        private String image;
         private String introduction;
     }
 
@@ -60,8 +61,9 @@ public class MemberDto {
         private String email;
         private String nickname;
         private String nation;
-        private String address;
+        private String gender;
         private String image;
+        private String address;
         private String introduction;
         private String role;
         private LocalDateTime createdAt;
@@ -74,7 +76,7 @@ public class MemberDto {
     public static class EmailVerificationResult {
         private boolean success;
 
-        public static EmailVerificationResult of(boolean authResult) {
+        public static EmailVerificationResult from(boolean authResult) {
             return new EmailVerificationResult(authResult);
         }
     }

@@ -2,12 +2,16 @@ package com.frog.travelwithme.utils;
 
 import com.frog.travelwithme.domain.buddyrecuirtment.common.DeletionEntity;
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
+import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyMatching;
 import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyRecruitment;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.global.enums.EnumCollection;
+import com.frog.travelwithme.global.enums.EnumCollection.Gender;
+import com.frog.travelwithme.global.enums.EnumCollection.BuddyMatchingStatus;
+import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
@@ -15,6 +19,7 @@ import com.frog.travelwithme.global.utils.TimeUtils;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * StubData 설명: 테스트를 위한 Stub data 관리
@@ -29,11 +34,15 @@ public class StubData {
         static String email = "e_ma-il@gmail.com";
         static String password = "Password1234!";
         static String nickname = "nickname";
-        static String image = "image";
+        @Getter
+        static String image = "defaultImageUrl";
         static String address = "address";
         static String introduction = "introduction";
         static String nation = "nation";
         static String role = "USER";
+        static Gender enumGender = Gender.MALE;
+        static String stringGender = enumGender.getDescription();
+        static String patchStringGender = Gender.FEMALE.getDescription();
         static LocalDateTime createdAt = LocalDateTime.now();
         static LocalDateTime lastModifiedAt = LocalDateTime.now();
         @Getter
@@ -55,8 +64,8 @@ public class StubData {
                     .nickname(nickname)
                     .address(address)
                     .introduction(introduction)
-                    .image(image)
                     .nation(nation)
+                    .gender(stringGender)
                     .role(role)
                     .build();
         }
@@ -68,7 +77,7 @@ public class StubData {
                     .nickname(nickname)
                     .address(address)
                     .introduction(introduction)
-                    .image(image)
+                    .gender(stringGender)
                     .nation(nation)
                     .role(role)
                     .build();
@@ -81,7 +90,7 @@ public class StubData {
                     .nickname(nickname)
                     .address(address)
                     .introduction(introduction)
-                    .image(image)
+                    .gender(stringGender)
                     .nation(nation)
                     .role(role)
                     .build();
@@ -94,7 +103,20 @@ public class StubData {
                     .nickname(nickname)
                     .address(address)
                     .introduction(introduction)
-                    .image(image)
+                    .gender(stringGender)
+                    .nation(nation)
+                    .role(role)
+                    .build();
+        }
+
+        public static SignUp getFailedSignUpDtoByGender(String failedGender) {
+            return SignUp.builder()
+                    .email(email)
+                    .password(password)
+                    .nickname(nickname)
+                    .address(address)
+                    .introduction(introduction)
+                    .gender(failedGender)
                     .nation(nation)
                     .role(role)
                     .build();
@@ -120,7 +142,7 @@ public class StubData {
                     .email(email)
                     .password(password)
                     .nickname(nickname)
-                    .image(image)
+                    .gender(enumGender)
                     .address(address)
                     .introduction(introduction)
                     .nation(nation)
@@ -134,11 +156,12 @@ public class StubData {
                     .email(email)
                     .password(password)
                     .nickname(nickname)
-                    .image(image)
+                    .gender(enumGender)
                     .address(address)
                     .introduction(introduction)
                     .nation(nation)
                     .role(role)
+                    .oauthstatus(OAuthStatus.NORMAL)
                     .build();
         }
 
@@ -150,6 +173,7 @@ public class StubData {
                     .address(address)
                     .nation(nation)
                     .introduction(introduction)
+                    .gender(stringGender)
                     .image(image)
                     .role(role)
                     .createdAt(createdAt)
@@ -163,7 +187,7 @@ public class StubData {
                     .nickname("patch" + nickname)
                     .address("patch" + address)
                     .nation("patch" + nation)
-                    .image("patch" + image)
+                    .gender(patchStringGender)
                     .introduction("patch" + introduction)
                     .build();
         }
@@ -181,8 +205,12 @@ public class StubData {
             return CustomUserDetails.of(email, role);
         }
 
+        public static CustomUserDetails getUserDetailsByEmailAndRole(String email, String role) {
+            return CustomUserDetails.of(email, role);
+        }
+
         public static EmailVerificationResult getEmailVerificationResult(boolean authResult) {
-            return EmailVerificationResult.of(authResult);
+            return EmailVerificationResult.from(authResult);
         }
     }
 
@@ -260,6 +288,12 @@ public class StubData {
                     .travelNationality(patchTravelNationality)
                     .travelStartDate(TimeUtils.stringToLocalDate(patchTravelStartDate))
                     .travelEndDate(TimeUtils.stringToLocalDate(patchTravelEndDate))
+                    .build();
+        }
+
+        public static BuddyMatching getBuddyMatching() {
+            return BuddyMatching.builder()
+                    .status(BuddyMatchingStatus.WAIT)
                     .build();
         }
     }

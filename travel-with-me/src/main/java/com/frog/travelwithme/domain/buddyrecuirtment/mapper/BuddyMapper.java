@@ -9,7 +9,7 @@ import org.mapstruct.ReportingPolicy;
 
 import java.time.LocalDateTime;
 
-import static com.frog.travelwithme.global.enums.EnumCollection.*;
+import static com.frog.travelwithme.global.enums.EnumCollection.BuddyRecruitmentStatus;
 
 /**
  * 작성자: 이재혁
@@ -36,7 +36,7 @@ public interface BuddyMapper {
                 .buddyRecruitmentStatus(BuddyRecruitmentStatus.IN_PROGRESS)
                 .deletionEntity(deletionEntity)
                 .build();
-    };
+    }
 
     default BuddyDto.PostResponseRecruitment toPostResponseRecruitmentDto(BuddyRecruitment buddyRecruitment){
         if(buddyRecruitment == null) {
@@ -47,6 +47,7 @@ public interface BuddyMapper {
         LocalDateTime travelEndDate = buddyRecruitment.getTravelEndDate();
 
         return BuddyDto.PostResponseRecruitment.builder()
+                .id(buddyRecruitment.getId())
                 .title(buddyRecruitment.getTitle())
                 .content(buddyRecruitment.getContent())
                 .travelNationality(buddyRecruitment.getTravelNationality())
@@ -68,6 +69,7 @@ public interface BuddyMapper {
         LocalDateTime travelEndDate = buddyRecruitment.getTravelEndDate();
 
         return BuddyDto.PatchResponseRecruitment.builder()
+                .id(buddyRecruitment.getId())
                 .title(buddyRecruitment.getTitle())
                 .content(buddyRecruitment.getContent())
                 .travelNationality(buddyRecruitment.getTravelNationality())
@@ -85,6 +87,7 @@ public interface BuddyMapper {
         LocalDateTime travelEndDate = buddyRecruitment.getTravelEndDate();
 
         return BuddyDto.GetResponseRecruitment.builder()
+                .id(buddyRecruitment.getId())
                 .title(buddyRecruitment.getTitle())
                 .content(buddyRecruitment.getContent())
                 .travelNationality(buddyRecruitment.getTravelNationality())
@@ -96,5 +99,4 @@ public interface BuddyMapper {
                 .memberImage(buddyRecruitment.getMember().getImage())
                 .build();
     }
-
 }

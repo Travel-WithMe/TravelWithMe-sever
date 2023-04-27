@@ -2,7 +2,9 @@ package com.frog.travelwithme.utils;
 
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.MultiValueMap;
@@ -124,6 +126,18 @@ public class ResultActionsUtils {
                         .with(csrf())
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
                         .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions postRequestWithContentandMultiPart(MockMvc mockMvc,
+                                                                   String url,
+                                                                   String json,
+                                                                   MockMultipartFile file) throws Exception {
+        return mockMvc.perform(multipart(url)
+                        .file(file)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .with(csrf()))
                 .andDo(print());
     }
 
@@ -279,6 +293,32 @@ public class ResultActionsUtils {
         return mockMvc.perform(get(url)
                         .params(params)
                         .headers(headers))
+                .andDo(print());
+    }
+
+    public static ResultActions patchRequestWithMultiPartAndToken(MockMvc mockMvc,
+                                                                  String url,
+                                                                  MockMultipartFile file,
+                                                                  String accessToken,
+                                                                  String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(multipart(HttpMethod.PATCH, url)
+                        .file(file)
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                        .with(csrf())
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions patchRequestWithUserDetailsAndMultiPart(MockMvc mockMvc,
+                                                                        String url,
+                                                                        CustomUserDetails userDetails,
+                                                                        MockMultipartFile file) throws Exception {
+        return mockMvc.perform(multipart(HttpMethod.PATCH, url)
+                        .file(file)
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                        .with(user(userDetails))
+                        .with(csrf()))
                 .andDo(print());
     }
 }

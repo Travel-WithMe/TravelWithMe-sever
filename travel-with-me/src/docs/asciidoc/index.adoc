@@ -18,6 +18,9 @@ include::{snippets}/signup/curl-request.adoc[]
 .http-request
 include::{snippets}/signup/http-request.adoc[]
 
+.request-parts
+include::{snippets}/signup/request-parts.adoc[]
+
 .request-fields
 include::{snippets}/signup/request-fields.adoc[]
 
@@ -33,6 +36,9 @@ include::{snippets}/patch-member/curl-request.adoc[]
 
 .http-request
 include::{snippets}/patch-member/http-request.adoc[]
+
+.request-headers
+include::{snippets}/patch-member/request-headers.adoc[]
 
 .request-fields
 include::{snippets}/patch-member/request-fields.adoc[]
@@ -50,11 +56,33 @@ include::{snippets}/get-member/curl-request.adoc[]
 .http-request
 include::{snippets}/get-member/http-request.adoc[]
 
+.request-headers
+include::{snippets}/get-member/request-headers.adoc[]
+
 .http-response
 include::{snippets}/get-member/http-response.adoc[]
 
 .response-fields
 include::{snippets}/get-member/response-fields.adoc[]
+
+=== 회원 프로필 이미지 수정
+.curl-request
+include::{snippets}/patch-profile-image/curl-request.adoc[]
+
+.http-request
+include::{snippets}/patch-profile-image/http-request.adoc[]
+
+.request-parts
+include::{snippets}/patch-profile-image/request-parts.adoc[]
+
+.request-headers
+include::{snippets}/patch-profile-image/request-headers.adoc[]
+
+.http-response
+include::{snippets}/patch-profile-image/http-response.adoc[]
+
+.response-fields
+include::{snippets}/patch-profile-image/response-fields.adoc[]
 
 === 회원 삭제
 .curl-request
@@ -62,6 +90,9 @@ include::{snippets}/delete-member/curl-request.adoc[]
 
 .http-request
 include::{snippets}/delete-member/http-request.adoc[]
+
+.request-headers
+include::{snippets}/delete-member/request-headers.adoc[]
 
 .http-response
 include::{snippets}/delete-member/http-response.adoc[]
@@ -151,6 +182,9 @@ include::{snippets}/logout/curl-request.adoc[]
 .http-request
 include::{snippets}/logout/http-request.adoc[]
 
+.request-headers
+include::{snippets}/logout/request-headers.adoc[]
+
 .http-response
 include::{snippets}/logout/http-response.adoc[]
 
@@ -160,6 +194,9 @@ include::{snippets}/access-token-reissue-success/curl-request.adoc[]
 
 .http-request
 include::{snippets}/access-token-reissue-success/http-request.adoc[]
+
+.request-headers
+include::{snippets}/access-token-reissue-success/request-headers.adoc[]
 
 .http-response
 include::{snippets}/access-token-reissue-success/http-response.adoc[]
@@ -180,6 +217,9 @@ include::{snippets}/reissue-fail-by-token-not-same/curl-request.adoc[]
 
 .http-request
 include::{snippets}/reissue-fail-by-token-not-same/http-request.adoc[]
+
+.request-headers
+include::{snippets}/reissue-fail-by-token-not-same/request-headers.adoc[]
 
 .http-response
 include::{snippets}/reissue-fail-by-token-not-same/http-response.adoc[]

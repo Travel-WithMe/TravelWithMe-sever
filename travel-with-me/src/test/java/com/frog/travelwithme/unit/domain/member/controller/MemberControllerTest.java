@@ -18,10 +18,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -66,6 +68,8 @@ class MemberControllerTest {
     @WithMockCustomUser
     void memberControllerTest1() throws Exception {
         // given
+        MockMultipartFile file = new MockMultipartFile("file",
+                "originalFilename", "text/plain", "fileContent".getBytes());
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
         MemberDto.Response response = StubData.MockMember.getResponseDto();
         given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
@@ -74,11 +78,11 @@ class MemberControllerTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-//        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
-//
-//        // then
-//        actions
-//                .andExpect(status().isCreated());
+        ResultActions actions = ResultActionsUtils.postRequestWithContentandMultiPart(mvc, uri, json, file);
+
+        // then
+        actions
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -339,6 +343,25 @@ class MemberControllerTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/emails/verifications")
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.getRequestWithTwoParams(mvc, uri, emailPapram, codePapram);
+
+        // then
+        actions.andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("회원의 프로필 이미지를 수정합니다.")
+    @WithMockCustomUser
+    void memberControllerTest15() throws Exception {
+        // given
+        MockMultipartFile file = new MockMultipartFile("file",
+                "originalFilename", "text/plain", "fileContent".getBytes());
+        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        given(memberService.changeProfileImage(any(MultipartFile.class), any())).willReturn(response);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/images")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.patchRequestWithUserDetailsAndMultiPart(mvc, uri, userDetails, file);
 
         // then
         actions.andExpect(status().isOk());

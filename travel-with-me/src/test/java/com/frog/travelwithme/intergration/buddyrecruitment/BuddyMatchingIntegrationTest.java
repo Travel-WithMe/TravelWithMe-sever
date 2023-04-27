@@ -1,13 +1,21 @@
 package com.frog.travelwithme.intergration.buddyrecruitment;
 
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
+import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyMatching;
 import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyRecruitment;
+import com.frog.travelwithme.domain.buddyrecuirtment.repository.BuddyMatchingRepository;
 import com.frog.travelwithme.domain.buddyrecuirtment.repository.BuddyRecruitmentRepository;
+import com.frog.travelwithme.domain.buddyrecuirtment.service.BuddyMatchingService;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
+import com.frog.travelwithme.global.dto.MessageResponseDto;
+import com.frog.travelwithme.global.enums.EnumCollection;
+import com.frog.travelwithme.global.exception.BusinessLogicException;
+import com.frog.travelwithme.global.exception.ErrorResponse;
+import com.frog.travelwithme.global.exception.ExceptionCode;
 import com.frog.travelwithme.global.security.auth.controller.dto.TokenDto;
 import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
@@ -15,8 +23,8 @@ import com.frog.travelwithme.intergration.BaseIntegrationTest;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.ResultActionsUtils;
 import com.frog.travelwithme.utils.StubData;
-import com.frog.travelwithme.utils.StubData.MockMember;
 import com.frog.travelwithme.utils.snippet.reqeust.RequestSnippet;
+import com.frog.travelwithme.utils.snippet.response.ErrorResponseSnippet;
 import com.frog.travelwithme.utils.snippet.response.ResponseSnippet;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import static com.frog.travelwithme.global.enums.EnumCollection.*;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getResponsePreProcessor;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,9 +42,9 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
-class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
+class BuddyMatchingIntegrationTest extends BaseIntegrationTest {
 
-    private final String BASE_URL = "/recruitments";
+    private final String BASE_URL = "/matching";
     private String EMAIL;
     private String EMAIL_OTHER;
 
@@ -49,6 +58,9 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
     private BuddyRecruitmentRepository buddyRecruitmentRepository;
 
     @Autowired
+    private BuddyMatchingRepository buddyMatchingRepository;
+
+    @Autowired
     private MemberRepository memberRepository;
 
     @Autowired
@@ -58,12 +70,12 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
     @BeforeEach
     void beforeEach() {
         // e_ma-il@gmail.com 회원 추가
-        MemberDto.SignUp memberOne = MockMember.getSignUpDto();
+        MemberDto.SignUp memberOne = StubData.MockMember.getSignUpDto();
         memberService.signUp(memberOne);
         EMAIL = memberOne.getEmail();
 
         // dhfif718@gmail.com 회원 추가
-        MemberDto.SignUp memberTwo = MockMember.getSignUpDtoByEmailAndNickname(
+        MemberDto.SignUp memberTwo = StubData.MockMember.getSignUpDtoByEmailAndNickname(
                 "dhfif718@gmail.com",
                 "이재혁"
         );
@@ -72,128 +84,120 @@ class BuddyRecruitmentIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("동행 작성 테스트")
-    void BuddyRecruitmentIntegrationTest1() throws Exception {
+    @DisplayName("동행 매칭신청 (신규)")
+    void buddyMatchingIntegrationTest1() throws Exception {
         // given
-        CustomUserDetails userDetails = MockMember.getUserDetails();
-        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
-        String accessToken = tokenDto.getAccessToken();
-        String refreshToken = tokenDto.getRefreshToken();
-        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
-        BuddyDto.PostRecruitment postRecruitmentDto = StubData.MockBuddy.getPostRecruitment();
-
-        // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
-                .build().toUri().toString();
-        String json = ObjectMapperUtils.objectToJsonString(postRecruitmentDto);
-
-        ResultActions actions = ResultActionsUtils.postRequestWithContentAndToken(
-                mvc, uri, json, accessToken, encryptedRefreshToken
-        );
-
-        // then
-        BuddyDto.PostResponseRecruitment response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
-                BuddyDto.PostResponseRecruitment.class);
-        assertThat(response.getId()).isNotNull();
-        assertThat(response.getTitle()).isEqualTo(postRecruitmentDto.getTitle());
-        assertThat(response.getContent()).isEqualTo(postRecruitmentDto.getContent());
-        assertThat(response.getTravelNationality()).isEqualTo(postRecruitmentDto.getTravelNationality());
-        assertThat(response.getTravelStartDate()).isEqualTo(postRecruitmentDto.getTravelStartDate());
-        assertThat(response.getTravelEndDate()).isEqualTo(postRecruitmentDto.getTravelEndDate());
-        assertThat(response.getViewCount()).isEqualTo(0L);
-        assertThat(response.getCommentCount()).isEqualTo(0L);
-        assertThat(response.getNickname()).isEqualTo("nickname");
-        assertThat(response.getMemberImage()).isEqualTo(MockMember.getImage());
-
-
-        actions
-                .andExpect(status().isCreated())
-                .andDo(document("post-recruitment",
-                        getRequestPreProcessor(),
-                        getResponsePreProcessor(),
-                        RequestSnippet.getPostRecruitmentSnippet(),
-                        ResponseSnippet.getPostRecruitmentSnippet()
-                ));
-    }
-
-    @Test
-    @DisplayName("동행 수정 테스트")
-    void BuddyRecruitmentIntegrationTest2() throws Exception {
-        // given
-        CustomUserDetails userDetails = MockMember.getUserDetails();
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
-        BuddyDto.PatchRecruitment patchRecruitmentDto = StubData.MockBuddy.getPatchRecruitment();
-
+        Member writer = memberRepository.findByEmail(EMAIL_OTHER).get();
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
-        Member writer = memberRepository.findByEmail(EMAIL).get();
         buddyRecruitment.addMember(writer);
         BuddyRecruitment saveBuddyRecruitment = buddyRecruitmentRepository.save(buddyRecruitment);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + saveBuddyRecruitment.getId())
                 .build().toUri().toString();
-        String json = ObjectMapperUtils.objectToJsonString(patchRecruitmentDto);
 
-        ResultActions actions = ResultActionsUtils.patchRequestWithContentAndToken(
-                mvc, uri, json, accessToken, encryptedRefreshToken
+        ResultActions actions = ResultActionsUtils.postRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken
         );
 
         // then
-        BuddyDto.PatchResponseRecruitment response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
-                BuddyDto.PatchResponseRecruitment.class);
-
-        assertThat(response.getId()).isEqualTo(saveBuddyRecruitment.getId());
-        assertThat(response.getTitle()).isEqualTo(patchRecruitmentDto.getTitle());
-        assertThat(response.getContent()).isEqualTo(patchRecruitmentDto.getContent());
-        assertThat(response.getTravelNationality()).isEqualTo(patchRecruitmentDto.getTravelNationality());
-        assertThat(response.getTravelStartDate()).isEqualTo(patchRecruitmentDto.getTravelStartDate());
-        assertThat(response.getTravelEndDate()).isEqualTo(patchRecruitmentDto.getTravelEndDate());
-
+        String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
+        assertThat(response).isEqualTo(ResponseBody.NEW_REQUEST_MATCHING.getDescription());
         actions
                 .andExpect(status().isOk())
-                .andDo(document("patch-recruitment",
+                .andDo(document("post-matching-request-new",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
-                        RequestSnippet.getPatchRecruitmentSnippet(),
-                        ResponseSnippet.getPatchRecruitmentSnippet()
+                        ResponseSnippet.getBuddyMatchingSnippet()
                 ));
     }
 
     @Test
-    @DisplayName("동행 삭제 테스트")
-    void BuddyRecruitmentIntegrationTest3() throws Exception {
+    @DisplayName("동행 매칭신청 (재신청)")
+    void buddyMatchingIntegrationTest2() throws Exception {
         // given
-        CustomUserDetails userDetails = MockMember.getUserDetails();
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
+        Member user = memberRepository.findByEmail(EMAIL).get();
+        Member writer = memberRepository.findByEmail(EMAIL_OTHER).get();
         BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
-        Member writer = memberRepository.findByEmail(EMAIL).get();
         buddyRecruitment.addMember(writer);
         BuddyRecruitment saveBuddyRecruitment = buddyRecruitmentRepository.save(buddyRecruitment);
+        BuddyMatching buddyMatching = StubData.MockBuddy.getBuddyMatching();
+        buddyMatching.changeStatus(BuddyMatchingStatus.REJECT);
+        buddyMatching.addMember(user);
+        buddyMatching.addBuddyRecruitment(saveBuddyRecruitment);
+        saveBuddyRecruitment.addBuddyMatching(buddyMatching);
 
         // when
-        String uri = UriComponentsBuilder.newInstance()
-                .path(BASE_URL + "/" + saveBuddyRecruitment.getId() + "/" + "deleted")
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + saveBuddyRecruitment.getId())
                 .build().toUri().toString();
 
         ResultActions actions = ResultActionsUtils.postRequestWithToken(
                 mvc, uri, accessToken, encryptedRefreshToken
         );
 
+        // then
+        String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
+        assertThat(response).isEqualTo(ResponseBody.RETRY_REQUEST_MATCHING.getDescription());
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("post-matching-request-retry",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ResponseSnippet.getBuddyMatchingSnippet()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 매칭신청 (신청불가)")
+    void buddyMatchingIntegrationTest3() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Member user = memberRepository.findByEmail(EMAIL).get();
+        Member writer = memberRepository.findByEmail(EMAIL_OTHER).get();
+        BuddyRecruitment buddyRecruitment = StubData.MockBuddy.getBuddyRecruitment();
+        buddyRecruitment.addMember(writer);
+        BuddyRecruitment saveBuddyRecruitment = buddyRecruitmentRepository.save(buddyRecruitment);
+        BuddyMatching buddyMatching = StubData.MockBuddy.getBuddyMatching();
+        buddyMatching.changeStatus(BuddyMatchingStatus.APPROVE);
+        buddyMatching.addMember(user);
+        buddyMatching.addBuddyRecruitment(saveBuddyRecruitment);
+        saveBuddyRecruitment.addBuddyMatching(buddyMatching);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + saveBuddyRecruitment.getId())
+                .build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.postRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken
+        );
 
         // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus()).isEqualTo(ExceptionCode.BUDDY_MATCHING_REQUEST_NOT_ALLOWED.getStatus());
+        assertThat(response.getMessage()).isEqualTo(ExceptionCode.BUDDY_MATCHING_REQUEST_NOT_ALLOWED.getMessage());
         actions
-                .andExpect(status().isNoContent())
-                .andDo(document("delete-recruitment",
+                .andDo(document("post-matching-request-exception",
                         getRequestPreProcessor(),
-                        getResponsePreProcessor()
+                        getResponsePreProcessor(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
                 ));
     }
 }

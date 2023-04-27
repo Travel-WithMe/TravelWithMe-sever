@@ -13,6 +13,7 @@ import com.frog.travelwithme.intergration.BaseIntegrationTest;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.ResultActionsUtils;
 import com.frog.travelwithme.utils.StubData;
+import com.frog.travelwithme.utils.security.WithMockCustomUser;
 import com.frog.travelwithme.utils.snippet.reqeust.RequestSnippet;
 import com.frog.travelwithme.utils.snippet.response.ResponseSnippet;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -70,6 +72,8 @@ class MemberIntegrationTest extends BaseIntegrationTest {
     @DisplayName("회원가입")
     void memberIntegrationTest1() throws Exception {
         // given
+        MockMultipartFile file = new MockMultipartFile("file",
+                "originalFilename", "text/plain", "fileContent".getBytes());
         memberService.deleteMember(EMAIL);
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
 
@@ -77,10 +81,10 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentandMultiPart(mvc, uri, json, file);
 
         // then
-        Response response = ObjectMapperUtils.actionsSingleToDto(actions, Response.class);
+        Response response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, Response.class);
         assertThat(signUpDto.getEmail()).isEqualTo(response.getEmail());
         assertThat(signUpDto.getNickname()).isEqualTo(response.getNickname());
         assertThat(signUpDto.getAddress()).isEqualTo(response.getAddress());
@@ -92,6 +96,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 .andDo(document("signup",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
+                        RequestSnippet.getSignUpMultipartSnippet(),
                         RequestSnippet.getSignUpSnippet(),
                         ResponseSnippet.getMemberSnippet()));
     }
@@ -116,7 +121,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 patchRequestWithContentAndToken(mvc, uri, json, accessToken, encryptedRefreshToken);
 
         // then
-        Response response = ObjectMapperUtils.actionsSingleToDto(actions, Response.class);
+        Response response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, Response.class);
         assertThat(originMemberDto.getNickname()).isNotEqualTo(response.getNickname());
         assertThat(originMemberDto.getAddress()).isNotEqualTo(response.getAddress());
         assertThat(originMemberDto.getIntroduction()).isNotEqualTo(response.getIntroduction());
@@ -130,6 +135,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 .andDo(document("patch-member",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getMemberPatchSnippet(),
                         ResponseSnippet.getMemberSnippet()));
     }
@@ -153,7 +159,9 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         actions
                 .andExpect(status().isOk())
                 .andDo(document("get-member",
+                        getRequestPreProcessor(),
                         getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
                         ResponseSnippet.getMemberSnippet()));
     }
 
@@ -176,7 +184,9 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         // then
         actions
                 .andExpect(status().isNoContent())
-                .andDo(document("delete-member"));
+                .andDo(document("delete-member",
+                        getRequestPreProcessor(),
+                        RequestSnippet.getTokenSnippet()));
         memberService.signUp(signUpDto);
     }
 
@@ -220,7 +230,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
 
         // then
         EmailVerificationResult response = ObjectMapperUtils.
-                actionsSingleToDto(actions, EmailVerificationResult.class);
+                actionsSingleToResponseWithData(actions, EmailVerificationResult.class);
         assertThat(response.isSuccess()).isTrue();
         actions.andExpect(status().isOk())
                 .andDo(document("email-verification-success",
@@ -250,7 +260,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
 
         // then
         EmailVerificationResult response = ObjectMapperUtils.
-                actionsSingleToDto(actions, EmailVerificationResult.class);
+                actionsSingleToResponseWithData(actions, EmailVerificationResult.class);
         assertThat(response.isSuccess()).isFalse();
         actions.andExpect(status().isOk())
                 .andDo(document("email-verification-fail",
@@ -260,5 +270,63 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                         ResponseSnippet.getMailVerificationSnippet()));
 
         redisService.deleteValues(AUTH_CODE_PREFIX + EMAIL_VALUE);
+    }
+
+    @Test
+    @DisplayName("회원의 프로필 이미지를 수정합니다.")
+    @WithMockCustomUser
+    void memberControllerTest8() throws Exception {
+        // given
+        MockMultipartFile file = new MockMultipartFile("file",
+                "originalFilename", "text/plain", "fileContent".getBytes());
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+        Response originMemberDto = memberService.findMemberByEmail(EMAIL);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/images")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.patchRequestWithMultiPartAndToken(
+                mvc, uri, file, accessToken, encryptedRefreshToken);
+
+        // then
+        Response response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, Response.class);
+        assertThat(response.getImage()).isNotEqualTo(originMemberDto.getImage());
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("patch-profile-image",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getSignUpMultipartSnippet(),
+                        ResponseSnippet.getMemberSnippet()));
+    }
+
+    @Test
+    @DisplayName("회원가입 시 성별은 남자, 여자만 입력 가능")
+    void memberIntegrationTest9() throws Exception {
+        // given
+        MockMultipartFile file = new MockMultipartFile("file",
+                "originalFilename", "text/plain", "fileContent".getBytes());
+        memberService.deleteMember(EMAIL);
+        MemberDto.SignUp failedSignUpDto = StubData.MockMember.getFailedSignUpDtoByGender("중성");
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
+                .build().toUri().toString();
+        String json = ObjectMapperUtils.asJsonString(failedSignUpDto);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentandMultiPart(mvc, uri, json, file);
+
+        // then
+        actions
+                .andExpect(status().is4xxClientError())
+                .andDo(document("signup-fail1",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getSignUpMultipartSnippet(),
+                        RequestSnippet.getSignUpSnippet()));
     }
 }

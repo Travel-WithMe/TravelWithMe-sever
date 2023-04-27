@@ -10,6 +10,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -56,6 +58,9 @@ public class BuddyRecruitment extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @OneToMany(mappedBy = "buddyRecruitment", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<BuddyMatching> buddyMatchingList = new ArrayList<>();
+
     /*
     * TODO : 댓글과 연관관계 어떻게 지어줄지 생각하기
     * 테이블을 중간테이블로 둘 예정.
@@ -78,6 +83,12 @@ public class BuddyRecruitment extends BaseTimeEntity {
     public void addMember(Member member) {
         if(member != null) {
             this.member = member;
+        }
+    }
+
+    public void addBuddyMatching(BuddyMatching buddyMatching) {
+        if(buddyMatching != null) {
+            this.buddyMatchingList.add(buddyMatching);
         }
     }
 

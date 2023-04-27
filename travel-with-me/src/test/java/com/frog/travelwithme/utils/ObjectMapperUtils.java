@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
+import com.frog.travelwithme.global.dto.MessageResponseDto;
+import com.frog.travelwithme.global.dto.SingleResponseDto;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginResponse;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -29,16 +31,40 @@ public class ObjectMapperUtils {
         }
     }
 
-    public static String dtoToJsonString(Object obj) throws JsonProcessingException {
+    public static String objectToJsonString(Object obj) throws JsonProcessingException {
         return objectMapper.registerModule(new JavaTimeModule()).writeValueAsString(obj);
     }
 
-    public static <T> T actionsSingleToDto(ResultActions actions, Class<T> responseClass) throws Exception {
+    public static <T> String actionsSingleToString(ResultActions actions, Class<T> responseClass) throws Exception {
+        String response = resultActionsToResponseAsString(actions);
+        String className = responseClass.getName();
+        String substring = null;
+
+        if(className.equals(SingleResponseDto.class.getName())) {
+            substring = response.substring(8, response.length() - 1);
+        } else if(className.equals(MessageResponseDto.class.getName())) {
+            substring = response.substring(12, response.length() - 2);
+        }
+        return substring;
+    }
+
+    public static <T> T actionsSingleToResponse(ResultActions actions, Class<T> responseClass) throws Exception {
         String response = resultActionsToResponseAsString(actions);
         return objectMapper.registerModule(new JavaTimeModule()).readValue(response, responseClass);
     }
 
+    public static <T> T actionsSingleToResponseWithData(ResultActions actions, Class<T> responseClass) throws Exception {
+        String response = resultActionsToResponseAsStringWithData(actions);
+        return objectMapper.registerModule(new JavaTimeModule()).readValue(response, responseClass);
+    }
+
     private static String resultActionsToResponseAsString(ResultActions actions) throws UnsupportedEncodingException {
+        return actions.andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8);
+    }
+
+    private static String resultActionsToResponseAsStringWithData(ResultActions actions) throws UnsupportedEncodingException {
         String response = actions.andReturn()
                 .getResponse()
                 .getContentAsString(StandardCharsets.UTF_8)

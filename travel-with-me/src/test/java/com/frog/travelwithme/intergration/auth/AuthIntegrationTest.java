@@ -13,6 +13,7 @@ import com.frog.travelwithme.intergration.BaseIntegrationTest;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.StubData;
 import com.frog.travelwithme.utils.ResultActionsUtils;
+import com.frog.travelwithme.utils.snippet.reqeust.RequestSnippet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -78,7 +79,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         ResultActions actions = ResultActionsUtils.getRequestWithContent(mvc, uri, json);
 
         // then
-        LoginResponse responseDto = ObjectMapperUtils.actionsSingleToDto(actions, LoginResponse.class);
+        LoginResponse responseDto = ObjectMapperUtils.actionsSingleToResponseWithData(actions, LoginResponse.class);
         assertThat(expectedResponseDto.getEmail()).isEqualTo(responseDto.getEmail());
         assertThat(expectedResponseDto.getNickname()).isEqualTo(responseDto.getNickname());
         assertThat(expectedResponseDto.getRole()).isEqualTo(responseDto.getRole());
@@ -131,7 +132,9 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         // then
         actions
                 .andExpect(status().isOk())
-                .andDo(document("access-token-reissue-success"));
+                .andDo(document("access-token-reissue-success",
+                        getRequestPreProcessor(),
+                        RequestSnippet.getRefreshTokenSnippet()));
     }
 
     @Test
@@ -154,7 +157,9 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         actions
                 .andExpect(status().is(404))
                 .andDo(document("reissue-fail-by-token-not-same",
+                        getRequestPreProcessor(),
                         getResponsePreProcessor(),
+                        RequestSnippet.getRefreshTokenSnippet(),
                         getFieldErrorSnippetsLong()));
     }
 
@@ -197,7 +202,9 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         assertThat(logout).isEqualTo("logout");
         actions
                 .andExpect(status().isNoContent())
-                .andDo(document("logout"));
+                .andDo(document("logout",
+                        getRequestPreProcessor(),
+                        RequestSnippet.getTokenSnippet()));
 
         redisService.deleteValues(accessToken);
     }

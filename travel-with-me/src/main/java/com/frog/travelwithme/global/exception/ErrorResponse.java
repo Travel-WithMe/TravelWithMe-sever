@@ -2,6 +2,7 @@ package com.frog.travelwithme.global.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
  * 작성일자: 2023/03/29
  **/
 @Getter
+@NoArgsConstructor
 public class ErrorResponse {
     private int status;
     private String message;

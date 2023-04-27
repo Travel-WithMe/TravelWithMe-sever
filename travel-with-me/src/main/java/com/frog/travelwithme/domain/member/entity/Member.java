@@ -1,9 +1,14 @@
 package com.frog.travelwithme.domain.member.entity;
 
-import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
-import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
 import com.frog.travelwithme.domain.buddyrecuirtment.common.BaseTimeEntity;
-import lombok.*;
+import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
+import com.frog.travelwithme.global.enums.EnumCollection.Gender;
+import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -17,6 +22,7 @@ import java.util.Optional;
  **/
 @Entity
 @Getter
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseTimeEntity {
     @Id
@@ -31,6 +37,10 @@ public class Member extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Column(nullable = false)
     private String nation;
@@ -52,15 +62,17 @@ public class Member extends BaseTimeEntity {
     private OAuthStatus oauthstatus;
 
     @Builder
-    public Member(Long id, String email, String nickname, String password, String nation, String address,
-                  String image, String introduction, String role, OAuthStatus oauthstatus) {
+    public Member(Long id, String email, String nickname, String password, Gender gender, String nation,
+                  String address, String introduction, String role, OAuthStatus oauthstatus) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;
         this.password = password;
+        this.gender = gender;
         this.nation = nation;
         this.address = address;
-        this.image = image;
+        // TODO: File 로직 구현 후 실제 url로 변경
+        this.image = "defaultImageUrl";
         this.introduction = introduction;
         this.role = role;
         this.oauthstatus = oauthstatus;
@@ -81,11 +93,15 @@ public class Member extends BaseTimeEntity {
                 .ifPresent(updatePassword -> this.password = updatePassword);
         Optional.ofNullable(patchDto.getNation())
                 .ifPresent(updateNation -> this.nation = updateNation);
-        Optional.ofNullable(patchDto.getImage())
-                .ifPresent(updateImage -> this.image = updateImage);
+        Optional.ofNullable(patchDto.getGender())
+                .ifPresent(updateGender -> this.gender = Gender.from(patchDto.getGender()));
         Optional.ofNullable(patchDto.getAddress())
                 .ifPresent(updateAddress -> this.address = updateAddress);
         Optional.ofNullable(patchDto.getIntroduction())
                 .ifPresent(updateIntroduction -> this.introduction = updateIntroduction);
+    }
+
+    public void changeImage(String newImage) {
+        this.image = newImage;
     }
 }

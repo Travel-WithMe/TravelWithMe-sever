@@ -53,6 +53,7 @@ public class BuddyDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class PostResponseRecruitment {
+        private Long id;
         private String title;
         private String content;
         private String travelNationality;
@@ -69,6 +70,7 @@ public class BuddyDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class PatchResponseRecruitment {
+        private Long id;
         private String title;
         private String content;
         private String travelNationality;
@@ -81,6 +83,7 @@ public class BuddyDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetResponseRecruitment {
+        private Long id;
         private String title;
         private String content;
         private String travelNationality;

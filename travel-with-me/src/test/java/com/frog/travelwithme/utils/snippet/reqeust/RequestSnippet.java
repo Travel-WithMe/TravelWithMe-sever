@@ -1,15 +1,17 @@
 package com.frog.travelwithme.utils.snippet.reqeust;
 
+import com.google.common.net.HttpHeaders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.snippet.Snippet;
 
 import java.util.List;
 
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 
 /**
  * RequestPostSnippet 설명: requestFields 관리
@@ -24,7 +26,7 @@ public class RequestSnippet {
                         fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
                         fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호"),
                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
-                        fieldWithPath("image").type(JsonFieldType.STRING).description("프로필 이미지 url"),
+                        fieldWithPath("gender").type(JsonFieldType.STRING).description("회원 성별 (남자/여자)"),
                         fieldWithPath("address").type(JsonFieldType.STRING).description("회원 주소"),
                         fieldWithPath("introduction").type(JsonFieldType.STRING).description("자기 소개"),
                         fieldWithPath("nation").type(JsonFieldType.STRING).description("회원 국가"),
@@ -38,9 +40,9 @@ public class RequestSnippet {
                 List.of(
                         fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호"),
                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
-                        fieldWithPath("image").type(JsonFieldType.STRING).description("프로필 이미지 url"),
                         fieldWithPath("address").type(JsonFieldType.STRING).description("회원 주소"),
                         fieldWithPath("introduction").type(JsonFieldType.STRING).description("자기 소개"),
+                        fieldWithPath("gender").type(JsonFieldType.STRING).description("회원 성별 (남자/여자)"),
                         fieldWithPath("nation").type(JsonFieldType.STRING).description("회원 국가")
                 )
         );
@@ -84,6 +86,31 @@ public class RequestSnippet {
                 List.of(
                         parameterWithName("email").description("인증 번호를 전달 받은 이메일 주소"),
                         parameterWithName("code").description("사용자가 인증 요청한 인증 번호")
+                )
+        );
+    }
+
+    public static Snippet getSignUpMultipartSnippet() {
+        return requestParts(
+                List.of(
+                        partWithName("file").description("회원의 프로필 이미지").optional()
+                )
+        );
+    }
+
+    public static Snippet getTokenSnippet() {
+        return requestHeaders(
+                List.of(
+                        headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token, 만료 시간: 2시간"),
+                        headerWithName(HttpHeaders.REFRESH).description("암호화된 Refresh Token, 만료 시간: 2주")
+                )
+        );
+    }
+
+    public static Snippet getRefreshTokenSnippet() {
+        return requestHeaders(
+                List.of(
+                        headerWithName(HttpHeaders.REFRESH).description("암호화된 Refresh Token, 만료 시간: 2주")
                 )
         );
     }
