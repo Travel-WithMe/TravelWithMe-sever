@@ -123,7 +123,9 @@ public class EnumCollection {
         private final String description;
 
         public static Gender from(String sub) {
-            if (sub == null) return null;
+            if (sub == null) {
+                return null;
+            }
             for (Gender gender : Gender.values()) {
                 if (gender.getDescription().equals(sub)) {
                     return gender;
