@@ -7,11 +7,8 @@ import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.global.enums.EnumCollection.BuddyRecruitmentStatus;
 import com.frog.travelwithme.global.utils.TimeUtils;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +22,6 @@ import java.util.Optional;
 
 @Entity
 @Getter
-@DynamicInsert
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BuddyRecruitment extends BaseTimeEntity {

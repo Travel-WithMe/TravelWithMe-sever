@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
+import com.frog.travelwithme.global.dto.MessageResponseDto;
+import com.frog.travelwithme.global.dto.SingleResponseDto;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginResponse;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -33,9 +35,17 @@ public class ObjectMapperUtils {
         return objectMapper.registerModule(new JavaTimeModule()).writeValueAsString(obj);
     }
 
-    public static String actionsSingleToStringBySubstring(ResultActions actions, int start) throws Exception {
+    public static <T> String actionsSingleToString(ResultActions actions, Class<T> responseClass) throws Exception {
         String response = resultActionsToResponseAsString(actions);
-        return response.substring(start, response.length() - 2);
+        String className = responseClass.getName();
+        String substring = null;
+
+        if(className.equals(SingleResponseDto.class.getName())) {
+            substring = response.substring(8, response.length() - 1);
+        } else if(className.equals(MessageResponseDto.class.getName())) {
+            substring = response.substring(12, response.length() - 2);
+        }
+        return substring;
     }
 
     public static <T> T actionsSingleToResponse(ResultActions actions, Class<T> responseClass) throws Exception {
