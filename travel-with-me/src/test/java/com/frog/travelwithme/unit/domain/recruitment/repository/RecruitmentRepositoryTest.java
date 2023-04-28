@@ -69,14 +69,14 @@ class RecruitmentRepositoryTest {
         entityManager.clear();
         entityManager.flush();
 
-        Recruitment findBuddy = recruitmentRepository.findById(saveRecruitment.getId()).get();
+        Recruitment findRecruitment = recruitmentRepository.findById(saveRecruitment.getId()).get();
 
         // when
-        findBuddy.changeStatus(EnumCollection.RecruitmentStatus.END);
+        findRecruitment.changeEnd();
 
         // then
-        assertThat(findBuddy.getId()).isEqualTo(saveRecruitment.getId());
-        assertThat(findBuddy.getRecruitmentStatus()) // Expect : END
+        assertThat(findRecruitment.getId()).isEqualTo(saveRecruitment.getId());
+        assertThat(findRecruitment.getRecruitmentStatus()) // Expect : END
                 .isNotEqualTo(recruitment.getRecruitmentStatus()); // Result : IN_PROGRESS
     }
 
@@ -87,13 +87,13 @@ class RecruitmentRepositoryTest {
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
 
         // when
-        Recruitment findBuddy = recruitmentRepository.findById(saveRecruitment.getId()).get();
+        Recruitment findRecruitment = recruitmentRepository.findById(saveRecruitment.getId()).get();
 
         // then
         assertAll(
-                () -> assertEquals(findBuddy.getTitle(), recruitment.getTitle()),
-                () -> assertEquals(findBuddy.getContent(), recruitment.getContent()),
-                () -> assertEquals(findBuddy.getTravelNationality(), recruitment.getTravelNationality())
+                () -> assertEquals(findRecruitment.getTitle(), recruitment.getTitle()),
+                () -> assertEquals(findRecruitment.getContent(), recruitment.getContent()),
+                () -> assertEquals(findRecruitment.getTravelNationality(), recruitment.getTravelNationality())
         );
     }
 
@@ -107,10 +107,10 @@ class RecruitmentRepositoryTest {
         // when
         recruitmentRepository.delete(saveRecruitment);
 
-        Optional<Recruitment> findBuddy = recruitmentRepository
+        Optional<Recruitment> findRecruitment = recruitmentRepository
                 .findById(saveRecruitment.getId());
 
         // then
-        assertThatThrownBy(() -> findBuddy.get()).isInstanceOf(NoSuchElementException.class);
+        assertThatThrownBy(() -> findRecruitment.get()).isInstanceOf(NoSuchElementException.class);
     }
 }

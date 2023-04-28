@@ -40,8 +40,14 @@ public class Buddy {
         this.status = status;
     }
 
-    public void changeStatus(BuddyStatus status) {
-        this.status = status;
+    public void changeWait() {
+        this.status = BuddyStatus.WAIT;
+    }
+    public void changeReject() {
+        this.status = BuddyStatus.REJECT;
+    }
+    public void changeApprove() {
+        this.status = BuddyStatus.APPROVE;
     }
 
     public void addMember(Member member) {

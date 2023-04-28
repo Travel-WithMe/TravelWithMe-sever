@@ -106,8 +106,12 @@ public class Recruitment extends BaseTimeEntity {
                 .ifPresent(travelEndDate -> this.travelEndDate = TimeUtils.stringToLocalDateTime(travelEndDate));
     }
 
-    public void  changeStatus(RecruitmentStatus recruitmentStatus) {
-        this.recruitmentStatus = recruitmentStatus;
+    public void changeInProgress() {
+        this.recruitmentStatus = RecruitmentStatus.IN_PROGRESS;
+    }
+
+    public void changeEnd() {
+        this.recruitmentStatus = RecruitmentStatus.END;
     }
 
     public void updateDeletionEntity() {

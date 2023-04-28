@@ -52,7 +52,7 @@ public class BuddyService {
             recruitment.addBuddy(buddy);
             return EnumCollection.ResponseBody.NEW_REQUEST_BUDDY;
         } else {
-            findBuddy.get().changeStatus(BuddyStatus.WAIT);
+            findBuddy.get().changeWait();
             return EnumCollection.ResponseBody.RETRY_REQUEST_BUDDY;
         }
 

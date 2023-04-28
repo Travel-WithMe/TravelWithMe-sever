@@ -131,7 +131,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         recruitment.addMember(writer);
         Recruitment saveBuddy = recruitmentRepository.save(recruitment);
         Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.changeStatus(BuddyStatus.REJECT);
+        buddy.changeReject();
         buddy.addMember(user);
         buddy.addRecruitment(saveBuddy);
         saveBuddy.addBuddy(buddy);
@@ -173,7 +173,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         recruitment.addMember(writer);
         Recruitment saveBuddy = recruitmentRepository.save(recruitment);
         Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.changeStatus(BuddyStatus.APPROVE);
+        buddy.changeApprove();
         buddy.addMember(user);
         buddy.addRecruitment(saveBuddy);
         saveBuddy.addBuddy(buddy);

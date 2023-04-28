@@ -67,7 +67,7 @@ class BuddyServiceTest {
         Buddy buddy = StubData.MockBuddy.getBuddy();
         buddy.addMember(member);
         buddy.addRecruitment(recruitment);
-        buddy.changeStatus(BuddyStatus.REJECT);
+        buddy.changeReject();
 
         when(recruitmentService.findRecruitmentById(recruitment.getId())).thenReturn(recruitment);
         doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);
@@ -97,7 +97,7 @@ class BuddyServiceTest {
         Buddy buddy = StubData.MockBuddy.getBuddy();
         buddy.addMember(member);
         buddy.addRecruitment(recruitment);
-        buddy.changeStatus(BuddyStatus.REJECT);
+        buddy.changeReject();
 
         when(recruitmentService.findRecruitmentById(recruitment.getId())).thenReturn(recruitment);
         doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);
@@ -127,7 +127,7 @@ class BuddyServiceTest {
         Buddy buddy = StubData.MockBuddy.getBuddy();
         buddy.addMember(member);
         buddy.addRecruitment(recruitment);
-        buddy.changeStatus(BuddyStatus.APPROVE);
+        buddy.changeApprove();
 
         when(recruitmentService.findRecruitmentById(recruitment.getId())).thenReturn(recruitment);
         doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);

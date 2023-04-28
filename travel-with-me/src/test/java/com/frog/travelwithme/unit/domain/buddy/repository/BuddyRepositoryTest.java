@@ -100,7 +100,7 @@ class BuddyRepositoryTest {
         Buddy findBuddy = buddyRepository.findById(saveBuddy.getId()).get();
 
         // when
-        findBuddy.changeStatus(BuddyStatus.APPROVE);
+        findBuddy.changeApprove();
 
         // then
         assertThat(findBuddy.getId()).isEqualTo(saveBuddy.getId());
