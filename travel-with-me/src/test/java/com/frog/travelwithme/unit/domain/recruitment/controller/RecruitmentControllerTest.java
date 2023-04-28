@@ -63,7 +63,7 @@ class RecruitmentControllerTest {
         RecruitmentDto.Post postDto = StubData.MockRecruitment.getPostRecruitment();
         RecruitmentDto.PostResponse responseRecruitmentDto = StubData.MockRecruitment.getPostResponseRecruitment();
 
-        given(recruitmentService.createRecruitment(any(),any())).willReturn(responseRecruitmentDto);
+        given(recruitmentService.createRecruitmentByUser(any(),any())).willReturn(responseRecruitmentDto);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
@@ -93,7 +93,7 @@ class RecruitmentControllerTest {
         RecruitmentDto.Patch patchDto = StubData.MockRecruitment.getPatchRecruitment();
         RecruitmentDto.PatchResponse responseRecruitmentDto = StubData.MockRecruitment.getPatchResponseRecruitment();
 
-        given(recruitmentService.updateRecruitment(any(),any(),any())).willReturn(responseRecruitmentDto);
+        given(recruitmentService.updateRecruitmentByUser(any(),any(),any())).willReturn(responseRecruitmentDto);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1)
@@ -120,7 +120,7 @@ class RecruitmentControllerTest {
     @WithMockCustomUser
     void buddyRecruitmentControllerTest3() throws Exception {
         // given
-        doNothing().when(recruitmentService).deleteRecruitment(any(), any());
+        doNothing().when(recruitmentService).deleteRecruitmentByUser(any(), any());
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1)

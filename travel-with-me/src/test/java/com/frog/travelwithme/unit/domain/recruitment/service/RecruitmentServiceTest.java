@@ -62,7 +62,7 @@ class RecruitmentServiceTest {
         when(buddyMapper.toPostResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);
 
         //when
-        RecruitmentDto.PostResponse responseRecruitment = recruitmentService.createRecruitment(
+        RecruitmentDto.PostResponse responseRecruitment = recruitmentService.createRecruitmentByUser(
                 postDto, member.getEmail()
         );
 
@@ -86,12 +86,11 @@ class RecruitmentServiceTest {
         Member member = StubData.MockMember.getMember();
         recruitment.addMember(member);
 
-        when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
         when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
         when(buddyMapper.toPatchResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);
 
         //when
-        RecruitmentDto.PatchResponse responseRecruitment = recruitmentService.updateRecruitment(
+        RecruitmentDto.PatchResponse responseRecruitment = recruitmentService.updateRecruitmentByUser(
                 patchDto, recruitment.getId(), member.getEmail()
         );
 
@@ -116,13 +115,12 @@ class RecruitmentServiceTest {
         Member user = StubData.MockMember.getMemberByEmailAndNickname("kkd718@gmail.com", "KCB");
         recruitment.addMember(writer);
 
-        when(memberService.findMemberAndCheckMemberExists(user.getEmail())).thenReturn(user);
         when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
         //then
         assertThatThrownBy(
-                () -> recruitmentService.updateRecruitment(
+                () -> recruitmentService.updateRecruitmentByUser(
                         patchDto,
                         recruitment.getId(),
                         user.getEmail()
@@ -138,11 +136,10 @@ class RecruitmentServiceTest {
         Member member = StubData.MockMember.getMember();
         recruitment.addMember(member);
 
-        when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
         when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
-        recruitmentService.deleteRecruitment(recruitment.getId(), member.getEmail());
+        recruitmentService.deleteRecruitmentByUser(recruitment.getId(), member.getEmail());
 
         //then
 
@@ -157,13 +154,12 @@ class RecruitmentServiceTest {
         Member user = StubData.MockMember.getMemberByEmailAndNickname("kkd718@gmail.com", "KCB");
         recruitment.addMember(writer);
 
-        when(memberService.findMemberAndCheckMemberExists(user.getEmail())).thenReturn(user);
         when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
         //then
         assertThatThrownBy(
-                () -> recruitmentService.deleteRecruitment(recruitment.getId(), user.getEmail())
+                () -> recruitmentService.deleteRecruitmentByUser(recruitment.getId(), user.getEmail())
         ).isInstanceOf(BusinessLogicException.class);
     }
 }

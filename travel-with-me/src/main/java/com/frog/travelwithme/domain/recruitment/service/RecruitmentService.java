@@ -37,30 +37,23 @@ public class RecruitmentService {
 
     private final RecruitmentMapper recruitmentMapper;
 
-    public RecruitmentDto.PostResponse createRecruitment(RecruitmentDto.Post postDto,
-                                                         String email) {
+    public RecruitmentDto.PostResponse createRecruitmentByUser(RecruitmentDto.Post postDto,
+                                                               String email) {
 
         Member findMember = memberService.findMemberAndCheckMemberExists(email);
-        Recruitment mappedRecruitment = recruitmentMapper.toEntity(postDto);
-        mappedRecruitment.addMember(findMember);
-        Recruitment recruitment = recruitmentRepository.save(mappedRecruitment);
-        return recruitmentMapper.toPostResponseRecruitmentDto(recruitment);
-
+        return this.createRecruitment(postDto, findMember);
     }
 
-    public RecruitmentDto.PatchResponse updateRecruitment(RecruitmentDto.Patch patchDto,
-                                                          Long recruitmentId,
-                                                          String email) {
-        this.checkEqualWriterAndUser(recruitmentId, email);
-        Recruitment recruitment = this.findRecruitmentById(recruitmentId);
-        recruitment.updateBuddyRecruitment(patchDto);
-        return recruitmentMapper.toPatchResponseRecruitmentDto(recruitment);
-
+    public RecruitmentDto.PatchResponse updateRecruitmentByUser(RecruitmentDto.Patch patchDto,
+                                                                Long recruitmentId,
+                                                                String email) {
+        Recruitment findRecruitment = this.checkEqualWriterAndUser(recruitmentId, email);
+        return this.updateRecruitment(patchDto, findRecruitment);
     }
 
-    public void deleteRecruitment(Long recruitmentId, String email) {
-        Recruitment recruitment = this.checkEqualWriterAndUser(recruitmentId, email);
-        recruitment.updateDeletionEntity();
+    public void deleteRecruitmentByUser(Long recruitmentId, String email) {
+        Recruitment findRecruitment = this.checkEqualWriterAndUser(recruitmentId, email);
+        this.deleteRecruitment(findRecruitment);
     }
 
 //    TODO : 댓글, 매칭관련 작업이 끝나면 조회 반환 작성하기
@@ -86,8 +79,7 @@ public class RecruitmentService {
     public Recruitment checkEqualWriterAndUser(Long recruitmentId, String email) {
         Recruitment findRecruitment = this.findRecruitmentById(recruitmentId);
         Member writer = findRecruitment.getMember();
-        Member user = memberService.findMemberAndCheckMemberExists(email);
-        if(!writer.equals(user)) {
+        if(!writer.getEmail().equals(email)) {
             log.debug("RecruitmentService.checkEqualWriterAndUser exception occur " +
                     "recruitmentsId: {}, email: {}", recruitmentId, email);
             throw new BusinessLogicException(ExceptionCode.RECRUITMENT_WRITER_NOT_MATCH);
@@ -104,6 +96,23 @@ public class RecruitmentService {
             throw new BusinessLogicException(ExceptionCode.RECRUITMENT_EXPIRED);
         }
     }
+
+    private RecruitmentDto.PostResponse createRecruitment(RecruitmentDto.Post postDto, Member member) {
+
+        Recruitment mappedRecruitment = recruitmentMapper.toEntity(postDto).addMember(member);
+        return recruitmentMapper.toPostResponseRecruitmentDto(recruitmentRepository.save(mappedRecruitment));
+    }
+
+    private RecruitmentDto.PatchResponse updateRecruitment(RecruitmentDto.Patch patchDto, Recruitment recruitment) {
+
+        Recruitment updatedRecruitment = recruitment.updateBuddyRecruitment(patchDto);
+        return recruitmentMapper.toPatchResponseRecruitmentDto(updatedRecruitment);
+    }
+
+    private void deleteRecruitment(Recruitment recruitment) {
+        recruitment.updateDeletionEntity();
+    }
+
 
 //    TODO : 댓글, 매칭관련 작업이 끝나면 조회 반환 작성하기
 //    private Boolean checkRecruitmentWriterByEmail(Recruitment recruitment, String email) {

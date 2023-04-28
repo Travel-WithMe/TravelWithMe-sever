@@ -81,19 +81,21 @@ public class Recruitment extends BaseTimeEntity {
         this.deletionEntity = deletionEntity;
     }
 
-    public void addMember(Member member) {
+    public Recruitment addMember(Member member) {
         if(member != null) {
             this.member = member;
         }
+        return this;
     }
 
-    public void addBuddy(Buddy buddyMatching) {
-        if(buddyMatching != null) {
-            this.buddyList.add(buddyMatching);
+    public Recruitment addBuddy(Buddy buddy) {
+        if(buddy != null) {
+            this.buddyList.add(buddy);
         }
+        return this;
     }
 
-    public void updateBuddyRecruitment(RecruitmentDto.Patch patch) {
+    public Recruitment updateBuddyRecruitment(RecruitmentDto.Patch patch) {
         Optional.ofNullable(patch.getTitle())
                 .ifPresent(title -> this.title = title);
         Optional.ofNullable(patch.getContent())
@@ -104,6 +106,7 @@ public class Recruitment extends BaseTimeEntity {
                 .ifPresent(travelStartDate -> this.travelStartDate = TimeUtils.stringToLocalDateTime(travelStartDate));
         Optional.ofNullable(patch.getTravelEndDate())
                 .ifPresent(travelEndDate -> this.travelEndDate = TimeUtils.stringToLocalDateTime(travelEndDate));
+        return this;
     }
 
     public void changeInProgress() {
