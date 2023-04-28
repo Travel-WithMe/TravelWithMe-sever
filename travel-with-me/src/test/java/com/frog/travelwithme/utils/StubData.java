@@ -1,16 +1,15 @@
 package com.frog.travelwithme.utils;
 
-import com.frog.travelwithme.domain.buddyrecuirtment.common.DeletionEntity;
-import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
-import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyMatching;
-import com.frog.travelwithme.domain.buddyrecuirtment.entity.BuddyRecruitment;
+import com.frog.travelwithme.domain.buddy.entity.Buddy;
+import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
+import com.frog.travelwithme.domain.common.DeletionEntity;
+import com.frog.travelwithme.domain.recruitment.controller.dto.RecruitmentDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.enums.EnumCollection.Gender;
-import com.frog.travelwithme.global.enums.EnumCollection.BuddyMatchingStatus;
 import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDto;
@@ -19,7 +18,6 @@ import com.frog.travelwithme.global.utils.TimeUtils;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 /**
  * StubData 설명: 테스트를 위한 Stub data 관리
@@ -214,7 +212,7 @@ public class StubData {
         }
     }
 
-    public static class MockBuddy {
+    public static class MockRecruitment {
 
         // 1번 Mock BuddyRecruitment 정보
         static Long id = 1L;
@@ -234,21 +232,21 @@ public class StubData {
         static String patchTravelEndDate = "2023-01-31";
 
 
-        public static BuddyRecruitment getBuddyRecruitment() {
-            return BuddyRecruitment.builder()
+        public static Recruitment getRecruitment() {
+            return Recruitment.builder()
                     .id(id)
                     .title(title)
                     .content(content)
                     .travelNationality(travelNationality)
                     .travelStartDate(TimeUtils.stringToLocalDateTime(travelStartDate))
                     .travelEndDate(TimeUtils.stringToLocalDateTime(travelEndDate))
-                    .buddyRecruitmentStatus(EnumCollection.BuddyRecruitmentStatus.IN_PROGRESS)
+                    .recruitmentStatus(EnumCollection.RecruitmentStatus.IN_PROGRESS)
                     .deletionEntity(new DeletionEntity())
                     .build();
         }
 
-        public static BuddyDto.PostRecruitment getPostRecruitment() {
-            return BuddyDto.PostRecruitment.builder()
+        public static RecruitmentDto.Post getPostRecruitment() {
+            return RecruitmentDto.Post.builder()
                     .title(title)
                     .content(content)
                     .travelNationality(travelNationality)
@@ -257,8 +255,8 @@ public class StubData {
                     .build();
         }
 
-        public static BuddyDto.PatchRecruitment getPatchRecruitment() {
-            return BuddyDto.PatchRecruitment.builder()
+        public static RecruitmentDto.Patch getPatchRecruitment() {
+            return RecruitmentDto.Patch.builder()
                     .title(patchTitle)
                     .content(patchContent)
                     .travelNationality(patchTravelNationality)
@@ -267,8 +265,8 @@ public class StubData {
                     .build();
         }
 
-        public static BuddyDto.PostResponseRecruitment getPostResponseRecruitment() {
-            return BuddyDto.PostResponseRecruitment.builder()
+        public static RecruitmentDto.PostResponse getPostResponseRecruitment() {
+            return RecruitmentDto.PostResponse.builder()
                     .title(title)
                     .content(content)
                     .travelNationality(travelNationality)
@@ -281,8 +279,8 @@ public class StubData {
                     .build();
         }
 
-        public static BuddyDto.PatchResponseRecruitment getPatchResponseRecruitment() {
-            return BuddyDto.PatchResponseRecruitment.builder()
+        public static RecruitmentDto.PatchResponse getPatchResponseRecruitment() {
+            return RecruitmentDto.PatchResponse.builder()
                     .title(patchTitle)
                     .content(patchContent)
                     .travelNationality(patchTravelNationality)
@@ -291,9 +289,12 @@ public class StubData {
                     .build();
         }
 
-        public static BuddyMatching getBuddyMatching() {
-            return BuddyMatching.builder()
-                    .status(BuddyMatchingStatus.WAIT)
+    }
+
+    public static class MockBuddy {
+        public static Buddy getBuddy() {
+            return Buddy.builder()
+                    .status(EnumCollection.BuddyStatus.WAIT)
                     .build();
         }
     }

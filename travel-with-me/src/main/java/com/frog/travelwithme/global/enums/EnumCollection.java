@@ -61,7 +61,7 @@ public class EnumCollection {
     }
 
     @AllArgsConstructor
-    public enum BuddyMatchingStatus implements EnumType {
+    public enum BuddyStatus implements EnumType {
         WAIT("승인대기 상태"),
         APPROVE("승인완료 상태"),
         REJECT("거절 상태");
@@ -80,7 +80,7 @@ public class EnumCollection {
     }
 
     @AllArgsConstructor
-    public enum BuddyRecruitmentStatus implements EnumType {
+    public enum RecruitmentStatus implements EnumType {
         IN_PROGRESS("동행 모집중 상태"),
         END("동행 모집종료 상태");
 
@@ -99,8 +99,8 @@ public class EnumCollection {
 
     @AllArgsConstructor
     public enum ResponseBody implements EnumType {
-        NEW_REQUEST_MATCHING("동행 매칭신청이 완료되었습니다."),
-        RETRY_REQUEST_MATCHING("동행 재신청이 완료되었습니다.");
+        NEW_REQUEST_BUDDY("동행 매칭신청이 완료되었습니다."),
+        RETRY_REQUEST_BUDDY("동행 재신청이 완료되었습니다.");
 
         private final String description;
 
