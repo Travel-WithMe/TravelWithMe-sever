@@ -25,10 +25,8 @@ public class Feed extends BaseTimeEntity {
 
     private String content;
 
-    @Builder.Default()
     private Long commentCount = 0L;
 
-    @Builder.Default()
     private Long likeCount = 0L;
 
     // TODO: 위치 정보 라이브러리 논의
@@ -40,4 +38,15 @@ public class Feed extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "feedTag", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FeedTag> feedTagList = new ArrayList<>();
+
+    @Builder
+    public Feed(String content, Long commentCount, Long likeCount,
+                String locate, Member member, List<FeedTag> feedTagList) {
+        this.content = content;
+        this.commentCount = commentCount;
+        this.likeCount = likeCount;
+        this.locate = locate;
+        this.member = member;
+        this.feedTagList = feedTagList;
+    }
 }
