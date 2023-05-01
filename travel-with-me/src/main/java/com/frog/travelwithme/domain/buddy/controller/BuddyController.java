@@ -30,7 +30,7 @@ public class BuddyController {
 
     private final BuddyService buddyService;
 
-    @PostMapping("/{recruitment-id}/buddy")
+    @PostMapping("/{recruitment-id}/buddy/request")
     public ResponseEntity requestBuddy(@Positive @PathVariable("recruitment-id") Long recruitmentsId,
                                        @AuthenticationPrincipal CustomUserDetails user) {
 

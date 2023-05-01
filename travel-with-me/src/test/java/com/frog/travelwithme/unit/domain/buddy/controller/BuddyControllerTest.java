@@ -61,9 +61,8 @@ class BuddyControllerTest {
         given(buddyService.requestBuddy(any(),any())).willReturn(requestBuddy);
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1 + "/" + SUB_URL)
-                .build().toUri().toString();
-
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1 + "/" + SUB_URL +
+                "/" + "request").build().toUri().toString();
         ResultActions actions = ResultActionsUtils.postRequestWithUserDetails(mvc, uri, userDetails);
 
         // then

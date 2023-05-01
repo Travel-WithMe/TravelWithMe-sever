@@ -96,8 +96,8 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         Long recruitmentId = saveBuddy.getId();
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL)
-                .build().toUri().toString();
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL +
+                        "/" + "request").build().toUri().toString();
 
         ResultActions actions = ResultActionsUtils.postRequestWithToken(
                 mvc, uri, accessToken, encryptedRefreshToken
@@ -138,8 +138,8 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         Long recruitmentId = saveBuddy.getId();
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL)
-                .build().toUri().toString();
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL +
+                "/" + "request").build().toUri().toString();
 
         ResultActions actions = ResultActionsUtils.postRequestWithToken(
                 mvc, uri, accessToken, encryptedRefreshToken
@@ -180,8 +180,8 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         Long recruitmentId = saveBuddy.getId();
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL)
-                .build().toUri().toString();
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL +
+                "/" + "request").build().toUri().toString();
 
         ResultActions actions = ResultActionsUtils.postRequestWithToken(
                 mvc, uri, accessToken, encryptedRefreshToken
