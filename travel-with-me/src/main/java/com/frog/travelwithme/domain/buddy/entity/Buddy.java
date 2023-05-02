@@ -53,6 +53,11 @@ public class Buddy {
         return this;
     }
 
+    public Buddy changeCancel() {
+        this.status = BuddyStatus.CANCEL;
+        return this;
+    }
+
     public void addMember(Member member) {
         this.member = member;
     }

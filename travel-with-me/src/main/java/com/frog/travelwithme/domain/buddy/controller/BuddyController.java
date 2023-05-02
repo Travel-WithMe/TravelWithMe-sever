@@ -39,4 +39,13 @@ public class BuddyController {
         return new ResponseEntity<>(new MessageResponseDto(response.getDescription()), HttpStatus.OK);
     }
 
+    @PostMapping("/{recruitment-id}/buddy/cancel")
+    public ResponseEntity cancelBuddy(@Positive @PathVariable("recruitment-id") Long recruitmentsId,
+                                      @AuthenticationPrincipal CustomUserDetails user) {
+
+        String email = user.getEmail();
+        EnumCollection.ResponseBody response = buddyService.cancelBuddyByUser(recruitmentsId, email);
+        return new ResponseEntity<>(new MessageResponseDto(response.getDescription()), HttpStatus.OK);
+    }
+
 }

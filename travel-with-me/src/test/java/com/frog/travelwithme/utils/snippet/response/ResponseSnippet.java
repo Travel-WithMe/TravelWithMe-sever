@@ -77,7 +77,7 @@ public class ResponseSnippet {
         );
     }
 
-    public static ResponseFieldsSnippet getBuddyMatchingSnippet() {
+    public static ResponseFieldsSnippet getBuddySnippet() {
         return responseFields(
                 fieldWithPath("message").type(JsonFieldType.STRING).description("매칭 신청 성공 메세지")
         );

@@ -36,22 +36,40 @@ public class BuddyService {
 
     private final MemberService memberService;
 
-    public EnumCollection.ResponseBody requestBuddyByUser(Long recruitmentId, String email) {
+    public ResponseBody requestBuddyByUser(Long recruitmentId, String email) {
         Recruitment recruitment = recruitmentService.findRecruitmentByIdAndCheckExpired(recruitmentId);
         Member member = memberService.findMemberAndCheckMemberExists(email);
         Optional<Buddy> findBuddy = buddyRepository.findBuddyByMemberAndRecruitment(member, recruitment);
         return this.requestBuddy(findBuddy, recruitment, member);
     }
 
-    private EnumCollection.ResponseBody requestBuddy(Optional<Buddy> findBuddy,
-                                                     Recruitment recruitment,
-                                                     Member member) {
+    public ResponseBody cancelBuddyByUser(Long recruitmentId, String email) {
+        Recruitment recruitment = recruitmentService.findRecruitmentByIdAndCheckExpired(recruitmentId);
+        Member member = memberService.findMemberAndCheckMemberExists(email);
+        Optional<Buddy> findBuddy = buddyRepository.findBuddyByMemberAndRecruitment(member, recruitment);
+        return this.cancelBuddy(findBuddy);
+    }
+
+    private ResponseBody requestBuddy(Optional<Buddy> findBuddy, Recruitment recruitment, Member member) {
         if(findBuddy.isEmpty()) {
             this.createBuddy(recruitment, member);
-            return EnumCollection.ResponseBody.NEW_REQUEST_BUDDY;
+            return ResponseBody.NEW_REQUEST_BUDDY;
         } else {
-            this.updateBuddy(findBuddy.get());
-            return EnumCollection.ResponseBody.RETRY_REQUEST_BUDDY;
+            Buddy buddy = findBuddy.get();
+            this.checkPossibleToRequestBuddy(buddy);
+            this.updateBuddyByStatus(buddy, BuddyStatus.CANCEL);
+            return ResponseBody.RETRY_REQUEST_BUDDY;
+        }
+    }
+
+    private ResponseBody cancelBuddy(Optional<Buddy> findBuddy) {
+        if(findBuddy.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.BUDDY_NOT_FOUND);
+        } else {
+            Buddy buddy = findBuddy.get();
+            this.checkPossibleToCancelBuddy(buddy);
+            this.updateBuddyByStatus(buddy, BuddyStatus.CANCEL);
+            return ResponseBody.CANCEL_BUDDY;
         }
     }
 
@@ -62,15 +80,30 @@ public class BuddyService {
         recruitment.addBuddy(buddy);
     }
 
-    private void updateBuddy(Buddy buddy) {
-        this.checkPossibleToRequestBuddy(buddy);
-        buddy.changeWait();
+    private void updateBuddyByStatus(Buddy buddy, BuddyStatus status) {
+        if(status.equals(BuddyStatus.WAIT)) {
+            buddy.changeWait();
+        } else if (status.equals(BuddyStatus.APPROVE)) {
+            buddy.changeApprove();
+        } else if (status.equals(BuddyStatus.REJECT)) {
+            buddy.changeReject();
+        } else if (status.equals(BuddyStatus.CANCEL)) {
+            buddy.changeCancel();
+        }
     }
 
     private void checkPossibleToRequestBuddy(Buddy buddy) {
         if (buddy.getStatus().equals(BuddyStatus.APPROVE)) {
             log.debug("BuddyService.checkPossibleToRequestBuddy exception occur buddy: {}", buddy);
             throw new BusinessLogicException(ExceptionCode.BUDDY_REQUEST_NOT_ALLOWED);
+        }
+    }
+
+    private void checkPossibleToCancelBuddy(Buddy buddy) {
+        BuddyStatus buddyStatus = buddy.getStatus();
+        if (buddyStatus.equals(BuddyStatus.REJECT) || buddyStatus.equals(BuddyStatus.CANCEL)) {
+            log.debug("BuddyService.checkPossibleToRequestBuddy exception occur buddy: {}", buddy);
+            throw new BusinessLogicException(ExceptionCode.BUDDY_CANCEL_NOT_ALLOWED);
         }
     }
 

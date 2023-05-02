@@ -72,4 +72,24 @@ class BuddyControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @DisplayName("동행 매칭취소")
+    @WithMockCustomUser
+    void buddyMatchingControllerTest2() throws Exception {
+        // given
+        EnumCollection.ResponseBody cancelBuddy = EnumCollection.ResponseBody.CANCEL_BUDDY;
+        given(buddyService.cancelBuddyByUser(any(),any())).willReturn(cancelBuddy);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1 + "/" + SUB_URL +
+                "/" + "cancel").build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.postRequestWithUserDetails(mvc, uri, userDetails);
+
+        // then
+        String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
+        assertThat(response).isEqualTo(cancelBuddy.getDescription());
+        actions
+                .andExpect(status().isOk());
+    }
+
 }

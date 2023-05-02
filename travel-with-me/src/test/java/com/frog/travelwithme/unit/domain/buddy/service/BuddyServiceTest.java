@@ -58,16 +58,11 @@ class BuddyServiceTest {
 
     @Test
     @DisplayName("동행 매칭신청 (신규)")
-    void buddyMatchingServiceTest1() {
+    void buddyServiceTest1() {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         Member member = StubData.MockMember.getMember();
         recruitment.addMember(member);
-
-        Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.addMember(member);
-        buddy.addRecruitment(recruitment);
-        buddy.changeReject();
 
         when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
         when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
@@ -87,7 +82,7 @@ class BuddyServiceTest {
 
     @Test
     @DisplayName("동행 매칭신청 (재신청)")
-    void buddyMatchingServiceTest2() {
+    void buddyServiceTest2() {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         Member member = StubData.MockMember.getMember();
@@ -116,7 +111,7 @@ class BuddyServiceTest {
 
     @Test
     @DisplayName("동행 매칭신청 (신청불가)")
-    void buddyMatchingServiceTest3() {
+    void buddyServiceTest3() {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         Member member = StubData.MockMember.getMember();
@@ -137,6 +132,80 @@ class BuddyServiceTest {
         assertThatThrownBy(() -> buddyService.requestBuddyByUser(recruitment.getId(), member.getEmail()))
                 .isInstanceOf(BusinessLogicException.class);
 
+    }
+
+    @Test
+    @DisplayName("동행 매칭취소")
+    void buddyServiceTest4() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Member member = StubData.MockMember.getMember();
+        recruitment.addMember(member);
+
+        Buddy buddy = StubData.MockBuddy.getBuddy();
+        buddy.addMember(member);
+        buddy.addRecruitment(recruitment);
+        buddy.changeWait();
+
+        when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
+        when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
+        when(buddyRepository.findBuddyByMemberAndRecruitment(any(),any()))
+                .thenReturn(Optional.of(buddy));
+
+
+        //when
+        ResponseBody response = buddyService.cancelBuddyByUser(recruitment.getId(), member.getEmail());
+
+        //then
+        assertAll(
+                () -> assertEquals(response.getName(), ResponseBody.CANCEL_BUDDY.getName()),
+                () -> assertEquals(response.getDescription(), ResponseBody.CANCEL_BUDDY.getDescription())
+        );
+    }
+
+    @Test
+    @DisplayName("동행 매칭취소 (매칭 이력이 없음)")
+    void buddyServiceTest5() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Member member = StubData.MockMember.getMember();
+        recruitment.addMember(member);
+
+        when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
+        when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
+        when(buddyRepository.findBuddyByMemberAndRecruitment(any(),any()))
+                .thenReturn(Optional.empty());
+
+
+        //when
+        //then
+        assertThatThrownBy(() -> buddyService.cancelBuddyByUser(recruitment.getId(), member.getEmail()))
+                .isInstanceOf(BusinessLogicException.class);
+    }
+
+    @Test
+    @DisplayName("동행 매칭취소 (취소불가)")
+    void buddyServiceTest6() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Member member = StubData.MockMember.getMember();
+        recruitment.addMember(member);
+
+        Buddy buddy = StubData.MockBuddy.getBuddy();
+        buddy.addMember(member);
+        buddy.addRecruitment(recruitment);
+        buddy.changeReject();
+
+        when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
+        when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
+        when(buddyRepository.findBuddyByMemberAndRecruitment(any(),any()))
+                .thenReturn(Optional.of(buddy));
+
+
+        //when
+        //then
+        assertThatThrownBy(() -> buddyService.cancelBuddyByUser(recruitment.getId(), member.getEmail()))
+                .isInstanceOf(BusinessLogicException.class);
     }
 
 }

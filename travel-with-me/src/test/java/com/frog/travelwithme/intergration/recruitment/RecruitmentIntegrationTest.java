@@ -73,7 +73,7 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("동행 작성 테스트")
-    void BuddyRecruitmentIntegrationTest1() throws Exception {
+    void recruitmentIntegrationTest1() throws Exception {
         // given
         CustomUserDetails userDetails = MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
@@ -118,7 +118,7 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("동행 수정 테스트")
-    void BuddyRecruitmentIntegrationTest2() throws Exception {
+    void recruitmentIntegrationTest2() throws Exception {
         // given
         CustomUserDetails userDetails = MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
@@ -165,7 +165,7 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("동행 삭제 테스트")
-    void BuddyRecruitmentIntegrationTest3() throws Exception {
+    void recruitmentIntegrationTest3() throws Exception {
         // given
         CustomUserDetails userDetails = MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
