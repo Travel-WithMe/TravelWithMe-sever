@@ -29,6 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Optional;
+
 import static com.frog.travelwithme.global.enums.EnumCollection.*;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getResponsePreProcessor;
@@ -232,6 +234,10 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         // then
         String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
         assertThat(response).isEqualTo(ResponseBody.CANCEL_BUDDY.getDescription());
+
+        Optional<Buddy> findBuddy = buddyRepository.findBuddyByMemberAndRecruitment(writer, recruitment);
+        assertThat(findBuddy.get().getStatus()).isEqualTo(BuddyStatus.CANCEL);
+
         actions
                 .andExpect(status().isOk())
                 .andDo(document("post-buddy-cancel-new",

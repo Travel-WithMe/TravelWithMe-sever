@@ -102,7 +102,7 @@ public class BuddyService {
     private void checkPossibleToCancelBuddy(Buddy buddy) {
         BuddyStatus buddyStatus = buddy.getStatus();
         if (buddyStatus.equals(BuddyStatus.REJECT) || buddyStatus.equals(BuddyStatus.CANCEL)) {
-            log.debug("BuddyService.checkPossibleToRequestBuddy exception occur buddy: {}", buddy);
+            log.debug("BuddyService.checkPossibleToCancelBuddy exception occur buddy: {}", buddy);
             throw new BusinessLogicException(ExceptionCode.BUDDY_CANCEL_NOT_ALLOWED);
         }
     }
