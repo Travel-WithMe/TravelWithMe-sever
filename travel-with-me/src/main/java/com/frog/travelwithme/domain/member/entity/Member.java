@@ -1,6 +1,6 @@
 package com.frog.travelwithme.domain.member.entity;
 
-import com.frog.travelwithme.domain.buddyrecuirtment.common.BaseTimeEntity;
+import com.frog.travelwithme.domain.common.BaseTimeEntity;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.global.enums.EnumCollection.Gender;
 import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;

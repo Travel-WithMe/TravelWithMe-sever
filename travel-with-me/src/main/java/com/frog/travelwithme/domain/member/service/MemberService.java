@@ -113,7 +113,7 @@ public class MemberService {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.debug("MemberServiceImpl.findMemberAndCheckMemberExists exception occur email: {}", email);
-                    throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+                    return new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
                 });
     }
 

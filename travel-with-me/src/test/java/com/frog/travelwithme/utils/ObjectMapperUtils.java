@@ -3,11 +3,8 @@ package com.frog.travelwithme.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.frog.travelwithme.domain.buddyrecuirtment.controller.dto.BuddyDto;
-import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.global.dto.MessageResponseDto;
 import com.frog.travelwithme.global.dto.SingleResponseDto;
-import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginResponse;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.io.UnsupportedEncodingException;
