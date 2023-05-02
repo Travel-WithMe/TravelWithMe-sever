@@ -69,15 +69,14 @@ class BuddyServiceTest {
         buddy.addRecruitment(recruitment);
         buddy.changeReject();
 
-        when(recruitmentService.findRecruitmentById(recruitment.getId())).thenReturn(recruitment);
-        doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);
+        when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
         when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
         when(buddyRepository.findBuddyByMemberAndRecruitment(any(),any()))
                 .thenReturn(Optional.empty());
 
 
         //when
-        ResponseBody response = buddyService.requestBuddy(recruitment.getId(), member.getEmail());
+        ResponseBody response = buddyService.requestBuddyByUser(recruitment.getId(), member.getEmail());
 
         //then
         assertAll(
@@ -99,15 +98,14 @@ class BuddyServiceTest {
         buddy.addRecruitment(recruitment);
         buddy.changeReject();
 
-        when(recruitmentService.findRecruitmentById(recruitment.getId())).thenReturn(recruitment);
-        doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);
+        when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
         when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
         when(buddyRepository.findBuddyByMemberAndRecruitment(any(),any()))
                 .thenReturn(Optional.of(buddy));
 
 
         //when
-        ResponseBody response = buddyService.requestBuddy(recruitment.getId(), member.getEmail());
+        ResponseBody response = buddyService.requestBuddyByUser(recruitment.getId(), member.getEmail());
 
         //then
         assertAll(
@@ -129,15 +127,14 @@ class BuddyServiceTest {
         buddy.addRecruitment(recruitment);
         buddy.changeApprove();
 
-        when(recruitmentService.findRecruitmentById(recruitment.getId())).thenReturn(recruitment);
-        doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);
+        when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
         when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
         when(buddyRepository.findBuddyByMemberAndRecruitment(any(),any()))
                 .thenReturn(Optional.of(buddy));
 
         //when
         //then
-        assertThatThrownBy(() -> buddyService.requestBuddy(recruitment.getId(), member.getEmail()))
+        assertThatThrownBy(() -> buddyService.requestBuddyByUser(recruitment.getId(), member.getEmail()))
                 .isInstanceOf(BusinessLogicException.class);
 
     }

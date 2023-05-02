@@ -35,7 +35,7 @@ public class BuddyController {
                                        @AuthenticationPrincipal CustomUserDetails user) {
 
         String email = user.getEmail();
-        EnumCollection.ResponseBody response = buddyService.requestBuddy(recruitmentsId, email);
+        EnumCollection.ResponseBody response = buddyService.requestBuddyByUser(recruitmentsId, email);
         return new ResponseEntity<>(new MessageResponseDto(response.getDescription()), HttpStatus.OK);
     }
 

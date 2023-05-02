@@ -76,6 +76,13 @@ public class RecruitmentService {
     }
 
     @Transactional(readOnly = true)
+    public Recruitment findRecruitmentByIdAndCheckExpired(Long recruitmentId) {
+        Recruitment recruitment = this.findRecruitmentById(recruitmentId);
+        this.checkExpiredRecruitment(recruitment);
+        return recruitment;
+    }
+
+    @Transactional(readOnly = true)
     public Recruitment checkEqualWriterAndUser(Long recruitmentId, String email) {
         Recruitment findRecruitment = this.findRecruitmentById(recruitmentId);
         Member writer = findRecruitment.getMember();

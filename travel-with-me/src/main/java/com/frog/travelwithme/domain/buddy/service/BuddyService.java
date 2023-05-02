@@ -36,44 +36,42 @@ public class BuddyService {
 
     private final MemberService memberService;
 
-    public EnumCollection.ResponseBody requestBuddy(Long recruitmentId, String email) {
-        Recruitment recruitment = recruitmentService.findRecruitmentById(recruitmentId);
-        recruitmentService.checkExpiredRecruitment(recruitment);
-
+    public EnumCollection.ResponseBody requestBuddyByUser(Long recruitmentId, String email) {
+        Recruitment recruitment = recruitmentService.findRecruitmentByIdAndCheckExpired(recruitmentId);
         Member member = memberService.findMemberAndCheckMemberExists(email);
-        Optional<Buddy> findBuddy = this.findBuddyByMemberAndRecruitment(
-                member, recruitment
-        );
+        Optional<Buddy> findBuddy = buddyRepository.findBuddyByMemberAndRecruitment(member, recruitment);
+        return this.requestBuddy(findBuddy, recruitment, member);
+    }
 
-        if(this.checkEmptyBuddyMatching(findBuddy)) {
-            Buddy buddy = new Buddy(BuddyStatus.WAIT);
-            buddy.addMember(member);
-            buddy.addRecruitment(recruitment);
-            recruitment.addBuddy(buddy);
+    private EnumCollection.ResponseBody requestBuddy(Optional<Buddy> findBuddy,
+                                                     Recruitment recruitment,
+                                                     Member member) {
+        if(findBuddy.isEmpty()) {
+            this.createBuddy(recruitment, member);
             return EnumCollection.ResponseBody.NEW_REQUEST_BUDDY;
         } else {
-            findBuddy.get().changeWait();
+            this.updateBuddy(findBuddy.get());
             return EnumCollection.ResponseBody.RETRY_REQUEST_BUDDY;
         }
-
     }
 
-    public Optional<Buddy> findBuddyByMemberAndRecruitment(Member member,
-                                                          Recruitment recruitment) {
-        return buddyRepository.findBuddyByMemberAndRecruitment(member, recruitment);
+    private void createBuddy(Recruitment recruitment, Member member) {
+        Buddy buddy = new Buddy(BuddyStatus.WAIT);
+        buddy.addMember(member);
+        buddy.addRecruitment(recruitment);
+        recruitment.addBuddy(buddy);
     }
 
-    private boolean checkEmptyBuddyMatching(Optional<Buddy> buddy) {
-        boolean check;
-        if (buddy.isEmpty()) {
-            check = true;
-        } else if (buddy.get().getStatus().equals(BuddyStatus.REJECT)) {
-            check = false;
-        } else {
-            log.debug("BuddyMatchingService.requestBuddy exception occur buddy: {}", buddy);
+    private void updateBuddy(Buddy buddy) {
+        this.checkPossibleToRequestBuddy(buddy);
+        buddy.changeWait();
+    }
+
+    private void checkPossibleToRequestBuddy(Buddy buddy) {
+        if (buddy.getStatus().equals(BuddyStatus.APPROVE)) {
+            log.debug("BuddyService.checkPossibleToRequestBuddy exception occur buddy: {}", buddy);
             throw new BusinessLogicException(ExceptionCode.BUDDY_REQUEST_NOT_ALLOWED);
         }
-        return check;
     }
 
 }

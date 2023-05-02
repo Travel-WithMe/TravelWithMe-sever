@@ -27,7 +27,7 @@ public class Buddy {
     @Enumerated(value = EnumType.STRING)
     private BuddyStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
@@ -40,14 +40,17 @@ public class Buddy {
         this.status = status;
     }
 
-    public void changeWait() {
+    public Buddy changeWait() {
         this.status = BuddyStatus.WAIT;
+        return this;
     }
-    public void changeReject() {
+    public Buddy changeReject() {
         this.status = BuddyStatus.REJECT;
+        return this;
     }
-    public void changeApprove() {
+    public Buddy changeApprove() {
         this.status = BuddyStatus.APPROVE;
+        return this;
     }
 
     public void addMember(Member member) {

@@ -55,7 +55,7 @@ public class Recruitment extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     RecruitmentStatus recruitmentStatus;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 

@@ -58,7 +58,7 @@ class BuddyControllerTest {
     void buddyMatchingControllerTest1() throws Exception {
         // given
         EnumCollection.ResponseBody requestBuddy = EnumCollection.ResponseBody.NEW_REQUEST_BUDDY;
-        given(buddyService.requestBuddy(any(),any())).willReturn(requestBuddy);
+        given(buddyService.requestBuddyByUser(any(),any())).willReturn(requestBuddy);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1 + "/" + SUB_URL +
