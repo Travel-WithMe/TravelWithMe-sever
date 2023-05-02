@@ -212,12 +212,13 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
-        Member writer = memberRepository.findByEmail(EMAIL).get();
+        Member user = memberRepository.findByEmail(EMAIL).get();
+        Member writer = memberRepository.findByEmail(EMAIL_OTHER).get();
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         recruitment.addMember(writer);
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
         Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.addMember(writer);
+        buddy.addMember(user);
         buddy.addRecruitment(saveRecruitment);
         saveRecruitment.addBuddy(buddy);
         Long recruitmentId = saveRecruitment.getId();
@@ -235,12 +236,12 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
         assertThat(response).isEqualTo(ResponseBody.CANCEL_BUDDY.getDescription());
 
-        Optional<Buddy> findBuddy = buddyRepository.findBuddyByMemberAndRecruitment(writer, recruitment);
+        Optional<Buddy> findBuddy = buddyRepository.findBuddyByMemberAndRecruitment(user, saveRecruitment);
         assertThat(findBuddy.get().getStatus()).isEqualTo(BuddyStatus.CANCEL);
 
         actions
                 .andExpect(status().isOk())
-                .andDo(document("post-buddy-cancel-new",
+                .andDo(document("post-buddy-cancel",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         ResponseSnippet.getBuddySnippet()
