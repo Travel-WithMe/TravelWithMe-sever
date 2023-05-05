@@ -3,6 +3,7 @@ package com.frog.travelwithme.utils;
 import com.frog.travelwithme.domain.buddy.entity.Buddy;
 import com.frog.travelwithme.domain.common.DeletionEntity;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
+import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
@@ -19,6 +20,7 @@ import com.frog.travelwithme.global.utils.TimeUtils;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -307,9 +309,16 @@ public class StubData {
         static final String profileImage = "profileImage";
         static final String nickname = "nickname";
         static final boolean isLiked = false;
+        @Getter
+        static final String tagName = "tagName";
         static final Long commentCount = 100L;
         static final Long likeCount = 100L;
-        static final List<String> tags = List.of("tag");
+        static final Long tagCount = 100L;
+        static final List<String> tags = List.of(tagName + "1", tagName + "2");
+        @Getter
+        static final int size = 20;
+        static boolean isWriter = true;
+
 
         public static FeedDto.Post getPostDto() {
             return FeedDto.Post.builder()
@@ -327,19 +336,24 @@ public class StubData {
                     .build();
         }
 
-        public static List<FeedDto.Response> getResponseDtos() {
-            FeedDto.Response response = FeedDto.Response.builder()
+        public static FeedDto.Response getResponseDto() {
+            return FeedDto.Response.builder()
                     .contents(contents)
                     .location(location)
                     .profileImage(profileImage)
-                    .isLiked(isLiked)
-                    .nickName(nickname)
+                    .liked(isLiked)
+                    .writer(isWriter)
+                    .nickname(nickname)
                     .likeCount(likeCount)
                     .commentCount(commentCount)
                     .tags(tags)
                     .build();
+        }
 
-            return List.of(response);
+        public static List<FeedDto.Response> getResponseDtos() {
+            FeedDto.Response responseDto = getResponseDto();
+
+            return List.of(responseDto);
         }
 
         public static FeedDto.ResponseDetail getResponseDetailDto() {
@@ -350,6 +364,22 @@ public class StubData {
                     // TODO: comments, tags 객체로 반환
                     .comments(List.of("comment"))
                     .tags(tags)
+                    .build();
+        }
+
+        public static List<TagDto.Response> getTagResponseDtoList(int dtoCount) {
+            List<TagDto.Response> responseList = new ArrayList<>();
+            for (int i = 1; i <= dtoCount; i++) {
+                responseList.add(getTagResponseDto(i));
+            }
+
+            return responseList;
+        }
+
+        private static TagDto.Response getTagResponseDto(int addName) {
+            return TagDto.Response.builder()
+                    .name(tagName + addName)
+                    .count(tagCount)
                     .build();
         }
     }
