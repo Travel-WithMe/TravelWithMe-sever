@@ -172,6 +172,17 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
+    public static ResultActions patchRequestWithContent(MockMvc mockMvc,
+                                                        String url,
+                                                        String json) throws Exception {
+
+        return mockMvc.perform(patch(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .content(json))
+                .andDo(print());
+    }
+
     public static ResultActions patchRequestWithContentAndToken(MockMvc mockMvc,
                                                                 String url,
                                                                 String json,
@@ -319,6 +330,30 @@ public class ResultActionsUtils {
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                         .with(user(userDetails))
                         .with(csrf()))
+                .andDo(print());
+    }
+
+    public static ResultActions getRequestWithParams(MockMvc mockMvc,
+                                                     String url,
+                                                     MultiValueMap<String, String> tagNamePapram) throws Exception {
+        return mockMvc.perform(get(url)
+                        .with(csrf())
+                        .params(tagNamePapram))
+                .andDo(print());
+    }
+
+    public static ResultActions getRequestWithTokenAndTwoParams(MockMvc mockMvc,
+                                                                String url,
+                                                                String accessToken,
+                                                                String encryptedRefreshToken,
+                                                                MultiValueMap<String, String> tagNamePapram,
+                                                                MultiValueMap<String, String> sizePapram) throws Exception {
+        return mockMvc.perform(get(url)
+                        .with(csrf())
+                        .params(tagNamePapram)
+                        .params(sizePapram)
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
                 .andDo(print());
     }
 }
