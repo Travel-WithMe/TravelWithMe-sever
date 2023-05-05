@@ -26,6 +26,10 @@ public enum ExceptionCode {
     BUDDY_REQUEST_NOT_ALLOWED(404, "동행매칭 요청이 불가능한 상태입니다."),
     BUDDY_CANCEL_NOT_ALLOWED(404, "동행매칭 취소가 불가능한 상태입니다."),
 
+    // Feed
+    FEED_NOT_FOUND(404, "피드가 존재하지 않습니다."),
+    FEED_WRITER_NOT_MATCH(404, "해당 피드를 작성한 유저가 아닙니다."),
+
     // Security, JWT
     NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),
     TOKEN_SIGNATURE_INVALID(400, "토큰 Signature가 올바르지 않습니다."),
