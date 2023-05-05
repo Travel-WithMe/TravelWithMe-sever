@@ -2,7 +2,9 @@ package com.frog.travelwithme.unit.domain.feed.controller;
 
 import com.frog.travelwithme.domain.feed.controller.FeedController;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
+import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
 import com.frog.travelwithme.domain.feed.service.FeedService;
+import com.frog.travelwithme.domain.feed.service.TagService;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.ResultActionsUtils;
@@ -18,13 +20,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,14 +47,20 @@ class FeedControllerTest {
 
     private final String BASE_URL = "/feed";
 
+    private final String TAG_NAME = StubData.MockFeed.getTagName();
+
+    private final int SIZE = StubData.MockFeed.getSize();
     @Autowired
-    protected MockMvc mvc;
+    private MockMvc mvc;
 
     @MockBean
-    protected FeedService feedService;
+    private FeedService feedService;
+
+    @MockBean
+    private TagService tagService;
 
     @Mock
-    protected CustomUserDetails userDetails;
+    private CustomUserDetails userDetails;
 
     @Test
     @DisplayName("피드 작성")
@@ -59,7 +68,7 @@ class FeedControllerTest {
     void feedControllerTest1() throws Exception {
         // given
         FeedDto.Post postDto = StubData.MockFeed.getPostDto();
-        FeedDto.ResponseDetail response = StubData.MockFeed.getResponseDetailDto();
+        FeedDto.Response response = StubData.MockFeed.getResponseDto();
         given(feedService.postFeed(any(), any(FeedDto.Post.class))).willReturn(response);
 
         // when
@@ -78,13 +87,13 @@ class FeedControllerTest {
     @WithMockCustomUser
     void feedControllerTest2() throws Exception {
         // given
-        FeedDto.ResponseDetail response = StubData.MockFeed.getResponseDetailDto();
-        given(feedService.findFeedById(anyLong())).willReturn(response);
+        FeedDto.Response response = StubData.MockFeed.getResponseDto();
+        given(feedService.findFeedById(any(), anyLong())).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/1")
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.getRequest(mvc, uri);
+        ResultActions actions = ResultActionsUtils.getRequestWithUserDetails(mvc, uri, userDetails);
 
         // then
         actions
@@ -97,12 +106,12 @@ class FeedControllerTest {
     void feedControllerTest3() throws Exception {
         // given
         List<FeedDto.Response> responseDtos = StubData.MockFeed.getResponseDtos();
-        given(feedService.findAll()).willReturn(responseDtos);
+        given(feedService.findAll(anyLong(), any())).willReturn(responseDtos);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.getRequest(mvc, uri);
+        ResultActions actions = ResultActionsUtils.getRequestWithUserDetails(mvc, uri, userDetails);
 
         // then
         actions
@@ -115,8 +124,8 @@ class FeedControllerTest {
     void feedControllerTest4() throws Exception {
         // given
         FeedDto.Patch patchDto = StubData.MockFeed.getPatchDto();
-        FeedDto.ResponseDetail response = StubData.MockFeed.getResponseDetailDto();
-        given(feedService.updateFeedById( any(), anyLong(), any(FeedDto.Patch.class))).willReturn(response);
+        FeedDto.Response response = StubData.MockFeed.getResponseDto();
+        given(feedService.updateFeed(any(), anyLong(), any(FeedDto.Patch.class))).willReturn(response);
 
         // when
         String json = ObjectMapperUtils.asJsonString(patchDto);
@@ -134,12 +143,36 @@ class FeedControllerTest {
     @WithMockCustomUser
     void feedControllerTest5() throws Exception {
         // given
-        doNothing().when(feedService).deleteFeedById(any(), anyLong());
+        doNothing().when(feedService).deleteFeed(any(), anyLong());
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/1")
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.deleteRequestWithUserDetails(mvc, uri, userDetails);
+
+        // then
+        actions
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Tag Name과 유사한 모든 TAG 조회")
+    @WithMockCustomUser
+    void feedControllerTest6() throws Exception {
+        // given
+        List<TagDto.Response> expectedResponse = StubData.MockFeed.getTagResponseDtoList(2);
+        given(tagService.findTagsStartingWith(any(), anyInt())).willReturn(expectedResponse);
+        String tagName = StubData.MockFeed.getTagName();
+        MultiValueMap<String, String> tagNamePapram = new LinkedMultiValueMap<>();
+        tagNamePapram.add(tagName, tagName);
+        MultiValueMap<String, String> sizeParam = new LinkedMultiValueMap<>();
+        tagNamePapram.add(TAG_NAME, TAG_NAME);
+        sizeParam.add("size", String.valueOf(SIZE));
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/tags")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.getRequestWithTwoParams(mvc, uri, tagNamePapram, sizeParam);
 
         // then
         actions
