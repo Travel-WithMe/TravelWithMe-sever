@@ -1,5 +1,6 @@
 package com.frog.travelwithme.domain.feed.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -39,13 +40,17 @@ public class FeedDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Response {
-        String nickName;
+        Long id;
+        String nickname;
         String profileImage;
         String contents;
         String location;
         long likeCount;
         long commentCount;
-        boolean isLiked;
+        @JsonProperty("isWriter")
+        boolean writer;
+        @JsonProperty("isLiked")
+        boolean liked;
         LocalDateTime createdAt;
         List<String> tags;
     }
@@ -55,11 +60,23 @@ public class FeedDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class ResponseDetail {
+        Long id;
+        String contents;
         String nickName;
         String prfileImage;
-        String contents;
+        boolean isWriter;
         List<String> tags;
         // TODO: 댓글 구현 고민
         List<String> comments;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class InternalPatch {
+        String contents;
+        String location;
+        List<String> tags;
     }
 }
