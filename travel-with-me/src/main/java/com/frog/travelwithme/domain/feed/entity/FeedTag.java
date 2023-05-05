@@ -14,9 +14,12 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FeedTag {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feed_id")
@@ -27,7 +30,8 @@ public class FeedTag {
     private Tag tag;
 
     @Builder
-    public FeedTag(Feed feed, Tag tag) {
+    public FeedTag(String name, Feed feed, Tag tag) {
+        this.name = name;
         this.feed = feed;
         this.tag = tag;
     }
