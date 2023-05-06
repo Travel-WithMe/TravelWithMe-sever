@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.NoSuchAlgorithmException;
@@ -67,27 +68,27 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public MemberDto.Response findMemberByEmail(String email) {
-        Member findMember = this.findMemberAndCheckMemberExists(email);
+        Member findMember = this.findMember(email);
 
         return memberMapper.toDto(findMember);
     }
 
     @Transactional(readOnly = true)
     public MemberDto.Response findMemberById(Long id) {
-        Member findMember = this.findMemberAndCheckMemberExists(id);
+        Member findMember = this.findMember(id);
 
         return memberMapper.toDto(findMember);
     }
 
     public MemberDto.Response updateMember(MemberDto.Patch patchDto, String email) {
-        Member findMember = this.findMemberAndCheckMemberExists(email);
+        Member findMember = this.findMember(email);
         findMember.updateMemberData(patchDto);
 
         return memberMapper.toDto(findMember);
     }
 
     @Transactional(readOnly = true)
-    public Member findMemberAndCheckMemberExists(Long id) {
+    public Member findMember(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> {
                     log.debug("MemberServiceImpl.findMemberAndCheckMemberExists exception occur id: {}", id);
@@ -96,12 +97,12 @@ public class MemberService {
     }
 
     public void deleteMember(String email) {
-        this.findMemberAndCheckMemberExists(email);
+        this.findMember(email);
         memberRepository.deleteByEmail(email);
     }
 
-    public MemberDto.Response changeProfileImage(MultipartFile multipartFile, String email) {
-        Member findMember = this.findMemberAndCheckMemberExists(email);
+    public MemberDto.Response changeProfileImage(@RequestPart MultipartFile file, String email) {
+        Member findMember = this.findMember(email);
         // TODO: 수정된 image url 변경 예정
         findMember.changeImage("newImageUrl");
 
@@ -109,7 +110,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public Member findMemberAndCheckMemberExists(String email) {
+    public Member findMember(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.debug("MemberServiceImpl.findMemberAndCheckMemberExists exception occur email: {}", email);
