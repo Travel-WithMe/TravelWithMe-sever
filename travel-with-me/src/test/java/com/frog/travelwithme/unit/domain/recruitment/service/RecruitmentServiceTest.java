@@ -56,7 +56,7 @@ class RecruitmentServiceTest {
         Member member = StubData.MockMember.getMember();
         recruitment.addMember(member);
 
-        when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
+        when(memberService.findMember(member.getEmail())).thenReturn(member);
         when(buddyMapper.toEntity(postDto)).thenReturn(recruitment);
         when(recruitmentRepository.save(recruitment)).thenReturn(recruitment);
         when(buddyMapper.toPostResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);

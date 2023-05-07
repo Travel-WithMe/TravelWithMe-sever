@@ -1,12 +1,11 @@
 package com.frog.travelwithme.domain.buddy.service;
 
 import com.frog.travelwithme.domain.buddy.entity.Buddy;
-import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
 import com.frog.travelwithme.domain.buddy.repository.BuddyRepository;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
+import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
 import com.frog.travelwithme.domain.recruitment.service.RecruitmentService;
-import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static com.frog.travelwithme.global.enums.EnumCollection.*;
+import static com.frog.travelwithme.global.enums.EnumCollection.BuddyStatus;
+import static com.frog.travelwithme.global.enums.EnumCollection.ResponseBody;
 
 /**
  * 작성자: 이재혁
@@ -38,14 +38,14 @@ public class BuddyService {
 
     public ResponseBody requestBuddyByUser(Long recruitmentId, String email) {
         Recruitment recruitment = recruitmentService.findRecruitmentByIdAndCheckExpired(recruitmentId);
-        Member member = memberService.findMemberAndCheckMemberExists(email);
+        Member member = memberService.findMember(email);
         Optional<Buddy> findBuddy = buddyRepository.findBuddyByMemberAndRecruitment(member, recruitment);
         return this.requestBuddy(findBuddy, recruitment, member);
     }
 
     public ResponseBody cancelBuddyByUser(Long recruitmentId, String email) {
         Recruitment recruitment = recruitmentService.findRecruitmentByIdAndCheckExpired(recruitmentId);
-        Member member = memberService.findMemberAndCheckMemberExists(email);
+        Member member = memberService.findMember(email);
         Optional<Buddy> findBuddy = buddyRepository.findBuddyByMemberAndRecruitment(member, recruitment);
         return this.cancelBuddy(findBuddy);
     }
