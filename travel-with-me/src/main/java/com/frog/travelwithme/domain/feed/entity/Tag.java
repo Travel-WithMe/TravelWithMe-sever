@@ -1,6 +1,5 @@
 package com.frog.travelwithme.domain.feed.entity;
 
-import com.frog.travelwithme.domain.buddyrecuirtment.common.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,7 +13,7 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Tag extends BaseTimeEntity {
+public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
