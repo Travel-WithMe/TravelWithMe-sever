@@ -4,7 +4,6 @@ import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto.Response;
 import com.frog.travelwithme.domain.feed.entity.Feed;
 import com.frog.travelwithme.domain.feed.entity.FeedTag;
-import com.frog.travelwithme.domain.feed.entity.Tag;
 import com.frog.travelwithme.domain.feed.mapper.FeedMapper;
 import com.frog.travelwithme.domain.feed.repository.FeedRepository;
 import com.frog.travelwithme.domain.member.entity.Member;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 작성자: 김찬빈
@@ -39,9 +37,10 @@ public class FeedService {
         Feed feed = feedMapper.toEntity(postDto);
         Member saveMember = memberService.findMember(email);
         feed.setMember(saveMember);
-        List<Tag> tagList = this.findOrCreateTags(postDto.getTags());
-        List<FeedTag> feedTagList = this.createFeedTags(feed, tagList);
-        feed.setFeedTagList(feedTagList);
+        if (postDto.getTags() != null) {
+            List<FeedTag> feedTags = tagService.createFeedTags(feed, postDto.getTags());
+            feedTags.forEach(feed::addFeedTag);
+        }
         Feed saveFeed = feedRepository.save(feed);
 
         return feedMapper.toResponse(saveFeed, email);
@@ -64,10 +63,11 @@ public class FeedService {
         String writerEmail = saveFeed.getMember().getEmail();
         this.checkWriter(email, writerEmail);
         FeedDto.InternalPatch internalPatchDto = feedMapper.toInternalDto(patchDto);
-        List<Tag> tagList = this.findOrCreateTags(internalPatchDto.getTags());
-        List<FeedTag> feedTagList = this.createFeedTags(saveFeed, tagList);
         saveFeed.updateFeedData(internalPatchDto);
-        feedTagList.forEach(saveFeed::addFeedTag);
+        if (internalPatchDto.getTags() != null) {
+            List<FeedTag> feedTags = tagService.createFeedTags(saveFeed, internalPatchDto.getTags());
+            feedTags.forEach(saveFeed::addFeedTag);
+        }
 
         return feedMapper.toResponse(saveFeed, email);
     }
@@ -93,21 +93,5 @@ public class FeedService {
                     log.debug("FeedService.findFeed exception occur feedId : {}", feedId);
                     throw new BusinessLogicException(ExceptionCode.FEED_NOT_FOUND);
                 });
-    }
-
-    private List<FeedTag> createFeedTags(Feed feed, List<Tag> tagList) {
-        return tagList.stream()
-                .map(tag -> FeedTag.builder()
-                        .tag(tag)
-                        .feed(feed)
-                        .name(tag.getName())
-                        .build())
-                .collect(Collectors.toList());
-    }
-
-    private List<Tag> findOrCreateTags(List<String> tagNames) {
-        return tagNames.stream()
-                .map(tagService::findOrCreateTag)
-                .collect(Collectors.toList());
     }
 }

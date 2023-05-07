@@ -68,12 +68,16 @@ public class Feed extends BaseTimeEntity {
     }
 
     public void addFeedTag(FeedTag feedTag) {
-        List<String> tagNameList = this.feedTagList
-                .stream()
-                .map(FeedTag::getName)
-                .collect(Collectors.toList());
-        if (!tagNameList.contains(feedTag.getName())) {
-            this.feedTagList.add(feedTag);
+        if (this.feedTagList == null) {
+            this.feedTagList = new ArrayList<>(List.of(feedTag));
+        } else {
+            List<String> tagNameList = this.feedTagList
+                    .stream()
+                    .map(FeedTag::getName)
+                    .collect(Collectors.toList());
+            if (!tagNameList.contains(feedTag.getName())) {
+                this.feedTagList.add(feedTag);
+            }
         }
     }
 }
