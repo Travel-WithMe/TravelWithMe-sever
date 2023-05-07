@@ -3,10 +3,8 @@ package com.frog.travelwithme.domain.feed.mapper;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.entity.Feed;
 import com.frog.travelwithme.domain.feed.entity.FeedTag;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.mapstruct.ReportingPolicy;
+import com.frog.travelwithme.domain.member.entity.Member;
+import org.mapstruct.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +18,7 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface FeedMapper {
 
-    Feed toEntity(FeedDto.Post postDto);
+    Feed postDtoToFeed(FeedDto.Post postDto, Member member);
 
     FeedDto.InternalPatch toInternalDto(FeedDto.Patch patchDto);
 

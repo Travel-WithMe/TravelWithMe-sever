@@ -59,14 +59,6 @@ public class Feed extends BaseTimeEntity {
                 .ifPresent(updateLocation -> this.location = updateLocation);
     }
 
-    public void setMember(Member member) {
-        this.member = member;
-    }
-
-    public void setFeedTagList(List<FeedTag> feedTagList) {
-        this.feedTagList = feedTagList;
-    }
-
     public void addFeedTag(FeedTag feedTag) {
         if (this.feedTagList == null) {
             this.feedTagList = new ArrayList<>(List.of(feedTag));
