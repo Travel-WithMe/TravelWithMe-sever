@@ -1,14 +1,14 @@
 package com.frog.travelwithme.unit.domain.buddy.service;
 
 import com.frog.travelwithme.domain.buddy.entity.Buddy;
-import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
-import com.frog.travelwithme.domain.recruitment.mapper.RecruitmentMapper;
 import com.frog.travelwithme.domain.buddy.repository.BuddyRepository;
-import com.frog.travelwithme.domain.recruitment.repository.RecruitmentRepository;
 import com.frog.travelwithme.domain.buddy.service.BuddyService;
-import com.frog.travelwithme.domain.recruitment.service.RecruitmentService;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
+import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
+import com.frog.travelwithme.domain.recruitment.mapper.RecruitmentMapper;
+import com.frog.travelwithme.domain.recruitment.repository.RecruitmentRepository;
+import com.frog.travelwithme.domain.recruitment.service.RecruitmentService;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.utils.StubData;
 import lombok.extern.slf4j.Slf4j;
@@ -21,11 +21,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.frog.travelwithme.global.enums.EnumCollection.*;
+import static com.frog.travelwithme.global.enums.EnumCollection.ResponseBody;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 /**
@@ -65,7 +65,7 @@ class BuddyServiceTest {
         recruitment.addMember(member);
 
         when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
-        when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
+        when(memberService.findMember(member.getEmail())).thenReturn(member);
         when(buddyRepository.findBuddyByMemberAndRecruitment(any(),any()))
                 .thenReturn(Optional.empty());
 
@@ -94,7 +94,7 @@ class BuddyServiceTest {
         buddy.changeReject();
 
         when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
-        when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
+        when(memberService.findMember(member.getEmail())).thenReturn(member);
         when(buddyRepository.findBuddyByMemberAndRecruitment(any(),any()))
                 .thenReturn(Optional.of(buddy));
 
@@ -123,7 +123,7 @@ class BuddyServiceTest {
         buddy.changeApprove();
 
         when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
-        when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
+        when(memberService.findMember(member.getEmail())).thenReturn(member);
         when(buddyRepository.findBuddyByMemberAndRecruitment(any(),any()))
                 .thenReturn(Optional.of(buddy));
 
@@ -148,7 +148,7 @@ class BuddyServiceTest {
         buddy.changeWait();
 
         when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
-        when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
+        when(memberService.findMember(member.getEmail())).thenReturn(member);
         when(buddyRepository.findBuddyByMemberAndRecruitment(any(),any()))
                 .thenReturn(Optional.of(buddy));
 
@@ -172,7 +172,7 @@ class BuddyServiceTest {
         recruitment.addMember(member);
 
         when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
-        when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
+        when(memberService.findMember(member.getEmail())).thenReturn(member);
         when(buddyRepository.findBuddyByMemberAndRecruitment(any(),any()))
                 .thenReturn(Optional.empty());
 
@@ -197,7 +197,7 @@ class BuddyServiceTest {
         buddy.changeReject();
 
         when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
-        when(memberService.findMemberAndCheckMemberExists(member.getEmail())).thenReturn(member);
+        when(memberService.findMember(member.getEmail())).thenReturn(member);
         when(buddyRepository.findBuddyByMemberAndRecruitment(any(),any()))
                 .thenReturn(Optional.of(buddy));
 
