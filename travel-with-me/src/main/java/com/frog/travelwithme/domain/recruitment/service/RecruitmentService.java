@@ -40,7 +40,7 @@ public class RecruitmentService {
     public RecruitmentDto.PostResponse createRecruitmentByUser(RecruitmentDto.Post postDto,
                                                                String email) {
 
-        Member findMember = memberService.findMemberAndCheckMemberExists(email);
+        Member findMember = memberService.findMember(email);
         return this.createRecruitment(postDto, findMember);
     }
 
