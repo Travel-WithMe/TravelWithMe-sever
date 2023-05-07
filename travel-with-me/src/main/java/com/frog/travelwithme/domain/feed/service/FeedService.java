@@ -34,9 +34,8 @@ public class FeedService {
     private final FeedMapper feedMapper;
 
     public Response postFeed(String email, FeedDto.Post postDto) {
-        Feed feed = feedMapper.toEntity(postDto);
         Member saveMember = memberService.findMember(email);
-        feed.setMember(saveMember);
+        Feed feed = feedMapper.postDtoToFeed(postDto, saveMember);
         if (postDto.getTags() != null) {
             List<FeedTag> feedTags = tagService.createFeedTags(feed, postDto.getTags());
             feedTags.forEach(feed::addFeedTag);
