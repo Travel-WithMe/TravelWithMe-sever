@@ -3,15 +3,10 @@ package com.frog.travelwithme.domain.feed.entity;
 import com.frog.travelwithme.domain.common.BaseTimeEntity;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.member.entity.Member;
-import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * Feed 설명: 피드 관리
@@ -41,15 +36,17 @@ public class Feed extends BaseTimeEntity {
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-    @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FeedTag> feedTagList = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name = "feed_tag",
+            joinColumns = @JoinColumn(name = "feed_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tags = new LinkedHashSet<>();
 
     @Builder
-    public Feed(String contents, String location, Member member, List<FeedTag> feedTagList) {
+    public Feed(String contents, String location, Member member) {
         this.contents = contents;
         this.location = location;
         this.member = member;
-        this.feedTagList = feedTagList;
     }
 
     public void updateFeedData(FeedDto.InternalPatch internalPatchDto) {
@@ -59,17 +56,7 @@ public class Feed extends BaseTimeEntity {
                 .ifPresent(updateLocation -> this.location = updateLocation);
     }
 
-    public void addFeedTag(FeedTag feedTag) {
-        if (this.feedTagList == null) {
-            this.feedTagList = new ArrayList<>(List.of(feedTag));
-        } else {
-            List<String> tagNameList = this.feedTagList
-                    .stream()
-                    .map(FeedTag::getName)
-                    .collect(Collectors.toList());
-            if (!tagNameList.contains(feedTag.getName())) {
-                this.feedTagList.add(feedTag);
-            }
-        }
+    public void addTags(Set<Tag> tags) {
+        this.tags.addAll(tags);
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.frog.travelwithme.domain.feed.entity.QFeed.feed;
-import static com.frog.travelwithme.domain.feed.entity.QFeedTag.feedTag;
+import static com.frog.travelwithme.domain.feed.entity.QTag.tag;
 import static com.frog.travelwithme.domain.member.entity.QMember.member;
 
 /**
@@ -30,7 +30,7 @@ public class FeedCustomRepositoryImpl implements FeedCustomRepository {
         return jpaQueryFactory
                 .selectFrom(feed)
                 .leftJoin(feed.member, member)
-                .leftJoin(feed.feedTagList, feedTag)
+                .leftJoin(feed.tags, tag)
                 .where(ltFeedId(lastFeedId))
                 .orderBy(feed.id.desc())
                 .limit(pageSize)

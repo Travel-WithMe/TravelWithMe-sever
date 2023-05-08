@@ -3,7 +3,7 @@ package com.frog.travelwithme.domain.feed.service;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto.Response;
 import com.frog.travelwithme.domain.feed.entity.Feed;
-import com.frog.travelwithme.domain.feed.entity.FeedTag;
+import com.frog.travelwithme.domain.feed.entity.Tag;
 import com.frog.travelwithme.domain.feed.mapper.FeedMapper;
 import com.frog.travelwithme.domain.feed.repository.FeedRepository;
 import com.frog.travelwithme.domain.member.entity.Member;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 작성자: 김찬빈
@@ -37,8 +38,8 @@ public class FeedService {
         Member saveMember = memberService.findMember(email);
         Feed feed = feedMapper.postDtoToFeed(postDto, saveMember);
         if (postDto.getTags() != null) {
-            List<FeedTag> feedTags = tagService.createFeedTags(feed, postDto.getTags());
-            feedTags.forEach(feed::addFeedTag);
+            Set<Tag> tags = tagService.findOrCreateTagsByName(postDto.getTags());
+            feed.addTags(tags);
         }
         Feed saveFeed = feedRepository.save(feed);
 
@@ -54,7 +55,7 @@ public class FeedService {
     public List<Response> findAll(Long lastFeedId, String email) {
         List<Feed> feedList = feedRepository.findAll(lastFeedId, email);
 
-        return feedMapper.toResponseList(feedList);
+        return feedMapper.toResponseList(feedList, email);
     }
 
     public Response updateFeed(String email, long feedId, FeedDto.Patch patchDto) {
@@ -64,8 +65,8 @@ public class FeedService {
         FeedDto.InternalPatch internalPatchDto = feedMapper.toInternalDto(patchDto);
         saveFeed.updateFeedData(internalPatchDto);
         if (internalPatchDto.getTags() != null) {
-            List<FeedTag> feedTags = tagService.createFeedTags(saveFeed, internalPatchDto.getTags());
-            feedTags.forEach(saveFeed::addFeedTag);
+            Set<Tag> tags = tagService.findOrCreateTagsByName(internalPatchDto.getTags());
+            saveFeed.addTags(tags);
         }
 
         return feedMapper.toResponse(saveFeed, email);
