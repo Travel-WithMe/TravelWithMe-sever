@@ -22,8 +22,8 @@ public class TagService {
     private final TagRepository tagRepository;
 
     @Transactional(readOnly = true)
-    public List<TagDto.Response> findTagsStartingWith(String tagName, int size) {
-        return tagRepository.findTagsStartingWith(tagName, size);
+    public List<TagDto.Response> findTagsStartWith(String tagName, int size) {
+        return tagRepository.findTagsStartWith(tagName, size);
     }
 
     public Set<Tag> findOrCreateTagsByName(List<String> tagNames) {
