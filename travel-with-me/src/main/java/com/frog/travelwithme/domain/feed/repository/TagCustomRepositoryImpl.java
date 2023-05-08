@@ -2,6 +2,7 @@ package com.frog.travelwithme.domain.feed.repository;
 
 import com.frog.travelwithme.domain.feed.controller.dto.QTagDto_Response;
 import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
+import com.frog.travelwithme.domain.feed.entity.QTag;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.frog.travelwithme.domain.feed.entity.QFeedTag.feedTag;
+import static com.frog.travelwithme.domain.feed.entity.QFeed.feed;
 import static com.frog.travelwithme.domain.feed.entity.QTag.tag;
 import static com.querydsl.core.types.ExpressionUtils.count;
 
@@ -27,13 +28,16 @@ public class TagCustomRepositoryImpl implements TagCustomRepository {
 
     @Override
     public List<TagDto.Response> findTagsStartingWith(String tagName, int size) {
+        QTag subTag = new QTag("subTag");
         return jpaQueryFactory.select(
                         new QTagDto_Response(
                                 tag.name,
                                 Expressions.as(
-                                        JPAExpressions.select(count(feedTag.id))
-                                                .from(feedTag)
-                                                .where(feedTag.tag.id.eq(tag.id)),
+                                        JPAExpressions.select(count(subTag))
+                                                .from(subTag)
+                                                .where(subTag.eq(tag))
+                                                .join(tag.feeds, feed)
+                                                .groupBy(subTag.id),
                                         "count"
                                 )))
                 .from(tag)

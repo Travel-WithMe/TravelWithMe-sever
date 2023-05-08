@@ -3,6 +3,8 @@ package com.frog.travelwithme.domain.feed.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * 작성자: 김찬빈
@@ -20,6 +22,9 @@ public class Tag {
 
     @Column(unique = true, updatable = false)
     private String name;
+
+    @ManyToMany(mappedBy = "tags")
+    private Set<Feed> feeds = new LinkedHashSet<>();
 
     @Builder
     public Tag(String name) {

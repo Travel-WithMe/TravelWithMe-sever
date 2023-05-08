@@ -1,8 +1,6 @@
 package com.frog.travelwithme.domain.feed.service;
 
 import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
-import com.frog.travelwithme.domain.feed.entity.Feed;
-import com.frog.travelwithme.domain.feed.entity.FeedTag;
 import com.frog.travelwithme.domain.feed.entity.Tag;
 import com.frog.travelwithme.domain.feed.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -26,23 +26,13 @@ public class TagService {
         return tagRepository.findTagsStartingWith(tagName, size);
     }
 
-    public List<FeedTag> createFeedTags(Feed feed, List<String> tagNames) {
-        return this.convertTagNamesToTags(tagNames).stream()
-                .map(tag -> FeedTag.builder()
-                        .tag(tag)
-                        .feed(feed)
-                        .name(tag.getName())
-                        .build())
-                .collect(Collectors.toList());
-    }
-
-    private List<Tag> convertTagNamesToTags(List<String> tagNames) {
+    public Set<Tag> findOrCreateTagsByName(List<String> tagNames) {
         return tagNames.stream()
-                .map(this::findOrCreateTagByName)
-                .collect(Collectors.toList());
+                .map(this::findOrCreateTag)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    private Tag findOrCreateTagByName(String tagName) {
+    private Tag findOrCreateTag(String tagName) {
         return tagRepository.findByName(tagName)
                 .orElseGet(() -> this.createTag(tagName)
         );
