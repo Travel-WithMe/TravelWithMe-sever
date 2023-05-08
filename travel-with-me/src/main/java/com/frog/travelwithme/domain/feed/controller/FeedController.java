@@ -74,7 +74,7 @@ public class FeedController {
     @GetMapping("/tags")
     public ResponseEntity getTagsByNameLike(@RequestParam String tagName,
                                             @RequestParam(required = false) int size) {
-        List<TagDto.Response> responseList = tagService.findTagsStartingWith(tagName, size);
+        List<TagDto.Response> responseList = tagService.findTagsStartWith(tagName, size);
 
         return new ResponseEntity<>(new PagelessMultiResponseDto<>(responseList), HttpStatus.OK);
     }

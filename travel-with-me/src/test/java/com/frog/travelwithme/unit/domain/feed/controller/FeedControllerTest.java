@@ -161,7 +161,7 @@ class FeedControllerTest {
     void feedControllerTest6() throws Exception {
         // given
         List<TagDto.Response> expectedResponse = StubData.MockFeed.getTagResponseDtoList(2);
-        given(tagService.findTagsStartingWith(any(), anyInt())).willReturn(expectedResponse);
+        given(tagService.findTagsStartWith(any(), anyInt())).willReturn(expectedResponse);
         String tagName = StubData.MockFeed.getTagName();
         MultiValueMap<String, String> tagNamePapram = new LinkedMultiValueMap<>();
         tagNamePapram.add(tagName, tagName);

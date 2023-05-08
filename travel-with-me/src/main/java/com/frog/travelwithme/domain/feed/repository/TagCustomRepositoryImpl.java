@@ -27,7 +27,7 @@ public class TagCustomRepositoryImpl implements TagCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<TagDto.Response> findTagsStartingWith(String tagName, int size) {
+    public List<TagDto.Response> findTagsStartWith(String tagName, int size) {
         QTag subTag = new QTag("subTag");
         return jpaQueryFactory.select(
                         new QTagDto_Response(
