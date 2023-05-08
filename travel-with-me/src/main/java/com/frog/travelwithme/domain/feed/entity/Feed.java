@@ -1,12 +1,17 @@
 package com.frog.travelwithme.domain.feed.entity;
 
-import com.frog.travelwithme.domain.buddyrecuirtment.common.BaseTimeEntity;
+import com.frog.travelwithme.domain.common.BaseTimeEntity;
+import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.member.entity.Member;
+import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Feed 설명: 피드 관리
@@ -23,30 +28,52 @@ public class Feed extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String content;
+    private String contents;
 
     private Long commentCount = 0L;
 
     private Long likeCount = 0L;
 
     // TODO: 위치 정보 라이브러리 논의
-    private String locate;
+    private String location;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-    @OneToMany(mappedBy = "feedTag", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FeedTag> feedTagList = new ArrayList<>();
 
     @Builder
-    public Feed(String content, Long commentCount, Long likeCount,
-                String locate, Member member, List<FeedTag> feedTagList) {
-        this.content = content;
-        this.commentCount = commentCount;
-        this.likeCount = likeCount;
-        this.locate = locate;
+    public Feed(String contents, String location, Member member, List<FeedTag> feedTagList) {
+        this.contents = contents;
+        this.location = location;
         this.member = member;
         this.feedTagList = feedTagList;
+    }
+
+    public void updateFeedData(FeedDto.InternalPatch internalPatchDto) {
+        Optional.ofNullable(internalPatchDto.getContents())
+                .ifPresent(updateContents -> this.contents = updateContents);
+        Optional.ofNullable(internalPatchDto.getLocation())
+                .ifPresent(updateLocation -> this.location = updateLocation);
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public void setFeedTagList(List<FeedTag> feedTagList) {
+        this.feedTagList = feedTagList;
+    }
+
+    public void addFeedTag(FeedTag feedTag) {
+        List<String> tagNameList = this.feedTagList
+                .stream()
+                .map(FeedTag::getName)
+                .collect(Collectors.toList());
+        if (!tagNameList.contains(feedTag.getName())) {
+            this.feedTagList.add(feedTag);
+        }
     }
 }
