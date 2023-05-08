@@ -1,13 +1,14 @@
 package com.frog.travelwithme.utils;
 
 import com.frog.travelwithme.domain.buddy.entity.Buddy;
-import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
 import com.frog.travelwithme.domain.common.DeletionEntity;
-import com.frog.travelwithme.domain.recruitment.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Member;
+import com.frog.travelwithme.domain.recruitment.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
 import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.enums.EnumCollection.Gender;
 import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
@@ -18,6 +19,7 @@ import com.frog.travelwithme.global.utils.TimeUtils;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * StubData 설명: 테스트를 위한 Stub data 관리
@@ -295,6 +297,59 @@ public class StubData {
         public static Buddy getBuddy() {
             return Buddy.builder()
                     .status(EnumCollection.BuddyStatus.WAIT)
+                    .build();
+        }
+    }
+
+    public static class MockFeed {
+        static final String contents = "contents";
+        static final String location = "location";
+        static final String profileImage = "profileImage";
+        static final String nickname = "nickname";
+        static final boolean isLiked = false;
+        static final Long commentCount = 100L;
+        static final Long likeCount = 100L;
+        static final List<String> tags = List.of("tag");
+
+        public static FeedDto.Post getPostDto() {
+            return FeedDto.Post.builder()
+                    .contents(contents)
+                    .location(location)
+                    .tags(tags)
+                    .build();
+        }
+
+        public static FeedDto.Patch getPatchDto() {
+            return FeedDto.Patch.builder()
+                    .contents("patch" + contents)
+                    .location("patch" + location)
+                    .tags(List.of("patch" + tags.get(0)))
+                    .build();
+        }
+
+        public static List<FeedDto.Response> getResponseDtos() {
+            FeedDto.Response response = FeedDto.Response.builder()
+                    .contents(contents)
+                    .location(location)
+                    .profileImage(profileImage)
+                    .isLiked(isLiked)
+                    .nickName(nickname)
+                    .likeCount(likeCount)
+                    .commentCount(commentCount)
+                    .tags(tags)
+                    .build();
+
+            return List.of(response);
+        }
+
+        public static FeedDto.ResponseDetail getResponseDetailDto() {
+            return FeedDto.ResponseDetail.builder()
+                    .contents(contents)
+                    .prfileImage(profileImage)
+                    .nickName(nickname)
+                    // TODO: comments, tags 객체로 반환
+                    .comments(List.of("comment"))
+                    .tags(tags)
                     .build();
         }
     }
