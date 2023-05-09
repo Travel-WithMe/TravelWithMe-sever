@@ -36,18 +36,25 @@ public class BuddyService {
 
     private final MemberService memberService;
 
-    public ResponseBody requestBuddyByUser(Long recruitmentId, String email) {
+    public ResponseBody requestBuddyByEmail(Long recruitmentId, String email) {
         Recruitment recruitment = recruitmentService.findRecruitmentByIdAndCheckExpired(recruitmentId);
         Member member = memberService.findMember(email);
         Optional<Buddy> findBuddy = buddyRepository.findBuddyByMemberAndRecruitment(member, recruitment);
         return this.requestBuddy(findBuddy, recruitment, member);
     }
 
-    public ResponseBody cancelBuddyByUser(Long recruitmentId, String email) {
+    public ResponseBody cancelBuddyByEmail(Long recruitmentId, String email) {
         Recruitment recruitment = recruitmentService.findRecruitmentByIdAndCheckExpired(recruitmentId);
         Member member = memberService.findMember(email);
         Optional<Buddy> findBuddy = buddyRepository.findBuddyByMemberAndRecruitment(member, recruitment);
         return this.cancelBuddy(findBuddy);
+    }
+
+    public ResponseBody approveBuddyByEmail(Long recruitmentId, String email, Long buddyId) {
+        Recruitment recruitment = recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitmentId, email);
+        recruitmentService.checkExpiredRecruitment(recruitment);
+        Buddy findBuddy = this.findBuddyByIdAndCheckEqualRecruitment(buddyId, recruitment);
+        return this.approveBuddy(findBuddy);
     }
 
     private ResponseBody requestBuddy(Optional<Buddy> findBuddy, Recruitment recruitment, Member member) {
@@ -71,6 +78,12 @@ public class BuddyService {
             this.updateBuddyByStatus(buddy, BuddyStatus.CANCEL);
             return ResponseBody.CANCEL_BUDDY;
         }
+    }
+
+    private ResponseBody approveBuddy(Buddy buddy) {
+        this.checkPossibleToApproveBuddy(buddy);
+        buddy.changeApprove();
+        return ResponseBody.APPROVE_BUDDY;
     }
 
     private void createBuddy(Recruitment recruitment, Member member) {
@@ -105,6 +118,32 @@ public class BuddyService {
             log.debug("BuddyService.checkPossibleToCancelBuddy exception occur buddy: {}", buddy);
             throw new BusinessLogicException(ExceptionCode.BUDDY_CANCEL_NOT_ALLOWED);
         }
+    }
+
+    private void checkPossibleToApproveBuddy(Buddy buddy) {
+        BuddyStatus buddyStatus = buddy.getStatus();
+        if (!buddyStatus.equals(BuddyStatus.WAIT)) {
+            log.debug("BuddyService.checkPossibleToApproveBuddy exception occur buddy: {}", buddy);
+            throw new BusinessLogicException(ExceptionCode.BUDDY_APPROVE_NOT_ALLOWED);
+        }
+    }
+
+    private Buddy findBuddyByIdAndCheckEqualRecruitment(Long id, Recruitment recruitment) {
+        Buddy buddy = this.findBuddyByIdJoinRecruitment(id);
+        if(!buddy.getRecruitment().equals(recruitment)) {
+            log.debug("BuddyService.findBuddyByIdAndCheckEqualRecruitment exception occur id: {}, recruitment: {}",
+                    id, recruitment);
+            throw new BusinessLogicException(ExceptionCode.BUDDY_RECRUITMENT_IS_DIFFERENT);
+        }
+        return buddy;
+    }
+
+    @Transactional(readOnly = true)
+    private Buddy findBuddyByIdJoinRecruitment(Long id) {
+        return buddyRepository.findBuddyByIdJoinRecruitment(id).orElseThrow(() -> {
+            log.debug("BuddyService.findBuddyById exception occur id: {}", id);
+            throw new BusinessLogicException(ExceptionCode.BUDDY_NOT_FOUND);
+        });
     }
 
 }

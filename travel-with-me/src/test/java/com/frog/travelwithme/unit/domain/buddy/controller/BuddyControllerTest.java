@@ -58,7 +58,7 @@ class BuddyControllerTest {
     void buddyMatchingControllerTest1() throws Exception {
         // given
         EnumCollection.ResponseBody requestBuddy = EnumCollection.ResponseBody.NEW_REQUEST_BUDDY;
-        given(buddyService.requestBuddyByUser(any(),any())).willReturn(requestBuddy);
+        given(buddyService.requestBuddyByEmail(any(),any())).willReturn(requestBuddy);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1 + "/" + SUB_URL +
@@ -78,7 +78,7 @@ class BuddyControllerTest {
     void buddyMatchingControllerTest2() throws Exception {
         // given
         EnumCollection.ResponseBody cancelBuddy = EnumCollection.ResponseBody.CANCEL_BUDDY;
-        given(buddyService.cancelBuddyByUser(any(),any())).willReturn(cancelBuddy);
+        given(buddyService.cancelBuddyByEmail(any(),any())).willReturn(cancelBuddy);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1 + "/" + SUB_URL +
@@ -88,6 +88,27 @@ class BuddyControllerTest {
         // then
         String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
         assertThat(response).isEqualTo(cancelBuddy.getDescription());
+        actions
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("동행 매칭승인")
+    @WithMockCustomUser
+    void buddyMatchingControllerTest3() throws Exception {
+        // given
+        EnumCollection.ResponseBody approveBuddy = EnumCollection.ResponseBody.APPROVE_BUDDY;
+        given(buddyService.approveBuddyByEmail(any(),any(),any())).willReturn(approveBuddy);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1 + "/" + SUB_URL +
+                "/" +  1 + "/" + "approve").build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.postRequestWithUserDetails(mvc, uri, userDetails);
+
+        // then
+        String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
+        assertThat(response).isEqualTo(approveBuddy.getDescription());
         actions
                 .andExpect(status().isOk());
     }

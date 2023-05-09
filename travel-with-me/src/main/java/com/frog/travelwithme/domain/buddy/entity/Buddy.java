@@ -36,7 +36,12 @@ public class Buddy {
     private Recruitment recruitment;
 
     @Builder
-    public Buddy(BuddyStatus status) {
+    public Buddy(Long id, BuddyStatus status) {
+        this.id = id;
+        this.status = status;
+    }
+
+    public Buddy( BuddyStatus status) {
         this.status = status;
     }
 

@@ -86,7 +86,7 @@ class RecruitmentServiceTest {
         Member member = StubData.MockMember.getMember();
         recruitment.addMember(member);
 
-        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
         when(buddyMapper.toPatchResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);
 
         //when
@@ -110,12 +110,12 @@ class RecruitmentServiceTest {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         RecruitmentDto.Patch patchDto = StubData.MockRecruitment.getPatchRecruitment();
-        RecruitmentDto.PatchResponse responseRecruitmentDto = StubData.MockRecruitment.getPatchResponseRecruitment();
+        StubData.MockRecruitment.getPatchResponseRecruitment();
         Member writer = StubData.MockMember.getMemberByEmailAndNickname("dhfif718@naver.com", "LJH");
         Member user = StubData.MockMember.getMemberByEmailAndNickname("kkd718@gmail.com", "KCB");
         recruitment.addMember(writer);
 
-        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
         //then
@@ -136,7 +136,7 @@ class RecruitmentServiceTest {
         Member member = StubData.MockMember.getMember();
         recruitment.addMember(member);
 
-        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
         recruitmentService.deleteRecruitmentByUser(recruitment.getId(), member.getEmail());
@@ -154,7 +154,7 @@ class RecruitmentServiceTest {
         Member user = StubData.MockMember.getMemberByEmailAndNickname("kkd718@gmail.com", "KCB");
         recruitment.addMember(writer);
 
-        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
         //then

@@ -47,12 +47,12 @@ public class RecruitmentService {
     public RecruitmentDto.PatchResponse updateRecruitmentByUser(RecruitmentDto.Patch patchDto,
                                                                 Long recruitmentId,
                                                                 String email) {
-        Recruitment findRecruitment = this.checkEqualWriterAndUser(recruitmentId, email);
+        Recruitment findRecruitment = this.findRecruitmentAndCheckEqualWriterAndUser(recruitmentId, email);
         return this.updateRecruitment(patchDto, findRecruitment);
     }
 
     public void deleteRecruitmentByUser(Long recruitmentId, String email) {
-        Recruitment findRecruitment = this.checkEqualWriterAndUser(recruitmentId, email);
+        Recruitment findRecruitment = this.findRecruitmentAndCheckEqualWriterAndUser(recruitmentId, email);
         this.deleteRecruitment(findRecruitment);
     }
 
@@ -68,8 +68,15 @@ public class RecruitmentService {
 
     @Transactional(readOnly = true)
     public Recruitment findRecruitmentById(Long id) {
-        Optional<Recruitment> findRecruitment = recruitmentRepository.findById(id);
-        return findRecruitment.orElseThrow(() -> {
+        return recruitmentRepository.findById(id).orElseThrow(() -> {
+            log.debug("RecruitmentService.findRecruitmentById exception occur id: {}", id);
+            throw new BusinessLogicException(ExceptionCode.RECRUITMENT_NOT_FOUND);
+        });
+    }
+
+    @Transactional(readOnly = true)
+    public Recruitment findRecruitmentByIdJoinMember(Long id) {
+        return recruitmentRepository.findRecruitmentByIdJoinMember(id).orElseThrow(() -> {
             log.debug("RecruitmentService.findRecruitmentById exception occur id: {}", id);
             throw new BusinessLogicException(ExceptionCode.RECRUITMENT_NOT_FOUND);
         });
@@ -83,8 +90,8 @@ public class RecruitmentService {
     }
 
     @Transactional(readOnly = true)
-    public Recruitment checkEqualWriterAndUser(Long recruitmentId, String email) {
-        Recruitment findRecruitment = this.findRecruitmentById(recruitmentId);
+    public Recruitment findRecruitmentAndCheckEqualWriterAndUser(Long recruitmentId, String email) {
+        Recruitment findRecruitment = this.findRecruitmentByIdJoinMember(recruitmentId);
         Member writer = findRecruitment.getMember();
         if(!writer.getEmail().equals(email)) {
             log.debug("RecruitmentService.checkEqualWriterAndUser exception occur " +

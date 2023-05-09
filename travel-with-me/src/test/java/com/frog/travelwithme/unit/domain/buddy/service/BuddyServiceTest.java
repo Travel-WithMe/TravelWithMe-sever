@@ -10,6 +10,7 @@ import com.frog.travelwithme.domain.recruitment.mapper.RecruitmentMapper;
 import com.frog.travelwithme.domain.recruitment.repository.RecruitmentRepository;
 import com.frog.travelwithme.domain.recruitment.service.RecruitmentService;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
+import com.frog.travelwithme.global.exception.ExceptionCode;
 import com.frog.travelwithme.utils.StubData;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +27,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 /**
@@ -71,7 +74,7 @@ class BuddyServiceTest {
 
 
         //when
-        ResponseBody response = buddyService.requestBuddyByUser(recruitment.getId(), member.getEmail());
+        ResponseBody response = buddyService.requestBuddyByEmail(recruitment.getId(), member.getEmail());
 
         //then
         assertAll(
@@ -100,7 +103,7 @@ class BuddyServiceTest {
 
 
         //when
-        ResponseBody response = buddyService.requestBuddyByUser(recruitment.getId(), member.getEmail());
+        ResponseBody response = buddyService.requestBuddyByEmail(recruitment.getId(), member.getEmail());
 
         //then
         assertAll(
@@ -129,7 +132,7 @@ class BuddyServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> buddyService.requestBuddyByUser(recruitment.getId(), member.getEmail()))
+        assertThatThrownBy(() -> buddyService.requestBuddyByEmail(recruitment.getId(), member.getEmail()))
                 .isInstanceOf(BusinessLogicException.class);
 
     }
@@ -154,7 +157,7 @@ class BuddyServiceTest {
 
 
         //when
-        ResponseBody response = buddyService.cancelBuddyByUser(recruitment.getId(), member.getEmail());
+        ResponseBody response = buddyService.cancelBuddyByEmail(recruitment.getId(), member.getEmail());
 
         //then
         assertAll(
@@ -179,7 +182,7 @@ class BuddyServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> buddyService.cancelBuddyByUser(recruitment.getId(), member.getEmail()))
+        assertThatThrownBy(() -> buddyService.cancelBuddyByEmail(recruitment.getId(), member.getEmail()))
                 .isInstanceOf(BusinessLogicException.class);
     }
 
@@ -204,8 +207,117 @@ class BuddyServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> buddyService.cancelBuddyByUser(recruitment.getId(), member.getEmail()))
+        assertThatThrownBy(() -> buddyService.cancelBuddyByEmail(recruitment.getId(), member.getEmail()))
                 .isInstanceOf(BusinessLogicException.class);
     }
 
+    @Test
+    @DisplayName("동행 매칭승인")
+    void buddyServiceTest7() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Member writer = StubData.MockMember.getMember();
+        Member user = StubData.MockMember.getMember();
+        recruitment.addMember(writer);
+
+        Buddy buddy = StubData.MockBuddy.getBuddy();
+        buddy.addMember(user);
+        buddy.addRecruitment(recruitment);
+        buddy.changeWait();
+
+
+        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
+                .thenReturn(recruitment);
+        doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);
+        when(buddyRepository.findBuddyByIdJoinRecruitment(buddy.getId())).thenReturn(Optional.of(buddy));
+
+
+        //when
+        ResponseBody response = buddyService.approveBuddyByEmail(recruitment.getId(), writer.getEmail(), buddy.getId());
+
+        //then
+        assertAll(
+                () -> assertEquals(response.getName(), ResponseBody.APPROVE_BUDDY.getName()),
+                () -> assertEquals(response.getDescription(), ResponseBody.APPROVE_BUDDY.getDescription())
+        );
+    }
+
+    @Test
+    @DisplayName("동행 매칭승인 (모집이 종료된 게시글)")
+    void buddyServiceTest8() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Member writer = StubData.MockMember.getMember();
+        Member user = StubData.MockMember.getMember();
+        recruitment.addMember(writer);
+        recruitment.changeEnd();
+
+        Buddy buddy = StubData.MockBuddy.getBuddy();
+        buddy.addMember(user);
+        buddy.addRecruitment(recruitment);
+        buddy.changeWait();
+
+
+        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
+                .thenReturn(recruitment);
+        doThrow(BusinessLogicException.class).when(recruitmentService).checkExpiredRecruitment(recruitment);
+
+        //when
+        //then
+        assertThatThrownBy(() -> buddyService.approveBuddyByEmail(recruitment.getId(), writer.getEmail(),buddy.getId()))
+                .isInstanceOf(BusinessLogicException.class);
+    }
+
+    @Test
+    @DisplayName("동행 매칭승인 (동행글 작성자가 아님)")
+    void buddyServiceTest9() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Member writer = StubData.MockMember.getMember();
+        Member user = StubData.MockMember.getMember();
+        recruitment.addMember(writer);
+        recruitment.changeEnd();
+
+        Buddy buddy = StubData.MockBuddy.getBuddy();
+        buddy.addMember(user);
+        buddy.addRecruitment(recruitment);
+        buddy.changeWait();
+
+
+        doThrow(BusinessLogicException.class).when(recruitmentService)
+                .findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail());
+
+        //when
+        //then
+        assertThatThrownBy(() -> buddyService.approveBuddyByEmail(recruitment.getId(), user.getEmail(),buddy.getId()))
+                .isInstanceOf(BusinessLogicException.class);
+    }
+
+    @Test
+    @DisplayName("동행 매칭승인 (동행 모집글이 다름)")
+    void buddyServiceTest10() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Recruitment recruitmentOther = StubData.MockRecruitment.getRecruitment();
+        Member writer = StubData.MockMember.getMember();
+        recruitment.addMember(writer);
+
+        Buddy buddy = StubData.MockBuddy.getBuddy();
+        buddy.addMember(writer);
+        buddy.addRecruitment(recruitmentOther);
+        buddy.changeWait();
+
+
+        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
+                .thenReturn(recruitment);
+        doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);
+        when(buddyRepository.findBuddyByIdJoinRecruitment(buddy.getId())).thenReturn(Optional.of(buddy));
+
+        //when
+        //then
+        assertThatThrownBy(() ->
+                buddyService
+                        .approveBuddyByEmail(recruitment.getId(), writer.getEmail(),buddy.getId()))
+                        .isInstanceOf(BusinessLogicException.class);
+    }
 }
