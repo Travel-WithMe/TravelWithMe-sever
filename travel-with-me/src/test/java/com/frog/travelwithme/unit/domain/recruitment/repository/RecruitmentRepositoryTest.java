@@ -1,5 +1,7 @@
 package com.frog.travelwithme.unit.domain.recruitment.repository;
 
+import com.frog.travelwithme.domain.member.entity.Member;
+import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
 import com.frog.travelwithme.domain.recruitment.repository.RecruitmentRepository;
 import com.frog.travelwithme.global.config.QuerydslConfig;
@@ -42,6 +44,9 @@ class RecruitmentRepositoryTest {
     @Autowired
     protected RecruitmentRepository recruitmentRepository;
 
+    @Autowired
+    protected MemberRepository memberRepository;
+
     @Test
     @DisplayName("동행 레포지토리 저장")
     void buddyRecruitmentRepositoryTest1() {
@@ -80,6 +85,7 @@ class RecruitmentRepositoryTest {
                 .isNotEqualTo(recruitment.getRecruitmentStatus()); // Result : IN_PROGRESS
     }
 
+    @Test
     @DisplayName("동행 레포지토리 조회")
     void buddyRecruitmentRepositoryTest3() {
         // given
@@ -112,5 +118,30 @@ class RecruitmentRepositoryTest {
 
         // then
         assertThatThrownBy(() -> findRecruitment.get()).isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    @DisplayName("동행글 id 조회(Member Join) : Querydsl")
+    void buddyRecruitmentRepositoryTest5() {
+        // given
+        Member member = StubData.MockMember.getMember();
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Member saveMember = memberRepository.save(member);
+        recruitment.addMember(saveMember);
+        Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
+
+        entityManager.flush();
+        entityManager.clear();
+        log.info("1차 캐시 clear");
+
+        // when
+        Recruitment findRecruitment = recruitmentRepository.findRecruitmentByIdJoinMember(saveRecruitment.getId()).get();
+        Member findMember = findRecruitment.getMember();
+
+        // then
+        assertAll(
+                () -> assertEquals(findMember.getEmail(), recruitment.getMember().getEmail()),
+                () -> assertEquals(findMember.getNickname(), recruitment.getMember().getNickname())
+        );
     }
 }

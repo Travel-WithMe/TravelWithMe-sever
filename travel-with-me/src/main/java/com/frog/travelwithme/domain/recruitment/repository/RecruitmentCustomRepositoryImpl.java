@@ -1,8 +1,16 @@
 package com.frog.travelwithme.domain.recruitment.repository;
 
+import com.frog.travelwithme.domain.member.entity.QMember;
+import com.frog.travelwithme.domain.recruitment.entity.QRecruitment;
+import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+import static com.frog.travelwithme.domain.member.entity.QMember.*;
+import static com.frog.travelwithme.domain.recruitment.entity.QRecruitment.*;
 
 /**
  * 작성자: 이재혁
@@ -17,4 +25,13 @@ public class RecruitmentCustomRepositoryImpl implements RecruitmentCustomReposit
     private final JPAQueryFactory queryFactory;
 
 
+    @Override
+    public Optional<Recruitment> findRecruitmentByIdJoinMember(Long id) {
+        return Optional.ofNullable(queryFactory
+                .from(recruitment)
+                .select(recruitment)
+                .leftJoin(recruitment.member, member).fetchJoin()
+                .where(recruitment.id.eq(id))
+                .fetchOne());
+    }
 }

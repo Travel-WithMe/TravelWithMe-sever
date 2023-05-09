@@ -23,8 +23,10 @@ public enum ExceptionCode {
     RECRUITMENT_WRITER_NOT_MATCH(404, "해당 동행모집글을 작성한 유저가 아닙니다."),
     RECRUITMENT_EXPIRED(404, "동행모집이 종료된 게시글 입니다."),
     BUDDY_NOT_FOUND(404, "해당 동행 매칭신청 내역을 찾을 수 없습니다."),
+    BUDDY_RECRUITMENT_IS_DIFFERENT(404, "동행매칭 요청의 모집글과 모집글이 상이한 요청을하였습니다."),
     BUDDY_REQUEST_NOT_ALLOWED(404, "동행매칭 요청이 불가능한 상태입니다."),
     BUDDY_CANCEL_NOT_ALLOWED(404, "동행매칭 취소가 불가능한 상태입니다."),
+    BUDDY_APPROVE_NOT_ALLOWED(404, "동행매칭 승인이 불가능한 상태입니다."),
 
     // Feed
     FEED_NOT_FOUND(404, "피드가 존재하지 않습니다."),

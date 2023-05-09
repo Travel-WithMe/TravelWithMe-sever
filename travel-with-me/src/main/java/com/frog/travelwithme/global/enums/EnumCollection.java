@@ -102,7 +102,8 @@ public class EnumCollection {
     public enum ResponseBody implements EnumType {
         NEW_REQUEST_BUDDY("동행 매칭신청이 완료되었습니다."),
         RETRY_REQUEST_BUDDY("동행 재신청이 완료되었습니다."),
-        CANCEL_BUDDY("동행 매칭신청이 취소되었습니다.");
+        CANCEL_BUDDY("동행 매칭신청이 취소되었습니다."),
+        APPROVE_BUDDY("동행 매칭신청이 승인되었습니다.");
 
         private final String description;
 
