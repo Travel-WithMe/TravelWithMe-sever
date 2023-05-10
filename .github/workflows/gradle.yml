@@ -63,7 +63,7 @@ jobs:
 
     # AWS Code Deploy 설정 및 실행
     - name: Code Deploy
-        run: >
+      run: >
           aws deploy create-deployment --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }}
           --deployment-config-name CodeDeployDefault.AllAtOnce
           --deployment-group-name ${{ secrets.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
