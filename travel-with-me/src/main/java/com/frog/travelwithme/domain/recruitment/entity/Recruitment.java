@@ -109,11 +109,11 @@ public class Recruitment extends BaseTimeEntity {
         return this;
     }
 
-    public void changeInProgress() {
+    public void inProgress() {
         this.recruitmentStatus = RecruitmentStatus.IN_PROGRESS;
     }
 
-    public void changeEnd() {
+    public void end() {
         this.recruitmentStatus = RecruitmentStatus.END;
     }
 

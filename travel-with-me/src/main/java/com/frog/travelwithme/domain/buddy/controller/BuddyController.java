@@ -35,7 +35,7 @@ public class BuddyController {
                                        @AuthenticationPrincipal CustomUserDetails user) {
 
         String email = user.getEmail();
-        EnumCollection.ResponseBody response = buddyService.requestBuddyByUser(recruitmentsId, email);
+        EnumCollection.ResponseBody response = buddyService.requestBuddyByEmail(recruitmentsId, email);
         return new ResponseEntity<>(new MessageResponseDto(response.getDescription()), HttpStatus.OK);
     }
 
@@ -44,8 +44,17 @@ public class BuddyController {
                                       @AuthenticationPrincipal CustomUserDetails user) {
 
         String email = user.getEmail();
-        EnumCollection.ResponseBody response = buddyService.cancelBuddyByUser(recruitmentsId, email);
+        EnumCollection.ResponseBody response = buddyService.cancelBuddyByEmail(recruitmentsId, email);
         return new ResponseEntity<>(new MessageResponseDto(response.getDescription()), HttpStatus.OK);
     }
 
+    @PostMapping("/{recruitment-id}/buddy/{buddy-id}/approve")
+    public ResponseEntity approveBuddy(@Positive @PathVariable("recruitment-id") Long recruitmentsId,
+                                       @Positive @PathVariable("buddy-id") Long buddyId,
+                                       @AuthenticationPrincipal CustomUserDetails user) {
+
+        String email = user.getEmail();
+        EnumCollection.ResponseBody response = buddyService.approveBuddyByEmail(recruitmentsId, email, buddyId);
+        return new ResponseEntity<>(new MessageResponseDto(response.getDescription()), HttpStatus.OK);
+    }
 }

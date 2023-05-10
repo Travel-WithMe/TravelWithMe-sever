@@ -15,6 +15,8 @@ import java.util.Optional;
 
 public interface BuddyCustomRepository {
 
+    Optional<Buddy> findBuddyByIdJoinRecruitment(Long id);
+
     Optional<Buddy> findBuddyByMemberAndRecruitment(Member member, Recruitment buddyRecruitment);
 
 }

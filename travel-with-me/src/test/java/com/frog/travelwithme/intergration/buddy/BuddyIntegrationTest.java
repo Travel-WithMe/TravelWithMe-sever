@@ -82,7 +82,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("동행 매칭신청 (신규)")
+    @DisplayName("동행 매칭신청 신규)")
     void buddyIntegrationTest1() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
@@ -118,7 +118,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("동행 매칭신청 (재신청)")
+    @DisplayName("동행 매칭신청 재신청")
     void buddyIntegrationTest2() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
@@ -133,9 +133,10 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         recruitment.addMember(writer);
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
         Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.changeReject();
+        buddy.reject();
         buddy.addMember(user);
         buddy.addRecruitment(saveRecruitment);
+//        buddyRepository.save(buddy);
         saveRecruitment.addBuddy(buddy);
         Long recruitmentId = saveRecruitment.getId();
 
@@ -160,8 +161,46 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("동행 매칭신청 (신청불가)")
+    @DisplayName("동행 매칭신청 (모집이 종료된 게시글)")
     void buddyIntegrationTest3() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Member writer = memberRepository.findByEmail(EMAIL_OTHER).get();
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(writer);
+        recruitment.end();
+        Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
+        Long recruitmentId = saveRecruitment.getId();
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL +
+                "/" + "request").build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.postRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken
+        );
+
+        // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getStatus());
+        assertThat(response.getMessage()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getMessage());
+        actions
+                .andDo(document("post-buddy-request-exception-1",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 매칭신청 (신청불가)")
+    void buddyIntegrationTest4() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
@@ -175,7 +214,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         recruitment.addMember(writer);
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
         Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.changeApprove();
+        buddy.approve();
         buddy.addMember(user);
         buddy.addRecruitment(saveRecruitment);
         saveRecruitment.addBuddy(buddy);
@@ -195,7 +234,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getStatus()).isEqualTo(ExceptionCode.BUDDY_REQUEST_NOT_ALLOWED.getStatus());
         assertThat(response.getMessage()).isEqualTo(ExceptionCode.BUDDY_REQUEST_NOT_ALLOWED.getMessage());
         actions
-                .andDo(document("post-buddy-request-exception-1",
+                .andDo(document("post-buddy-request-exception-2",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         ErrorResponseSnippet.getFieldErrorSnippetsLong()
@@ -204,7 +243,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("동행 매칭취소")
-    void buddyIntegrationTest4() throws Exception {
+    void buddyIntegrationTest5() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
@@ -249,8 +288,53 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
+    @DisplayName("동행 매칭취소 (모집이 종료된 게시글)")
+    void buddyIntegrationTest6() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Member user = memberRepository.findByEmail(EMAIL).get();
+        Member writer = memberRepository.findByEmail(EMAIL_OTHER).get();
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(writer);
+        recruitment.end();
+        Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
+        Buddy buddy = StubData.MockBuddy.getBuddy();
+        buddy.addMember(user);
+        buddy.addRecruitment(saveRecruitment);
+        saveRecruitment.addBuddy(buddy);
+        Long recruitmentId = saveRecruitment.getId();
+
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL +
+                "/" + "cancel").build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.postRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken
+        );
+
+        // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getStatus());
+        assertThat(response.getMessage()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getMessage());
+
+        actions
+                .andDo(document("post-buddy-cancel-exception-1",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
+                ));
+    }
+
+    @Test
     @DisplayName("동행 매칭취소 (매칭 이력이 없음)")
-    void buddyIntegrationTest5() throws Exception {
+    void buddyIntegrationTest7() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
@@ -284,7 +368,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getStatus()).isEqualTo(ExceptionCode.BUDDY_NOT_FOUND.getStatus());
         assertThat(response.getMessage()).isEqualTo(ExceptionCode.BUDDY_NOT_FOUND.getMessage());
         actions
-                .andDo(document("post-buddy-cancel-exception-1",
+                .andDo(document("post-buddy-cancel-exception-2",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         ErrorResponseSnippet.getFieldErrorSnippetsLong()
@@ -293,7 +377,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("동행 매칭취소 (취소불가)")
-    void buddyIntegrationTest6() throws Exception {
+    void buddyIntegrationTest8() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
@@ -306,7 +390,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         recruitment.addMember(writer);
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
         Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.changeReject();
+        buddy.reject();
         buddy.addMember(writer);
         buddy.addRecruitment(saveRecruitment);
         saveRecruitment.addBuddy(buddy);
@@ -327,7 +411,189 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getStatus()).isEqualTo(ExceptionCode.BUDDY_CANCEL_NOT_ALLOWED.getStatus());
         assertThat(response.getMessage()).isEqualTo(ExceptionCode.BUDDY_CANCEL_NOT_ALLOWED.getMessage());
         actions
-                .andDo(document("post-buddy-cancel-exception-2",
+                .andDo(document("post-buddy-cancel-exception-3",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 매칭신청 승인")
+    void buddyIntegrationTest9() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Member writer = memberRepository.findByEmail(EMAIL).get();
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(writer);
+        Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
+        Buddy buddy = StubData.MockBuddy.getBuddy();
+        buddy.addMember(writer);
+        buddy.addRecruitment(saveRecruitment);
+        saveRecruitment.addBuddy(buddy);
+        Buddy savedBuddy = buddyRepository.save(buddy);
+        Long recruitmentId = saveRecruitment.getId();
+        Long buddyId = savedBuddy.getId();
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL +
+                "/" + buddyId + "/" + "approve").build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.postRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken
+        );
+
+        // then
+        String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
+        assertThat(response).isEqualTo(ResponseBody.APPROVE_BUDDY.getDescription());
+
+        Optional<Buddy> findBuddy = buddyRepository.findBuddyByIdJoinRecruitment(buddyId);
+        assertThat(findBuddy.get().getStatus()).isEqualTo(BuddyStatus.APPROVE);
+        actions
+                .andDo(document("post-buddy-approve",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ResponseSnippet.getBuddySnippet()
+                ));
+    }
+
+
+    @Test
+    @DisplayName("동행 매칭신청 승인 (모집이 종료된 게시글)")
+    void buddyIntegrationTest10() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Member writer = memberRepository.findByEmail(EMAIL).get();
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(writer);
+        recruitment.end();
+
+        Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
+        Buddy buddy = StubData.MockBuddy.getBuddy();
+        buddy.addMember(writer);
+        buddy.addRecruitment(saveRecruitment);
+        saveRecruitment.addBuddy(buddy);
+        Buddy savedBuddy = buddyRepository.save(buddy);
+        Long recruitmentId = saveRecruitment.getId();
+        Long buddyId = savedBuddy.getId();
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL +
+                "/" + buddyId + "/" + "approve").build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.postRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken
+        );
+
+        // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getStatus());
+        assertThat(response.getMessage()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getMessage());
+        actions
+                .andDo(document("post-buddy-approve-exception-1",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
+                ));
+    }
+
+
+    @Test
+    @DisplayName("동행 매칭신청 승인 (동행글 작성자가 아님)")
+    void buddyIntegrationTest11() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Member writer = memberRepository.findByEmail(EMAIL).get();
+        Member user = memberRepository.findByEmail(EMAIL_OTHER).get();
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(user);
+        Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
+        Buddy buddy = StubData.MockBuddy.getBuddy();
+        buddy.addMember(writer);
+        buddy.addRecruitment(saveRecruitment);
+        saveRecruitment.addBuddy(buddy);
+        Buddy savedBuddy = buddyRepository.save(buddy);
+        Long recruitmentId = saveRecruitment.getId();
+        Long buddyId = savedBuddy.getId();
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL +
+                "/" + buddyId + "/" + "approve").build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.postRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken
+        );
+
+        // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus()).isEqualTo(ExceptionCode.RECRUITMENT_WRITER_NOT_MATCH.getStatus());
+        assertThat(response.getMessage()).isEqualTo(ExceptionCode.RECRUITMENT_WRITER_NOT_MATCH.getMessage());
+
+        actions
+                .andDo(document("post-buddy-approve-exception-2",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 매칭신청 승인 (동행 모집글이 다름)")
+    void buddyIntegrationTest12() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Member writer = memberRepository.findByEmail(EMAIL).get();
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Recruitment recruitmentOther = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(writer);
+        recruitmentOther.addMember(writer);
+        Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
+        Recruitment saveRecruitmentOther = recruitmentRepository.save(recruitmentOther);
+        Buddy buddy = StubData.MockBuddy.getBuddy();
+        buddy.addMember(writer);
+        buddy.addRecruitment(saveRecruitmentOther);
+        saveRecruitment.addBuddy(buddy);
+        Buddy savedBuddy = buddyRepository.save(buddy);
+        Long recruitmentId = saveRecruitment.getId();
+        Long buddyId = savedBuddy.getId();
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL +
+                "/" + buddyId + "/" + "approve").build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.postRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken
+        );
+
+        // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus()).isEqualTo(ExceptionCode.BUDDY_RECRUITMENT_IS_DIFFERENT.getStatus());
+        assertThat(response.getMessage()).isEqualTo(ExceptionCode.BUDDY_RECRUITMENT_IS_DIFFERENT.getMessage());
+        actions
+                .andDo(document("post-buddy-approve-exception-3",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         ErrorResponseSnippet.getFieldErrorSnippetsLong()

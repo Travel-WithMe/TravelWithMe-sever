@@ -22,7 +22,6 @@ import javax.persistence.EntityManager;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static com.frog.travelwithme.global.enums.EnumCollection.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -100,7 +99,7 @@ class BuddyRepositoryTest {
         Buddy findBuddy = buddyRepository.findById(saveBuddy.getId()).get();
 
         // when
-        findBuddy.changeApprove();
+        findBuddy.approve();
 
         // then
         assertThat(findBuddy.getId()).isEqualTo(saveBuddy.getId());
@@ -208,4 +207,34 @@ class BuddyRepositoryTest {
         assertThatThrownBy(() -> findBuddy.get()).isInstanceOf(NoSuchElementException.class);
     }
 
+    @Test
+    @DisplayName("동행매칭 id로 찾기(Recruitment Join) : Querydsl")
+    void BuddyMatchingRepositoryTest7() {
+        // given
+        Member member = StubData.MockMember.getMember();
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+
+        Member saveMember = memberRepository.save(member);
+        Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
+
+        Buddy buddy = StubData.MockBuddy.getBuddy();
+        buddy.addMember(saveMember);
+        buddy.addRecruitment(saveRecruitment);
+        Buddy saveBuddy = buddyRepository.save(buddy);
+
+        entityManager.flush();
+        entityManager.clear();
+        log.info("1차 캐시 clear");
+
+        // when
+        Buddy findBuddy = buddyRepository.findBuddyByIdJoinRecruitment(saveBuddy.getId()).get();
+        Recruitment findRecruitment = findBuddy.getRecruitment();
+
+        // then
+        assertAll(
+                () -> assertEquals(findRecruitment.getId(), saveBuddy.getRecruitment().getId()),
+                () -> assertEquals(findRecruitment.getTitle(), saveBuddy.getRecruitment().getTitle()),
+                () -> assertEquals(findRecruitment.getContent(), saveBuddy.getRecruitment().getContent())
+        );
+    }
 }

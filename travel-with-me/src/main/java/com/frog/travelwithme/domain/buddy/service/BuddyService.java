@@ -36,18 +36,25 @@ public class BuddyService {
 
     private final MemberService memberService;
 
-    public ResponseBody requestBuddyByUser(Long recruitmentId, String email) {
+    public ResponseBody requestBuddyByEmail(Long recruitmentId, String email) {
         Recruitment recruitment = recruitmentService.findRecruitmentByIdAndCheckExpired(recruitmentId);
         Member member = memberService.findMember(email);
         Optional<Buddy> findBuddy = buddyRepository.findBuddyByMemberAndRecruitment(member, recruitment);
         return this.requestBuddy(findBuddy, recruitment, member);
     }
 
-    public ResponseBody cancelBuddyByUser(Long recruitmentId, String email) {
+    public ResponseBody cancelBuddyByEmail(Long recruitmentId, String email) {
         Recruitment recruitment = recruitmentService.findRecruitmentByIdAndCheckExpired(recruitmentId);
         Member member = memberService.findMember(email);
         Optional<Buddy> findBuddy = buddyRepository.findBuddyByMemberAndRecruitment(member, recruitment);
         return this.cancelBuddy(findBuddy);
+    }
+
+    public ResponseBody approveBuddyByEmail(Long recruitmentId, String email, Long buddyId) {
+        Recruitment recruitment = recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitmentId, email);
+        recruitmentService.checkExpiredRecruitment(recruitment);
+        Buddy findBuddy = this.findBuddyByIdAndCheckEqualRecruitment(buddyId, recruitment);
+        return this.approveBuddy(findBuddy);
     }
 
     private ResponseBody requestBuddy(Optional<Buddy> findBuddy, Recruitment recruitment, Member member) {
@@ -73,22 +80,28 @@ public class BuddyService {
         }
     }
 
+    private ResponseBody approveBuddy(Buddy buddy) {
+        this.checkPossibleToApproveBuddy(buddy);
+        buddy.approve();
+        return ResponseBody.APPROVE_BUDDY;
+    }
+
     private void createBuddy(Recruitment recruitment, Member member) {
-        Buddy buddy = new Buddy(BuddyStatus.WAIT);
+        Buddy buddy = new Buddy(BuddyStatus.REQUEST);
         buddy.addMember(member);
         buddy.addRecruitment(recruitment);
         recruitment.addBuddy(buddy);
     }
 
     private void updateBuddyByStatus(Buddy buddy, BuddyStatus status) {
-        if(status.equals(BuddyStatus.WAIT)) {
-            buddy.changeWait();
+        if(status.equals(BuddyStatus.REQUEST)) {
+            buddy.request();
         } else if (status.equals(BuddyStatus.APPROVE)) {
-            buddy.changeApprove();
+            buddy.approve();
         } else if (status.equals(BuddyStatus.REJECT)) {
-            buddy.changeReject();
+            buddy.reject();
         } else if (status.equals(BuddyStatus.CANCEL)) {
-            buddy.changeCancel();
+            buddy.cancel();
         }
     }
 
@@ -105,6 +118,31 @@ public class BuddyService {
             log.debug("BuddyService.checkPossibleToCancelBuddy exception occur buddy: {}", buddy);
             throw new BusinessLogicException(ExceptionCode.BUDDY_CANCEL_NOT_ALLOWED);
         }
+    }
+
+    private void checkPossibleToApproveBuddy(Buddy buddy) {
+        BuddyStatus buddyStatus = buddy.getStatus();
+        if (!buddyStatus.equals(BuddyStatus.REQUEST)) {
+            log.debug("BuddyService.checkPossibleToApproveBuddy exception occur buddy: {}", buddy);
+            throw new BusinessLogicException(ExceptionCode.BUDDY_APPROVE_NOT_ALLOWED);
+        }
+    }
+
+    private Buddy findBuddyByIdAndCheckEqualRecruitment(Long id, Recruitment recruitment) {
+        Buddy buddy = this.findBuddyByIdJoinRecruitment(id);
+        if(!buddy.getRecruitment().equals(recruitment)) {
+            log.debug("BuddyService.findBuddyByIdAndCheckEqualRecruitment exception occur id: {}, recruitment: {}",
+                    id, recruitment);
+            throw new BusinessLogicException(ExceptionCode.BUDDY_RECRUITMENT_IS_DIFFERENT);
+        }
+        return buddy;
+    }
+
+    private Buddy findBuddyByIdJoinRecruitment(Long id) {
+        return buddyRepository.findBuddyByIdJoinRecruitment(id).orElseThrow(() -> {
+            log.debug("BuddyService.findBuddyById exception occur id: {}", id);
+            throw new BusinessLogicException(ExceptionCode.BUDDY_NOT_FOUND);
+        });
     }
 
 }

@@ -62,7 +62,7 @@ class RecruitmentServiceTest {
         when(buddyMapper.toPostResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);
 
         //when
-        RecruitmentDto.PostResponse responseRecruitment = recruitmentService.createRecruitmentByUser(
+        RecruitmentDto.PostResponse responseRecruitment = recruitmentService.createRecruitmentByEmail(
                 postDto, member.getEmail()
         );
 
@@ -86,11 +86,11 @@ class RecruitmentServiceTest {
         Member member = StubData.MockMember.getMember();
         recruitment.addMember(member);
 
-        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
         when(buddyMapper.toPatchResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);
 
         //when
-        RecruitmentDto.PatchResponse responseRecruitment = recruitmentService.updateRecruitmentByUser(
+        RecruitmentDto.PatchResponse responseRecruitment = recruitmentService.updateRecruitmentByEmail(
                 patchDto, recruitment.getId(), member.getEmail()
         );
 
@@ -110,17 +110,17 @@ class RecruitmentServiceTest {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         RecruitmentDto.Patch patchDto = StubData.MockRecruitment.getPatchRecruitment();
-        RecruitmentDto.PatchResponse responseRecruitmentDto = StubData.MockRecruitment.getPatchResponseRecruitment();
+        StubData.MockRecruitment.getPatchResponseRecruitment();
         Member writer = StubData.MockMember.getMemberByEmailAndNickname("dhfif718@naver.com", "LJH");
         Member user = StubData.MockMember.getMemberByEmailAndNickname("kkd718@gmail.com", "KCB");
         recruitment.addMember(writer);
 
-        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
         //then
         assertThatThrownBy(
-                () -> recruitmentService.updateRecruitmentByUser(
+                () -> recruitmentService.updateRecruitmentByEmail(
                         patchDto,
                         recruitment.getId(),
                         user.getEmail()
@@ -136,10 +136,10 @@ class RecruitmentServiceTest {
         Member member = StubData.MockMember.getMember();
         recruitment.addMember(member);
 
-        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
-        recruitmentService.deleteRecruitmentByUser(recruitment.getId(), member.getEmail());
+        recruitmentService.deleteRecruitmentByEmail(recruitment.getId(), member.getEmail());
 
         //then
 
@@ -154,12 +154,12 @@ class RecruitmentServiceTest {
         Member user = StubData.MockMember.getMemberByEmailAndNickname("kkd718@gmail.com", "KCB");
         recruitment.addMember(writer);
 
-        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
         //then
         assertThatThrownBy(
-                () -> recruitmentService.deleteRecruitmentByUser(recruitment.getId(), user.getEmail())
+                () -> recruitmentService.deleteRecruitmentByEmail(recruitment.getId(), user.getEmail())
         ).isInstanceOf(BusinessLogicException.class);
     }
 }
