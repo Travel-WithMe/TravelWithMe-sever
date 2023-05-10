@@ -62,7 +62,7 @@ class RecruitmentServiceTest {
         when(buddyMapper.toPostResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);
 
         //when
-        RecruitmentDto.PostResponse responseRecruitment = recruitmentService.createRecruitmentByUser(
+        RecruitmentDto.PostResponse responseRecruitment = recruitmentService.createRecruitmentByEmail(
                 postDto, member.getEmail()
         );
 
@@ -90,7 +90,7 @@ class RecruitmentServiceTest {
         when(buddyMapper.toPatchResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);
 
         //when
-        RecruitmentDto.PatchResponse responseRecruitment = recruitmentService.updateRecruitmentByUser(
+        RecruitmentDto.PatchResponse responseRecruitment = recruitmentService.updateRecruitmentByEmail(
                 patchDto, recruitment.getId(), member.getEmail()
         );
 
@@ -120,7 +120,7 @@ class RecruitmentServiceTest {
         //when
         //then
         assertThatThrownBy(
-                () -> recruitmentService.updateRecruitmentByUser(
+                () -> recruitmentService.updateRecruitmentByEmail(
                         patchDto,
                         recruitment.getId(),
                         user.getEmail()
@@ -139,7 +139,7 @@ class RecruitmentServiceTest {
         when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
-        recruitmentService.deleteRecruitmentByUser(recruitment.getId(), member.getEmail());
+        recruitmentService.deleteRecruitmentByEmail(recruitment.getId(), member.getEmail());
 
         //then
 
@@ -159,7 +159,7 @@ class RecruitmentServiceTest {
         //when
         //then
         assertThatThrownBy(
-                () -> recruitmentService.deleteRecruitmentByUser(recruitment.getId(), user.getEmail())
+                () -> recruitmentService.deleteRecruitmentByEmail(recruitment.getId(), user.getEmail())
         ).isInstanceOf(BusinessLogicException.class);
     }
 }

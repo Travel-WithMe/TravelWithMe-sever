@@ -45,20 +45,20 @@ public class Buddy {
         this.status = status;
     }
 
-    public Buddy changeWait() {
-        this.status = BuddyStatus.WAIT;
+    public Buddy request() {
+        this.status = BuddyStatus.REQUEST;
         return this;
     }
-    public Buddy changeReject() {
+    public Buddy reject() {
         this.status = BuddyStatus.REJECT;
         return this;
     }
-    public Buddy changeApprove() {
+    public Buddy approve() {
         this.status = BuddyStatus.APPROVE;
         return this;
     }
 
-    public Buddy changeCancel() {
+    public Buddy cancel() {
         this.status = BuddyStatus.CANCEL;
         return this;
     }

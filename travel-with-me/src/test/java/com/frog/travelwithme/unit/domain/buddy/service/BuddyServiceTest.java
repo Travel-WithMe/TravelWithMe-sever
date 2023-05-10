@@ -10,7 +10,6 @@ import com.frog.travelwithme.domain.recruitment.mapper.RecruitmentMapper;
 import com.frog.travelwithme.domain.recruitment.repository.RecruitmentRepository;
 import com.frog.travelwithme.domain.recruitment.service.RecruitmentService;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
-import com.frog.travelwithme.global.exception.ExceptionCode;
 import com.frog.travelwithme.utils.StubData;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -94,7 +93,7 @@ class BuddyServiceTest {
         Buddy buddy = StubData.MockBuddy.getBuddy();
         buddy.addMember(member);
         buddy.addRecruitment(recruitment);
-        buddy.changeReject();
+        buddy.reject();
 
         when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
         when(memberService.findMember(member.getEmail())).thenReturn(member);
@@ -123,7 +122,7 @@ class BuddyServiceTest {
         Buddy buddy = StubData.MockBuddy.getBuddy();
         buddy.addMember(member);
         buddy.addRecruitment(recruitment);
-        buddy.changeApprove();
+        buddy.approve();
 
         when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
         when(memberService.findMember(member.getEmail())).thenReturn(member);
@@ -148,7 +147,7 @@ class BuddyServiceTest {
         Buddy buddy = StubData.MockBuddy.getBuddy();
         buddy.addMember(member);
         buddy.addRecruitment(recruitment);
-        buddy.changeWait();
+        buddy.request();
 
         when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
         when(memberService.findMember(member.getEmail())).thenReturn(member);
@@ -197,7 +196,7 @@ class BuddyServiceTest {
         Buddy buddy = StubData.MockBuddy.getBuddy();
         buddy.addMember(member);
         buddy.addRecruitment(recruitment);
-        buddy.changeReject();
+        buddy.reject();
 
         when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitment.getId())).thenReturn(recruitment);
         when(memberService.findMember(member.getEmail())).thenReturn(member);
@@ -223,7 +222,7 @@ class BuddyServiceTest {
         Buddy buddy = StubData.MockBuddy.getBuddy();
         buddy.addMember(user);
         buddy.addRecruitment(recruitment);
-        buddy.changeWait();
+        buddy.request();
 
 
         when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
@@ -250,12 +249,12 @@ class BuddyServiceTest {
         Member writer = StubData.MockMember.getMember();
         Member user = StubData.MockMember.getMember();
         recruitment.addMember(writer);
-        recruitment.changeEnd();
+        recruitment.end();
 
         Buddy buddy = StubData.MockBuddy.getBuddy();
         buddy.addMember(user);
         buddy.addRecruitment(recruitment);
-        buddy.changeWait();
+        buddy.request();
 
 
         when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
@@ -276,12 +275,12 @@ class BuddyServiceTest {
         Member writer = StubData.MockMember.getMember();
         Member user = StubData.MockMember.getMember();
         recruitment.addMember(writer);
-        recruitment.changeEnd();
+        recruitment.end();
 
         Buddy buddy = StubData.MockBuddy.getBuddy();
         buddy.addMember(user);
         buddy.addRecruitment(recruitment);
-        buddy.changeWait();
+        buddy.request();
 
 
         doThrow(BusinessLogicException.class).when(recruitmentService)
@@ -305,7 +304,7 @@ class BuddyServiceTest {
         Buddy buddy = StubData.MockBuddy.getBuddy();
         buddy.addMember(writer);
         buddy.addRecruitment(recruitmentOther);
-        buddy.changeWait();
+        buddy.request();
 
 
         when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))

@@ -5,7 +5,6 @@ import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
 import com.frog.travelwithme.domain.recruitment.repository.RecruitmentRepository;
 import com.frog.travelwithme.global.config.QuerydslConfig;
-import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.utils.StubData;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -77,7 +76,7 @@ class RecruitmentRepositoryTest {
         Recruitment findRecruitment = recruitmentRepository.findById(saveRecruitment.getId()).get();
 
         // when
-        findRecruitment.changeEnd();
+        findRecruitment.end();
 
         // then
         assertThat(findRecruitment.getId()).isEqualTo(saveRecruitment.getId());

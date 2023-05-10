@@ -133,7 +133,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         recruitment.addMember(writer);
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
         Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.changeReject();
+        buddy.reject();
         buddy.addMember(user);
         buddy.addRecruitment(saveRecruitment);
 //        buddyRepository.save(buddy);
@@ -173,7 +173,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         Member writer = memberRepository.findByEmail(EMAIL_OTHER).get();
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         recruitment.addMember(writer);
-        recruitment.changeEnd();
+        recruitment.end();
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
         Long recruitmentId = saveRecruitment.getId();
 
@@ -214,7 +214,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         recruitment.addMember(writer);
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
         Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.changeApprove();
+        buddy.approve();
         buddy.addMember(user);
         buddy.addRecruitment(saveRecruitment);
         saveRecruitment.addBuddy(buddy);
@@ -301,7 +301,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         Member writer = memberRepository.findByEmail(EMAIL_OTHER).get();
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         recruitment.addMember(writer);
-        recruitment.changeEnd();
+        recruitment.end();
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
         Buddy buddy = StubData.MockBuddy.getBuddy();
         buddy.addMember(user);
@@ -390,7 +390,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         recruitment.addMember(writer);
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
         Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.changeReject();
+        buddy.reject();
         buddy.addMember(writer);
         buddy.addRecruitment(saveRecruitment);
         saveRecruitment.addBuddy(buddy);
@@ -476,7 +476,7 @@ class BuddyIntegrationTest extends BaseIntegrationTest {
         Member writer = memberRepository.findByEmail(EMAIL).get();
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         recruitment.addMember(writer);
-        recruitment.changeEnd();
+        recruitment.end();
 
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
         Buddy buddy = StubData.MockBuddy.getBuddy();

@@ -82,26 +82,26 @@ public class BuddyService {
 
     private ResponseBody approveBuddy(Buddy buddy) {
         this.checkPossibleToApproveBuddy(buddy);
-        buddy.changeApprove();
+        buddy.approve();
         return ResponseBody.APPROVE_BUDDY;
     }
 
     private void createBuddy(Recruitment recruitment, Member member) {
-        Buddy buddy = new Buddy(BuddyStatus.WAIT);
+        Buddy buddy = new Buddy(BuddyStatus.REQUEST);
         buddy.addMember(member);
         buddy.addRecruitment(recruitment);
         recruitment.addBuddy(buddy);
     }
 
     private void updateBuddyByStatus(Buddy buddy, BuddyStatus status) {
-        if(status.equals(BuddyStatus.WAIT)) {
-            buddy.changeWait();
+        if(status.equals(BuddyStatus.REQUEST)) {
+            buddy.request();
         } else if (status.equals(BuddyStatus.APPROVE)) {
-            buddy.changeApprove();
+            buddy.approve();
         } else if (status.equals(BuddyStatus.REJECT)) {
-            buddy.changeReject();
+            buddy.reject();
         } else if (status.equals(BuddyStatus.CANCEL)) {
-            buddy.changeCancel();
+            buddy.cancel();
         }
     }
 
@@ -122,7 +122,7 @@ public class BuddyService {
 
     private void checkPossibleToApproveBuddy(Buddy buddy) {
         BuddyStatus buddyStatus = buddy.getStatus();
-        if (!buddyStatus.equals(BuddyStatus.WAIT)) {
+        if (!buddyStatus.equals(BuddyStatus.REQUEST)) {
             log.debug("BuddyService.checkPossibleToApproveBuddy exception occur buddy: {}", buddy);
             throw new BusinessLogicException(ExceptionCode.BUDDY_APPROVE_NOT_ALLOWED);
         }
@@ -138,7 +138,6 @@ public class BuddyService {
         return buddy;
     }
 
-    @Transactional(readOnly = true)
     private Buddy findBuddyByIdJoinRecruitment(Long id) {
         return buddyRepository.findBuddyByIdJoinRecruitment(id).orElseThrow(() -> {
             log.debug("BuddyService.findBuddyById exception occur id: {}", id);

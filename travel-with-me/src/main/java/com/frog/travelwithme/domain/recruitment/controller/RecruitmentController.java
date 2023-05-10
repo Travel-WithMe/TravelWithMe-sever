@@ -35,7 +35,7 @@ public class RecruitmentController {
                                           @AuthenticationPrincipal CustomUserDetails user) {
 
         String email = user.getEmail();
-        RecruitmentDto.PostResponse response = recruitmentService.createRecruitmentByUser(
+        RecruitmentDto.PostResponse response = recruitmentService.createRecruitmentByEmail(
                 postDto, email
         );
 
@@ -48,7 +48,7 @@ public class RecruitmentController {
                                            @AuthenticationPrincipal CustomUserDetails user) {
 
         String email = user.getEmail();
-        RecruitmentDto.PatchResponse response = recruitmentService.updateRecruitmentByUser(
+        RecruitmentDto.PatchResponse response = recruitmentService.updateRecruitmentByEmail(
                 patchDto, recruitmentId, email
         );
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
@@ -59,7 +59,7 @@ public class RecruitmentController {
                                             @AuthenticationPrincipal CustomUserDetails user) {
 
         String email = user.getEmail();
-        recruitmentService.deleteRecruitmentByUser(recruitmentId, email);
+        recruitmentService.deleteRecruitmentByEmail(recruitmentId, email);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

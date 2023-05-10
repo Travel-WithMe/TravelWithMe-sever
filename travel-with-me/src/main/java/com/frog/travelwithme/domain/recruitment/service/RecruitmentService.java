@@ -15,8 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 import static com.frog.travelwithme.global.enums.EnumCollection.*;
 
 /**
@@ -37,21 +35,21 @@ public class RecruitmentService {
 
     private final RecruitmentMapper recruitmentMapper;
 
-    public RecruitmentDto.PostResponse createRecruitmentByUser(RecruitmentDto.Post postDto,
-                                                               String email) {
+    public RecruitmentDto.PostResponse createRecruitmentByEmail(RecruitmentDto.Post postDto,
+                                                                String email) {
 
         Member findMember = memberService.findMember(email);
         return this.createRecruitment(postDto, findMember);
     }
 
-    public RecruitmentDto.PatchResponse updateRecruitmentByUser(RecruitmentDto.Patch patchDto,
-                                                                Long recruitmentId,
-                                                                String email) {
+    public RecruitmentDto.PatchResponse updateRecruitmentByEmail(RecruitmentDto.Patch patchDto,
+                                                                 Long recruitmentId,
+                                                                 String email) {
         Recruitment findRecruitment = this.findRecruitmentAndCheckEqualWriterAndUser(recruitmentId, email);
         return this.updateRecruitment(patchDto, findRecruitment);
     }
 
-    public void deleteRecruitmentByUser(Long recruitmentId, String email) {
+    public void deleteRecruitmentByEmail(Long recruitmentId, String email) {
         Recruitment findRecruitment = this.findRecruitmentAndCheckEqualWriterAndUser(recruitmentId, email);
         this.deleteRecruitment(findRecruitment);
     }
@@ -91,23 +89,26 @@ public class RecruitmentService {
 
     @Transactional(readOnly = true)
     public Recruitment findRecruitmentAndCheckEqualWriterAndUser(Long recruitmentId, String email) {
-        Recruitment findRecruitment = this.findRecruitmentByIdJoinMember(recruitmentId);
-        Member writer = findRecruitment.getMember();
-        if(!writer.getEmail().equals(email)) {
-            log.debug("RecruitmentService.checkEqualWriterAndUser exception occur " +
-                    "recruitmentsId: {}, email: {}", recruitmentId, email);
-            throw new BusinessLogicException(ExceptionCode.RECRUITMENT_WRITER_NOT_MATCH);
-        }
-        return findRecruitment;
+        Recruitment recruitment = this.findRecruitmentByIdJoinMember(recruitmentId);
+        this.checkEqualWriterAndUser(recruitment, email);
+        return recruitment;
     }
 
-    @Transactional(readOnly = true)
     public void checkExpiredRecruitment(Recruitment recruitment) {
         RecruitmentStatus status = recruitment.getRecruitmentStatus();
         if(status.equals(RecruitmentStatus.END)) {
             log.debug("RecruitmentService.checkExpiredRecruitment exception occur " +
                     "recruitment: {}", recruitment);
             throw new BusinessLogicException(ExceptionCode.RECRUITMENT_EXPIRED);
+        }
+    }
+
+    public void checkEqualWriterAndUser(Recruitment recruitment, String email) {
+        Member writer = recruitment.getMember();
+        if(!writer.getEmail().equals(email)) {
+            log.debug("RecruitmentService.checkEqualWriterAndUser exception occur " +
+                    "recruitment: {}, email: {}", recruitment, email);
+            throw new BusinessLogicException(ExceptionCode.RECRUITMENT_WRITER_NOT_MATCH);
         }
     }
 
