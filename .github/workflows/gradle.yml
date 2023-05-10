@@ -44,7 +44,6 @@ jobs:
           arguments: build
           build-root-directory: ./travel-with-me #폴더 경로 추가
 
-
       # build 후 압축하는 과정
       - name: Make zip file
         run: zip -r ./travel-with-me-build.zip .
