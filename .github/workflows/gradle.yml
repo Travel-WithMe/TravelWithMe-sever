@@ -20,52 +20,52 @@ jobs:
         working-directory: ./travel-with-me #폴더 경로 추가
 
     steps:
-    # submodule을 사용하기 위한 토큰 추가 
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        token: ${{ secrets.ACTION_TOKEN }}
-        submodules: true
-    
-    - uses: actions/checkout@v3
-    - name: Set up JDK 11
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        
-    # ~/gradlew' is not executable. 문제해결
-    - name: Add permission
-      run: chmod +x ./gradlew
+      # submodule을 사용하기 위한 토큰 추가 
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
+          submodules: true
 
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-      with:
-        arguments: build
-        build-root-directory: ./travel-with-me #폴더 경로 추가
+      - uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
 
-    # build 후 압축하는 과정
-    - name: Make zip file
-      run: zip -r ./travel-with-me-build.zip .
-      shell: bash
+      # ~/gradlew' is not executable. 문제해결
+      - name: Add permission
+        run: chmod +x ./gradlew
 
-    # AWS 사용정보 입력
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }} # IAM 권한 만들때 만든 엑세스키
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # IAM 권한 만들때 만든 시크릿키
-        aws-region: ap-northeast-2 # 서울리전
-        
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: build
+          build-root-directory: ./travel-with-me #폴더 경로 추가
 
-    # 압축파일 AWS S3 버킷에 업로드(전달)
-    - name: Upload to S3
-      run: aws s3 cp --region ap-northeast-2 ./travel-with-me-build.zip s3://${{ secrets.S3_BUCKET_NAME }}/travel-with-me-build.zip
+      # build 후 압축하는 과정
+      - name: Make zip file
+        run: zip -r ./travel-with-me-build.zip .
+        shell: bash
+
+      # AWS 사용정보 입력
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }} # IAM 권한 만들때 만든 엑세스키
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # IAM 권한 만들때 만든 시크릿키
+          aws-region: ap-northeast-2 # 서울리전
 
 
-    # AWS Code Deploy 설정 및 실행
-    - name: Code Deploy
-      run: >
+      # 압축파일 AWS S3 버킷에 업로드(전달)
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./travel-with-me-build.zip s3://${{ secrets.S3_BUCKET_NAME }}/travel-with-me-build.zip
+
+
+      # AWS Code Deploy 설정 및 실행
+      - name: Code Deploy
+        run: >
           aws deploy create-deployment --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }}
           --deployment-config-name CodeDeployDefault.AllAtOnce
           --deployment-group-name ${{ secrets.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
