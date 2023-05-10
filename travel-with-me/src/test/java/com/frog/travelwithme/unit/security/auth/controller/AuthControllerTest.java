@@ -32,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 작성일자: 2023/04/10
  **/
 
-@ActiveProfiles("test")
 @WebMvcTest(
         controllers = AuthController.class,
         excludeFilters = {
