@@ -15,6 +15,7 @@ import java.time.Duration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
+@ActiveProfiles("test")
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
