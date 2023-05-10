@@ -48,6 +48,17 @@ jobs:
       - name: Make zip file
         run: zip -r ./travel-with-me-build.zip .
         shell: bash
+<<<<<<< HEAD
+=======
+
+      # AWS 사용정보 입력
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }} # IAM 권한 만들때 만든 엑세스키
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # IAM 권한 만들때 만든 시크릿키
+          aws-region: ap-northeast-2 # 서울리전
+>>>>>>> feccd68 (chore - #56 Update gradle.yml)
 
 <<<<<<< HEAD
       # AWS 사용정보 입력
@@ -69,10 +80,21 @@ jobs:
         run: >
 =======
 
+<<<<<<< HEAD
     # AWS Code Deploy 설정 및 실행
     - name: Code Deploy
       run: >
 >>>>>>> fd48480 (Update gradle.yml)
+=======
+      # 압축파일 AWS S3 버킷에 업로드(전달)
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./travel-with-me-build.zip s3://${{ secrets.S3_BUCKET_NAME }}/travel-with-me-build.zip
+
+
+      # AWS Code Deploy 설정 및 실행
+      - name: Code Deploy
+        run: >
+>>>>>>> feccd68 (chore - #56 Update gradle.yml)
           aws deploy create-deployment --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }}
           --deployment-config-name CodeDeployDefault.AllAtOnce
           --deployment-group-name ${{ secrets.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
