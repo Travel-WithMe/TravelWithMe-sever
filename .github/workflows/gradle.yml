@@ -49,6 +49,7 @@ jobs:
         run: zip -r ./travel-with-me-build.zip .
         shell: bash
 
+<<<<<<< HEAD
       # AWS 사용정보 입력
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -66,6 +67,12 @@ jobs:
       # AWS Code Deploy 설정 및 실행
       - name: Code Deploy
         run: >
+=======
+
+    # AWS Code Deploy 설정 및 실행
+    - name: Code Deploy
+      run: >
+>>>>>>> fd48480 (Update gradle.yml)
           aws deploy create-deployment --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }}
           --deployment-config-name CodeDeployDefault.AllAtOnce
           --deployment-group-name ${{ secrets.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
