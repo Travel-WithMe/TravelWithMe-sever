@@ -56,6 +56,7 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }} # IAM 권한 만들때 만든 엑세스키
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # IAM 권한 만들때 만든 시크릿키
         aws-region: ap-northeast-2 # 서울리전
+        
 
     # 압축파일 AWS S3 버킷에 업로드(전달)
     - name: Upload to S3
