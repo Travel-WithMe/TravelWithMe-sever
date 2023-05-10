@@ -44,7 +44,7 @@ jobs:
           arguments: build
           build-root-directory: ./travel-with-me #폴더 경로 추가
 
-<<<<<<< HEAD
+
       # build 후 압축하는 과정
       - name: Make zip file
         run: zip -r ./travel-with-me-build.zip .
@@ -65,36 +65,7 @@ jobs:
       # AWS Code Deploy 설정 및 실행
       - name: Code Deploy
         run: >
-
-      # 압축파일 AWS S3 버킷에 업로드(전달)
-      - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./travel-with-me-build.zip s3://${{ secrets.S3_BUCKET_NAME }}/travel-with-me-build.zip
-
-
-      # AWS Code Deploy 설정 및 실행
-      - name: Code Deploy
-=======
-    # 압축파일 AWS S3 버킷에 업로드(전달)
-    - name: Upload to S3
-      run: aws s3 cp --region ap-northeast-2 ./travel-with-me-build.zip s3://${{ secrets.S3_BUCKET_NAME }}/travel-with-me-build.zip
-
-    # AWS Code Deploy 설정 및 실행
-    - name: Code Deploy
-<<<<<<< HEAD
->>>>>>> 14a0af7 (chore - #56 - CodeDeploy 설정 추가)
-        run: >
-          aws deploy create-deployment --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }}
-          --deployment-config-name CodeDeployDefault.AllAtOnce
-          --deployment-group-name ${{ secrets.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
-<<<<<<< HEAD
-          --s3-location bucket=${{ secrets.S3_BUCKET_NAME }},bundleType=zip,key=travel-with-me-build.zip
-=======
-          --s3-location bucket=${{ secrets.S3_BUCKET_NAME }},bundleType=zip,key=travel-with-me-build.zip
->>>>>>> 14a0af7 (chore - #56 - CodeDeploy 설정 추가)
-=======
-      run: >
           aws deploy create-deployment --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }}
           --deployment-config-name CodeDeployDefault.AllAtOnce
           --deployment-group-name ${{ secrets.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
           --s3-location bucket=${{ secrets.S3_BUCKET_NAME }},bundleType=zip,key=travel-with-me-build.zip
->>>>>>> 1dd4d00 (chore - #56: Update gradle.yml)
