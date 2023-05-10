@@ -21,11 +21,11 @@ jobs:
 
     steps:
     # submodule을 사용하기 위한 토큰 추가 
-#     - name: Checkout
-#       uses: actions/checkout@v3
-#       with:
-#         token: ${{ secrets.ACTION_TOKEN }}
-#         submodules: true
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.ACTION_TOKEN }}
+        submodules: true
     
     - uses: actions/checkout@v3
     - name: Set up JDK 11
