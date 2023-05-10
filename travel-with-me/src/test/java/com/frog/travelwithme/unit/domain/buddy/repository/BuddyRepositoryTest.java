@@ -22,7 +22,6 @@ import javax.persistence.EntityManager;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static com.frog.travelwithme.global.enums.EnumCollection.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -100,7 +99,7 @@ class BuddyRepositoryTest {
         Buddy findBuddy = buddyRepository.findById(saveBuddy.getId()).get();
 
         // when
-        findBuddy.changeApprove();
+        findBuddy.approve();
 
         // then
         assertThat(findBuddy.getId()).isEqualTo(saveBuddy.getId());

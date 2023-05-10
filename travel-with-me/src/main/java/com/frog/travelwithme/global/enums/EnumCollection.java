@@ -62,7 +62,7 @@ public class EnumCollection {
 
     @AllArgsConstructor
     public enum BuddyStatus implements EnumType {
-        WAIT("승인대기 상태"),
+        REQUEST("승인요청 상태"),
         APPROVE("승인완료 상태"),
         REJECT("거절 상태"),
         CANCEL("취소 상태");

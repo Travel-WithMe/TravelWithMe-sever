@@ -298,7 +298,7 @@ public class StubData {
     public static class MockBuddy {
         public static Buddy getBuddy() {
             return Buddy.builder()
-                    .status(EnumCollection.BuddyStatus.WAIT)
+                    .status(EnumCollection.BuddyStatus.REQUEST)
                     .build();
         }
     }
