@@ -1,6 +1,5 @@
 package com.frog.travelwithme.domain.recruitment.entity;
 
-import com.frog.travelwithme.domain.buddy.entity.Buddy;
 import com.frog.travelwithme.domain.common.BaseTimeEntity;
 import com.frog.travelwithme.domain.common.DeletionEntity;
 import com.frog.travelwithme.domain.recruitment.controller.dto.RecruitmentDto;

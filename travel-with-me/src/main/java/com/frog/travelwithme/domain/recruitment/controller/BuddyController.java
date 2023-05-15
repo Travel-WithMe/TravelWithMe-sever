@@ -1,6 +1,6 @@
-package com.frog.travelwithme.domain.buddy.controller;
+package com.frog.travelwithme.domain.recruitment.controller;
 
-import com.frog.travelwithme.domain.buddy.service.BuddyService;
+import com.frog.travelwithme.domain.recruitment.service.BuddyService;
 import com.frog.travelwithme.global.dto.MessageResponseDto;
 import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;

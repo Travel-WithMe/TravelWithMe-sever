@@ -1,6 +1,6 @@
 package com.frog.travelwithme.utils;
 
-import com.frog.travelwithme.domain.buddy.entity.Buddy;
+import com.frog.travelwithme.domain.recruitment.entity.Buddy;
 import com.frog.travelwithme.domain.common.DeletionEntity;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.controller.dto.TagDto;

@@ -1,7 +1,7 @@
-package com.frog.travelwithme.domain.buddy.service;
+package com.frog.travelwithme.domain.recruitment.service;
 
-import com.frog.travelwithme.domain.buddy.entity.Buddy;
-import com.frog.travelwithme.domain.buddy.repository.BuddyRepository;
+import com.frog.travelwithme.domain.recruitment.entity.Buddy;
+import com.frog.travelwithme.domain.recruitment.repository.BuddyRepository;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
