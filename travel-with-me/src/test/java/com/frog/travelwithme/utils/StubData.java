@@ -1,6 +1,6 @@
 package com.frog.travelwithme.utils;
 
-import com.frog.travelwithme.domain.recruitment.entity.Buddy;
+import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.common.DeletionEntity;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
@@ -8,8 +8,8 @@ import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Member;
-import com.frog.travelwithme.domain.recruitment.controller.dto.RecruitmentDto;
-import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
+import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.enums.EnumCollection.Gender;
 import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
@@ -295,10 +295,10 @@ public class StubData {
 
     }
 
-    public static class MockBuddy {
-        public static Buddy getBuddy() {
-            return Buddy.builder()
-                    .status(EnumCollection.BuddyStatus.REQUEST)
+    public static class MockMatching {
+        public static Matching getMatching() {
+            return Matching.builder()
+                    .status(EnumCollection.MatchingStatus.REQUEST)
                     .build();
         }
     }
