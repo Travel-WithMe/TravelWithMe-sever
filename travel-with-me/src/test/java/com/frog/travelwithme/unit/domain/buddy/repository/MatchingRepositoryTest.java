@@ -1,4 +1,4 @@
-package com.frog.travelwithme.unit.domain.buddy.repository;
+package com.frog.travelwithme.unit.domain.recruitment.repository;
 
 import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
