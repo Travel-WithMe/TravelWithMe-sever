@@ -1,10 +1,7 @@
 package com.frog.travelwithme.domain.recruitment.repository;
 
-import com.frog.travelwithme.domain.buddy.repository.BuddyCustomRepository;
 import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Optional;
 
 /**
  * 작성자: 이재혁

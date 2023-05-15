@@ -1,6 +1,6 @@
-package com.frog.travelwithme.domain.buddy.repository;
+package com.frog.travelwithme.domain.recruitment.repository;
 
-import com.frog.travelwithme.domain.buddy.entity.Buddy;
+import com.frog.travelwithme.domain.recruitment.entity.Buddy;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

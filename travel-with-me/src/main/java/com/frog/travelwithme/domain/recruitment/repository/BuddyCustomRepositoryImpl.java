@@ -1,8 +1,7 @@
-package com.frog.travelwithme.domain.buddy.repository;
+package com.frog.travelwithme.domain.recruitment.repository;
 
-import com.frog.travelwithme.domain.buddy.entity.Buddy;
-import com.frog.travelwithme.domain.buddy.entity.QBuddy;
-import com.frog.travelwithme.domain.recruitment.entity.QRecruitment;
+import com.frog.travelwithme.domain.recruitment.entity.Buddy;
+import com.frog.travelwithme.domain.recruitment.entity.QBuddy;
 import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-import static com.frog.travelwithme.domain.buddy.entity.QBuddy.*;
+import static com.frog.travelwithme.domain.recruitment.entity.QBuddy.*;
 import static com.frog.travelwithme.domain.recruitment.entity.QRecruitment.*;
 
 /**

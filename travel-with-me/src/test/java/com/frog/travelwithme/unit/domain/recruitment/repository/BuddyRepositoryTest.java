@@ -1,8 +1,8 @@
-package com.frog.travelwithme.unit.domain.buddy.repository;
+package com.frog.travelwithme.unit.domain.recruitment.repository;
 
-import com.frog.travelwithme.domain.buddy.entity.Buddy;
+import com.frog.travelwithme.domain.recruitment.entity.Buddy;
 import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
-import com.frog.travelwithme.domain.buddy.repository.BuddyRepository;
+import com.frog.travelwithme.domain.recruitment.repository.BuddyRepository;
 import com.frog.travelwithme.domain.recruitment.repository.RecruitmentRepository;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;

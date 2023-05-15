@@ -1,7 +1,6 @@
-package com.frog.travelwithme.domain.buddy.entity;
+package com.frog.travelwithme.domain.recruitment.entity;
 
 import com.frog.travelwithme.domain.member.entity.Member;
-import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
 import lombok.*;
 
 import javax.persistence.*;
