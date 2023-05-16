@@ -4,8 +4,10 @@ import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
 import com.frog.travelwithme.domain.feed.service.FeedService;
 import com.frog.travelwithme.domain.feed.service.TagService;
+import com.frog.travelwithme.global.dto.MessageResponseDto;
 import com.frog.travelwithme.global.dto.PagelessMultiResponseDto;
 import com.frog.travelwithme.global.dto.SingleResponseDto;
+import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -85,13 +87,19 @@ public class FeedController {
     }
 
     @PostMapping("/{feed-id}/likes")
-    public ResponseEntity postLike() {
-        return new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity<EnumCollection.ResponseBody> postLike(@PathVariable("feed-id") Long feedId,
+                                                                @AuthenticationPrincipal CustomUserDetails user) {
+        EnumCollection.ResponseBody responseBody = feedService.doLike(user.getEmail(), feedId);
+
+        return new ResponseEntity(new MessageResponseDto(responseBody.getDescription()), HttpStatus.OK);
     }
 
     @DeleteMapping("/{feed-id}/likes")
-    public ResponseEntity deleteLike() {
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    public ResponseEntity<EnumCollection.ResponseBody> deleteLike(@PathVariable("feed-id") Long feedId,
+                                                                  @AuthenticationPrincipal CustomUserDetails user) {
+        EnumCollection.ResponseBody responseBody = feedService.cancelLike(user.getEmail(), feedId);
+
+        return new ResponseEntity(new MessageResponseDto(responseBody.getDescription()), HttpStatus.OK);
     }
 
     @PostMapping("/{feed-id}/comments")
