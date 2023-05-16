@@ -3,9 +3,11 @@ package com.frog.travelwithme.domain.feed.entity;
 import com.frog.travelwithme.domain.common.BaseTimeEntity;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.member.entity.Member;
+import com.frog.travelwithme.global.utils.StringListConverter;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 /**
@@ -22,6 +24,10 @@ public class Feed extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank
+    @Convert(converter = StringListConverter.class)
+    private List<String> imageUrls = new ArrayList<>();
 
     private String contents;
 

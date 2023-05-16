@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -30,8 +31,10 @@ public class FeedController {
     private final TagService tagService;
 
     @PostMapping
-    public ResponseEntity postFeed(@Valid @RequestBody FeedDto.Post postDto,
+    public ResponseEntity postFeed(@RequestPart(value = "file") List<MultipartFile> multipartFiles,
+                                   @Valid @RequestBody FeedDto.Post postDto,
                                    @AuthenticationPrincipal CustomUserDetails user) {
+        // TODO: MultiPartFile 로직 추가
         FeedDto.Response response = feedService.postFeed(user.getEmail(), postDto);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
@@ -56,8 +59,10 @@ public class FeedController {
 
     @PatchMapping("/{feed-id}")
     public ResponseEntity patchFeed(@PathVariable("feed-id") Long feedId,
+                                    @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles,
                                     @Valid @RequestBody FeedDto.Patch patchDto,
                                     @AuthenticationPrincipal CustomUserDetails user) {
+        // TODO: MultiPartFile 로직 추가
         FeedDto.Response response = feedService.updateFeed(user.getEmail(), feedId, patchDto);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
