@@ -48,6 +48,12 @@ public class Feed extends BaseTimeEntity {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags = new LinkedHashSet<>();
 
+    @ManyToMany
+    @JoinTable(name = "feed_like",
+            joinColumns = @JoinColumn(name = "feed_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id"))
+    private List<Member> likedMembers = new ArrayList<>();
+
     @Builder
     public Feed(String contents, String location, Member member) {
         this.contents = contents;
@@ -64,5 +70,15 @@ public class Feed extends BaseTimeEntity {
 
     public void addTags(Set<Tag> tags) {
         this.tags.addAll(tags);
+    }
+
+    public void addLike(Member member) {
+        this.likedMembers.add(member);
+        this.likeCount += 1;
+    }
+
+    public void removeLike(Member member) {
+        this.likedMembers.remove(member);
+        this.likeCount -= 1;
     }
 }

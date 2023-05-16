@@ -1,6 +1,7 @@
 package com.frog.travelwithme.domain.member.entity;
 
 import com.frog.travelwithme.domain.common.BaseTimeEntity;
+import com.frog.travelwithme.domain.feed.entity.Feed;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.global.enums.EnumCollection.Gender;
 import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
@@ -12,7 +13,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Member 설명: 회원 데이터 관리
@@ -60,6 +61,9 @@ public class Member extends BaseTimeEntity {
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private OAuthStatus oauthstatus;
+
+    @ManyToMany(mappedBy = "likedMembers")
+    private List<Feed> likedFeeds = new ArrayList<>();
 
     @Builder
     public Member(Long id, String email, String nickname, String password, Gender gender, String nation,
