@@ -4,10 +4,7 @@ import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.entity.Feed;
 import com.frog.travelwithme.domain.feed.entity.Tag;
 import com.frog.travelwithme.domain.member.entity.Member;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +29,9 @@ public interface FeedMapper {
     @Mapping(target = "profileImage", source = "feed.member.image")
     @Mapping(target = "tags", source = "feed.tags", qualifiedByName = "convertTagNamesFromTags")
     @Mapping(target = "writer", expression = "java(feed.getMember().getEmail().equals(email))")
+    @Mapping(target = "liked", expression = "java(!feed.getLikedMembers().isEmpty() && " +
+            "feed.getLikedMembers().stream().map(Member::getEmail)" +
+            ".collect(java.util.stream.Collectors.toList()).contains(email))")
     @Mapping(target = "nickname", expression = "java(feed.getMember().getNickname())")
     FeedDto.Response toResponse(Feed feed, String email);
 
