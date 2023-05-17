@@ -9,6 +9,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Feed 설명: 피드 관리
@@ -79,12 +80,21 @@ public class Feed extends BaseTimeEntity {
         this.likeCount += 1;
     }
 
-    public void removeLike(Member member) {
-        this.likedMembers.remove(member);
+    public void removeLike(String email) {
+        this.likedMembers.stream()
+                .map(Member::getEmail)
+                .collect(Collectors.toList())
+                .remove(email);
         this.likeCount -= 1;
     }
 
-    public boolean isLikedByMember(Member member) {
-        return this.likedMembers.contains(member);
+    public boolean isLikedByMember(String email) {
+        if (this.likedMembers.isEmpty()) {
+            return false;
+        }
+        return this.likedMembers.stream()
+                .map(Member::getEmail)
+                .collect(Collectors.toList())
+                .contains(email);
     }
 }

@@ -81,19 +81,17 @@ public class FeedService {
     }
 
     public ResponseBody doLike(String email, long feedId) {
-        Member member = memberService.findMember(email);
         Feed feed = this.findFeed(feedId);
-        if (!feed.isLikedByMember(member)) {
-            feed.addLike(member);
+        if (!feed.isLikedByMember(email)) {
+            feed.addLike(memberService.findMember(email));
         }
         return ResponseBody.SUCCESS_FEED_LIKE;
     }
 
     public ResponseBody cancelLike(String email, long feedId) {
-        Member member = memberService.findMember(email);
         Feed feed = this.findFeed(feedId);
-        if (feed.isLikedByMember(member)) {
-            feed.removeLike(member);
+        if (feed.isLikedByMember(email)) {
+            feed.removeLike(email);
         }
         return ResponseBody.SUCCESS_CANCEL_FEED_LIKE;
     }
