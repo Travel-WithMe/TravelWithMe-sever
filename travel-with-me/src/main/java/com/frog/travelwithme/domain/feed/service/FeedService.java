@@ -83,7 +83,7 @@ public class FeedService {
     public ResponseBody doLike(String email, long feedId) {
         Member member = memberService.findMember(email);
         Feed feed = this.findFeed(feedId);
-        if (!feed.getLikedMembers().contains(member)) {
+        if (!feed.isLikedByMember(member)) {
             feed.addLike(member);
         }
         return ResponseBody.SUCCESS_FEED_LIKE;
@@ -92,7 +92,7 @@ public class FeedService {
     public ResponseBody cancelLike(String email, long feedId) {
         Member member = memberService.findMember(email);
         Feed feed = this.findFeed(feedId);
-        if (feed.getLikedMembers().contains(member)) {
+        if (feed.isLikedByMember(member)) {
             feed.removeLike(member);
         }
         return ResponseBody.SUCCESS_CANCEL_FEED_LIKE;

@@ -83,4 +83,8 @@ public class Feed extends BaseTimeEntity {
         this.likedMembers.remove(member);
         this.likeCount -= 1;
     }
+
+    public boolean isLikedByMember(Member member) {
+        return this.likedMembers.contains(member);
+    }
 }
