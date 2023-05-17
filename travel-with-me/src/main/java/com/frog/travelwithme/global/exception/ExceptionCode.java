@@ -33,6 +33,7 @@ public enum ExceptionCode {
     FEED_NOT_FOUND(404, "피드가 존재하지 않습니다."),
     FEED_WRITER_NOT_MATCH(404, "해당 피드를 작성한 유저가 아닙니다."),
     ALREADY_LIKED_FEED(409, "이미 좋아요한 피드입니다."),
+    UNABLE_TO_CANCEL_LIKE(409, "좋아요를 하지 않았기 때문에 좋아요를 취소할 수 없습니다. "),
 
     // Security, JWT
     NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),
