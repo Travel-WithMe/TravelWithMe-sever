@@ -7,7 +7,7 @@ import com.frog.travelwithme.global.utils.StringListConverter;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.*;
 
 /**
@@ -25,7 +25,7 @@ public class Feed extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotEmpty
     @Convert(converter = StringListConverter.class)
     private List<String> imageUrls = new ArrayList<>();
 
@@ -56,6 +56,8 @@ public class Feed extends BaseTimeEntity {
 
     @Builder
     public Feed(String contents, String location, Member member) {
+        // TODO: File 로직 추가 후 구현
+        this.imageUrls.add("defaultImageUrl");
         this.contents = contents;
         this.location = location;
         this.member = member;
