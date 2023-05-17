@@ -80,18 +80,26 @@ public class FeedService {
         feedRepository.deleteById(feedId);
     }
 
+    // TODO: Redis 캐시 사용 고려
     public ResponseBody doLike(String email, long feedId) {
         Feed feed = this.findFeed(feedId);
         if (!feed.isLikedByMember(email)) {
             feed.addLike(memberService.findMember(email));
+        } else {
+            log.debug("FeedService.doLike exception occur email : {}, feedId : {}", email, feedId);
+            throw new BusinessLogicException(ExceptionCode.ALREADY_LIKED_FEED);
         }
         return ResponseBody.SUCCESS_FEED_LIKE;
     }
 
+    // TODO: Redis 캐시 사용 고려
     public ResponseBody cancelLike(String email, long feedId) {
         Feed feed = this.findFeed(feedId);
         if (feed.isLikedByMember(email)) {
             feed.removeLike(email);
+        } else {
+            log.debug("FeedService.cancelLike exception occur email : {}, feedId : {}", email, feedId);
+            throw new BusinessLogicException(ExceptionCode.UNABLE_TO_CANCEL_LIKE);
         }
         return ResponseBody.SUCCESS_CANCEL_FEED_LIKE;
     }

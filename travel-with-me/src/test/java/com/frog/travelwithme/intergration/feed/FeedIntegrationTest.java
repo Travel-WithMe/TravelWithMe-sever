@@ -8,6 +8,8 @@ import com.frog.travelwithme.domain.feed.service.TagService;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
+import com.frog.travelwithme.global.exception.ErrorResponse;
+import com.frog.travelwithme.global.exception.ExceptionCode;
 import com.frog.travelwithme.global.security.auth.controller.dto.TokenDto;
 import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
@@ -25,6 +27,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,6 +63,9 @@ class FeedIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @BeforeEach
     public void beforEach() {
@@ -287,5 +294,54 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getLikeCount()).isZero();
         actions
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("이미 좋아요한 Feed를 좋아요할 때 예외 발생")
+    void feedControllerTest9() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+        feedService.doLike(userDetails.getEmail(), feedId);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + feedId + "/likes")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.postRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken);
+
+        // then
+        ErrorResponse errorResponse = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+        assertThat(errorResponse.getMessage()).isEqualTo(ExceptionCode.ALREADY_LIKED_FEED.getMessage());
+        assertThat(errorResponse.getStatus()).isEqualTo(ExceptionCode.ALREADY_LIKED_FEED.getStatus());
+        actions
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("Feed 좋아요를 하지 않았을 때 좋아요 취소를 하게 되면 예외 발생")
+    void feedControllerTest10() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + feedId + "/likes")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.deleteRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken);
+
+        // then
+        ErrorResponse errorResponse = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+        assertThat(errorResponse.getMessage()).isEqualTo(ExceptionCode.UNABLE_TO_CANCEL_LIKE.getMessage());
+        assertThat(errorResponse.getStatus()).isEqualTo(ExceptionCode.UNABLE_TO_CANCEL_LIKE.getStatus());
+        actions
+                .andExpect(status().is4xxClientError());
     }
 }
