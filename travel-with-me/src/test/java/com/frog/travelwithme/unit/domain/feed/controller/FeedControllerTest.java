@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
@@ -70,12 +71,17 @@ class FeedControllerTest {
         FeedDto.Post postDto = StubData.MockFeed.getPostDto();
         FeedDto.Response response = StubData.MockFeed.getResponseDto();
         given(feedService.postFeed(any(), any(FeedDto.Post.class))).willReturn(response);
+        MockMultipartFile file = new MockMultipartFile("file",
+                "test.png",
+                "image/png",
+                "fileContent".getBytes());
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(postDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContentAndUserDetails(mvc, uri, json, userDetails);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentAndUserDetailsAndMultiPart(
+                mvc, uri, json, userDetails, file);
 
         // then
         actions
