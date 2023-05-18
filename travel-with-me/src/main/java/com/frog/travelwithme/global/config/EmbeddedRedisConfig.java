@@ -25,7 +25,7 @@ import java.util.Objects;
  **/
 @Slf4j
 @Configuration
-@Profile("test")
+@Profile({"test", "local"})
 public class EmbeddedRedisConfig {
 
     @Value("${spring.redis.port}")
