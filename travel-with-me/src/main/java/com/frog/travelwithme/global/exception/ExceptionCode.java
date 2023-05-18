@@ -27,6 +27,7 @@ public enum ExceptionCode {
     MATCHING_REQUEST_NOT_ALLOWED(404, "동행매칭 요청이 불가능한 상태입니다."),
     MATCHING_CANCEL_NOT_ALLOWED(404, "동행매칭 취소가 불가능한 상태입니다."),
     MATCHING_APPROVE_NOT_ALLOWED(404, "동행매칭 승인이 불가능한 상태입니다."),
+    MATCHING_REJECT_NOT_ALLOWED(404, "동행매칭 거절이 불가능한 상태입니다."),
 
     // Feed
     FEED_NOT_FOUND(404, "피드가 존재하지 않습니다."),

@@ -56,6 +56,13 @@ public class MatchingService {
         return this.approveMatching(findMatching);
     }
 
+    public ResponseBody rejectMatchingByEmail(Long recruitmentId, String email, Long matchingId) {
+        Recruitment recruitment = recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitmentId, email);
+        recruitmentService.checkExpiredRecruitment(recruitment);
+        Matching findMatching = this.findMatchingByIdAndCheckEqualRecruitment(matchingId, recruitment);
+        return this.rejectMatching(findMatching);
+    }
+
     private ResponseBody requestMatching(Optional<Matching> findMatching, Recruitment recruitment, Member member) {
         if(findMatching.isEmpty()) {
             this.createMatching(recruitment, member);
@@ -83,6 +90,12 @@ public class MatchingService {
         this.checkPossibleToApproveMatching(matching);
         matching.approve();
         return ResponseBody.APPROVE_MATCHING;
+    }
+
+    private ResponseBody rejectMatching(Matching matching) {
+        this.checkPossibleToRejectMatching(matching);
+        matching.reject();
+        return ResponseBody.REJECT_MATCHING;
     }
 
     private void createMatching(Recruitment recruitment, Member member) {
@@ -127,8 +140,16 @@ public class MatchingService {
         }
     }
 
+    private void checkPossibleToRejectMatching(Matching matching) {
+        MatchingStatus matchingStatus = matching.getStatus();
+        if (!matchingStatus.equals(MatchingStatus.REQUEST)) {
+            log.debug("MatchingService.checkPossibleToRejectMatching exception occur matching: {}", matching);
+            throw new BusinessLogicException(ExceptionCode.MATCHING_REJECT_NOT_ALLOWED);
+        }
+    }
+
     private Matching findMatchingByIdAndCheckEqualRecruitment(Long id, Recruitment recruitment) {
-        Matching matching = this.findMatchingByIdJoinRecruitment(id);
+        Matching matching = this.findMatchingById(id);
         if(!matching.getRecruitment().equals(recruitment)) {
             log.debug("MatchingService.findMatchingByIdAndCheckEqualRecruitment exception occur id: {}, recruitment: {}",
                     id, recruitment);
@@ -137,8 +158,8 @@ public class MatchingService {
         return matching;
     }
 
-    private Matching findMatchingByIdJoinRecruitment(Long id) {
-        return matchingRepository.findMatchingByIdJoinRecruitment(id).orElseThrow(() -> {
+    private Matching findMatchingById(Long id) {
+        return matchingRepository.findById(id).orElseThrow(() -> {
             log.debug("MatchingService.findMatchingById exception occur id: {}", id);
             throw new BusinessLogicException(ExceptionCode.MATCHING_NOT_FOUND);
         });

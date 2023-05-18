@@ -228,7 +228,7 @@ class MatchingServiceTest {
         when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
                 .thenReturn(recruitment);
         doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);
-        when(matchingRepository.findMatchingByIdJoinRecruitment(matching.getId())).thenReturn(Optional.of(matching));
+        when(matchingRepository.findById(matching.getId())).thenReturn(Optional.of(matching));
 
 
         //when
@@ -310,7 +310,7 @@ class MatchingServiceTest {
         when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
                 .thenReturn(recruitment);
         doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);
-        when(matchingRepository.findMatchingByIdJoinRecruitment(matching.getId())).thenReturn(Optional.of(matching));
+        when(matchingRepository.findById(matching.getId())).thenReturn(Optional.of(matching));
 
         //when
         //then
@@ -318,5 +318,115 @@ class MatchingServiceTest {
                 matchingService
                         .approveMatchingByEmail(recruitment.getId(), writer.getEmail(), matching.getId()))
                         .isInstanceOf(BusinessLogicException.class);
+    }
+
+    @Test
+    @DisplayName("동행 매칭거절")
+    void matchingServiceTest11() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Member writer = StubData.MockMember.getMember();
+        Member user = StubData.MockMember.getMember();
+        recruitment.addMember(writer);
+
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(user);
+        matching.addRecruitment(recruitment);
+        matching.request();
+
+
+        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
+                .thenReturn(recruitment);
+        doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);
+        when(matchingRepository.findById(matching.getId())).thenReturn(Optional.of(matching));
+
+
+        //when
+        ResponseBody response = matchingService.rejectMatchingByEmail(recruitment.getId(), writer.getEmail(), matching.getId());
+
+        //then
+        assertAll(
+                () -> assertEquals(response.getName(), ResponseBody.REJECT_MATCHING.getName()),
+                () -> assertEquals(response.getDescription(), ResponseBody.REJECT_MATCHING.getDescription())
+        );
+    }
+
+    @Test
+    @DisplayName("동행 매칭거절 (모집이 종료된 게시글)")
+    void matchingServiceTest12() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Member writer = StubData.MockMember.getMember();
+        Member user = StubData.MockMember.getMember();
+        recruitment.addMember(writer);
+        recruitment.end();
+
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(user);
+        matching.addRecruitment(recruitment);
+        matching.request();
+
+
+        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
+                .thenReturn(recruitment);
+        doThrow(BusinessLogicException.class).when(recruitmentService).checkExpiredRecruitment(recruitment);
+
+        //when
+        //then
+        assertThatThrownBy(() -> matchingService.rejectMatchingByEmail(recruitment.getId(), writer.getEmail(), matching.getId()))
+                .isInstanceOf(BusinessLogicException.class);
+    }
+
+    @Test
+    @DisplayName("동행 매칭거절 (동행글 작성자가 아님)")
+    void matchingServiceTest13() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Member writer = StubData.MockMember.getMember();
+        Member user = StubData.MockMember.getMember();
+        recruitment.addMember(writer);
+        recruitment.end();
+
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(user);
+        matching.addRecruitment(recruitment);
+        matching.request();
+
+
+        doThrow(BusinessLogicException.class).when(recruitmentService)
+                .findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail());
+
+        //when
+        //then
+        assertThatThrownBy(() -> matchingService.rejectMatchingByEmail(recruitment.getId(), user.getEmail(), matching.getId()))
+                .isInstanceOf(BusinessLogicException.class);
+    }
+
+    @Test
+    @DisplayName("동행 매칭거절 (동행 모집글이 다름)")
+    void matchingServiceTest14() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Recruitment recruitmentOther = StubData.MockRecruitment.getRecruitment();
+        Member writer = StubData.MockMember.getMember();
+        recruitment.addMember(writer);
+
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(writer);
+        matching.addRecruitment(recruitmentOther);
+        matching.request();
+
+
+        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
+                .thenReturn(recruitment);
+        doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);
+        when(matchingRepository.findById(matching.getId())).thenReturn(Optional.of(matching));
+
+        //when
+        //then
+        assertThatThrownBy(() ->
+                matchingService
+                        .rejectMatchingByEmail(recruitment.getId(), writer.getEmail(), matching.getId()))
+                .isInstanceOf(BusinessLogicException.class);
     }
 }

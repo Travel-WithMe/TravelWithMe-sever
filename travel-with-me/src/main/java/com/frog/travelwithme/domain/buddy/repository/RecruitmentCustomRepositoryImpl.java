@@ -26,7 +26,7 @@ public class RecruitmentCustomRepositoryImpl implements RecruitmentCustomReposit
 
 
     @Override
-    public Optional<Recruitment> findRecruitmentByIdJoinMember(Long id) {
+    public Optional<Recruitment> findRecruitmentById(Long id) {
         return Optional.ofNullable(queryFactory
                 .from(recruitment)
                 .select(recruitment)

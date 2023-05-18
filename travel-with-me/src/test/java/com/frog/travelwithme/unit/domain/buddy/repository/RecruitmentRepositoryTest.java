@@ -134,7 +134,7 @@ class RecruitmentRepositoryTest {
         log.info("1차 캐시 clear");
 
         // when
-        Recruitment findRecruitment = recruitmentRepository.findRecruitmentByIdJoinMember(saveRecruitment.getId()).get();
+        Recruitment findRecruitment = recruitmentRepository.findRecruitmentById(saveRecruitment.getId()).get();
         Member findMember = findRecruitment.getMember();
 
         // then

@@ -113,4 +113,25 @@ class MatchingControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @DisplayName("동행 매칭거절")
+    @WithMockCustomUser
+    void matchingControllerTest4() throws Exception {
+        // given
+        EnumCollection.ResponseBody approveMatching = EnumCollection.ResponseBody.REJECT_MATCHING;
+        given(matchingService.rejectMatchingByEmail(any(),any(),any())).willReturn(approveMatching);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1 + "/" + SUB_URL +
+                "/" +  1 + "/" + "reject").build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.postRequestWithUserDetails(mvc, uri, userDetails);
+
+        // then
+        String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
+        assertThat(response).isEqualTo(approveMatching.getDescription());
+        actions
+                .andExpect(status().isOk());
+    }
+
 }
