@@ -104,6 +104,7 @@ public class EnumCollection {
         RETRY_REQUEST_MATCHING("동행 재신청이 완료되었습니다."),
         CANCEL_MATCHING("동행 매칭신청이 취소되었습니다."),
         APPROVE_MATCHING("동행 매칭신청이 승인되었습니다."),
+        REJECT_MATCHING("동행 매칭신청이 거절되었습니다."),
         SUCCESS_FEED_LIKE("피드를 좋아요했습니다."),
         SUCCESS_CANCEL_FEED_LIKE("피드 좋아요를 취소했습니다.");
 

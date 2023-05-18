@@ -86,7 +86,7 @@ class RecruitmentServiceTest {
         Member member = StubData.MockMember.getMember();
         recruitment.addMember(member);
 
-        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
         when(buddyMapper.toPatchResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);
 
         //when
@@ -115,7 +115,7 @@ class RecruitmentServiceTest {
         Member user = StubData.MockMember.getMemberByEmailAndNickname("kkd718@gmail.com", "KCB");
         recruitment.addMember(writer);
 
-        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
         //then
@@ -136,7 +136,7 @@ class RecruitmentServiceTest {
         Member member = StubData.MockMember.getMember();
         recruitment.addMember(member);
 
-        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
         recruitmentService.deleteRecruitmentByEmail(recruitment.getId(), member.getEmail());
@@ -154,7 +154,7 @@ class RecruitmentServiceTest {
         Member user = StubData.MockMember.getMemberByEmailAndNickname("kkd718@gmail.com", "KCB");
         recruitment.addMember(writer);
 
-        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
         //then

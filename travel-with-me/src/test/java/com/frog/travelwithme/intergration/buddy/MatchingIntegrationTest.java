@@ -598,4 +598,185 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
                         ErrorResponseSnippet.getFieldErrorSnippetsLong()
                 ));
     }
+
+    @Test
+    @DisplayName("동행 매칭신청 거절")
+    void matchingIntegrationTest13() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Member writer = memberRepository.findByEmail(EMAIL).get();
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(writer);
+        Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(writer);
+        matching.addRecruitment(saveRecruitment);
+        saveRecruitment.addMatching(matching);
+        Matching savedMatching = matchingRepository.save(matching);
+        Long recruitmentId = saveRecruitment.getId();
+        Long matchingId = savedMatching.getId();
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL +
+                "/" + matchingId + "/" + "reject").build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.postRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken
+        );
+
+        // then
+        String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
+        Optional<Matching> findMatching = matchingRepository.findMatchingByIdJoinRecruitment(matchingId);
+
+        assertThat(response).isEqualTo(ResponseBody.REJECT_MATCHING.getDescription());
+        assertThat(findMatching.get().getStatus()).isEqualTo(MatchingStatus.REJECT);
+        actions
+                .andDo(document("post-matching-reject",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ResponseSnippet.getMatchingSnippet()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 매칭신청 거절 (모집이 종료된 게시글)")
+    void matchingIntegrationTest14() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Member writer = memberRepository.findByEmail(EMAIL).get();
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(writer);
+        recruitment.end();
+
+        Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(writer);
+        matching.addRecruitment(saveRecruitment);
+        saveRecruitment.addMatching(matching);
+        Matching savedMatching = matchingRepository.save(matching);
+        Long recruitmentId = saveRecruitment.getId();
+        Long matchingId = savedMatching.getId();
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL +
+                "/" + matchingId + "/" + "reject").build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.postRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken
+        );
+
+        // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getStatus());
+        assertThat(response.getMessage()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getMessage());
+        actions
+                .andDo(document("post-matching-reject-exception-1",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 매칭신청 거절 (동행글 작성자가 아님)")
+    void matchingIntegrationTest15() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Member writer = memberRepository.findByEmail(EMAIL).get();
+        Member user = memberRepository.findByEmail(EMAIL_OTHER).get();
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(user);
+        Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(writer);
+        matching.addRecruitment(saveRecruitment);
+        saveRecruitment.addMatching(matching);
+        Matching savedMatching = matchingRepository.save(matching);
+        Long recruitmentId = saveRecruitment.getId();
+        Long matchingId = savedMatching.getId();
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL +
+                "/" + matchingId + "/" + "reject").build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.postRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken
+        );
+
+        // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus()).isEqualTo(ExceptionCode.RECRUITMENT_WRITER_NOT_MATCH.getStatus());
+        assertThat(response.getMessage()).isEqualTo(ExceptionCode.RECRUITMENT_WRITER_NOT_MATCH.getMessage());
+
+        actions
+                .andDo(document("post-matching-reject-exception-2",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 매칭신청 거절 (동행 모집글이 다름)")
+    void matchingIntegrationTest16() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Member writer = memberRepository.findByEmail(EMAIL).get();
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Recruitment recruitmentOther = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(writer);
+        recruitmentOther.addMember(writer);
+        Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
+        Recruitment saveRecruitmentOther = recruitmentRepository.save(recruitmentOther);
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(writer);
+        matching.addRecruitment(saveRecruitmentOther);
+        saveRecruitment.addMatching(matching);
+        Matching savedMatching = matchingRepository.save(matching);
+        Long recruitmentId = saveRecruitment.getId();
+        Long matchingId = savedMatching.getId();
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId + "/" + SUB_URL +
+                "/" + matchingId + "/" + "reject").build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.postRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken
+        );
+
+        // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus()).isEqualTo(ExceptionCode.MATCHING_RECRUITMENT_IS_DIFFERENT.getStatus());
+        assertThat(response.getMessage()).isEqualTo(ExceptionCode.MATCHING_RECRUITMENT_IS_DIFFERENT.getMessage());
+        actions
+                .andDo(document("post-matching-reject-exception-3",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
+                ));
+    }
+
 }

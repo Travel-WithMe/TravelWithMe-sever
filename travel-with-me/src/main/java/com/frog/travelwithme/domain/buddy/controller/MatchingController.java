@@ -58,4 +58,14 @@ public class MatchingController {
         EnumCollection.ResponseBody response = matchingService.approveMatchingByEmail(recruitmentsId, email, matchingId);
         return new ResponseEntity<>(new MessageResponseDto(response.getDescription()), HttpStatus.OK);
     }
+
+    @PostMapping("/{recruitment-id}/matching/{matching-id}/reject")
+    public ResponseEntity rejectMatching(@Positive @PathVariable("recruitment-id") Long recruitmentsId,
+                                          @Positive @PathVariable("matching-id") Long matchingId,
+                                          @AuthenticationPrincipal CustomUserDetails user) {
+
+        String email = user.getEmail();
+        EnumCollection.ResponseBody response = matchingService.rejectMatchingByEmail(recruitmentsId, email, matchingId);
+        return new ResponseEntity<>(new MessageResponseDto(response.getDescription()), HttpStatus.OK);
+    }
 }

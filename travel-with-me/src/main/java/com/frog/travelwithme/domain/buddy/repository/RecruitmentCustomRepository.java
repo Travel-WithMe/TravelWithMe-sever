@@ -13,6 +13,6 @@ import java.util.Optional;
 
 public interface RecruitmentCustomRepository {
 
-    Optional<Recruitment> findRecruitmentByIdJoinMember(Long id);
+    Optional<Recruitment> findRecruitmentById(Long id);
 
 }
