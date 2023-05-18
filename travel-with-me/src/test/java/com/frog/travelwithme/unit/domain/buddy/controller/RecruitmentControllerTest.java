@@ -1,8 +1,8 @@
-package com.frog.travelwithme.unit.domain.recruitment.controller;
+package com.frog.travelwithme.unit.domain.buddy.controller;
 
-import com.frog.travelwithme.domain.recruitment.controller.RecruitmentController;
-import com.frog.travelwithme.domain.recruitment.controller.dto.RecruitmentDto;
-import com.frog.travelwithme.domain.recruitment.service.RecruitmentService;
+import com.frog.travelwithme.domain.buddy.controller.RecruitmentController;
+import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.service.RecruitmentService;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.global.utils.TimeUtils;
 import com.frog.travelwithme.utils.ObjectMapperUtils;

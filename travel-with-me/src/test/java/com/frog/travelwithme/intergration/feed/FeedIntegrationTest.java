@@ -20,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -83,17 +84,23 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
         FeedDto.Post postDto = StubData.MockFeed.getPostDto();
+        MockMultipartFile file = new MockMultipartFile("file",
+                "test.png",
+                "image/png",
+                "fileContent".getBytes());
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(postDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContentAndToken(
-                mvc, uri, json, accessToken, encryptedRefreshToken);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentAndTokenAndMultiPart(
+                mvc, uri, json, accessToken, encryptedRefreshToken, file);
 
         // then
         FeedDto.Response response = ObjectMapperUtils.actionsSingleToResponseWithData(
                 actions, FeedDto.Response.class);
+        log.info("response.getContents() : {}", response.getContents());
+        log.info("postDto.getContents() : {}", postDto.getContents());
         assertThat(response.getContents()).isEqualTo(postDto.getContents());
         assertThat(response.getTags()).isEqualTo(postDto.getTags());
         assertThat(response.getLocation()).isEqualTo(postDto.getLocation());
@@ -101,7 +108,12 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getLikeCount()).isZero();
         assertThat(response.getNickname()).isNotNull();
         actions
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                /*.andDo(document("post-feed",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getPostFeedSnippet(),
+                        ResponseSnippet.getFeedSnippet()))*/;
     }
 
     @Test
@@ -226,6 +238,53 @@ class FeedIntegrationTest extends BaseIntegrationTest {
 
         // then
         // TODO: actionsMultiToResponseWithData 필요
+        actions
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Feed 좋아요")
+    void feedControllerTest7() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + feedId + "/likes")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.postRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken);
+
+        // then
+        FeedDto.Response response = feedService.findFeedById(userDetails.getEmail(), feedId);
+        assertThat(response.getLikeCount()).isPositive();
+        actions
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Feed 좋아요 취소")
+    void feedControllerTest8() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+        feedService.doLike(userDetails.getEmail(), feedId);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + feedId + "/likes")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.deleteRequestWithToken(
+                mvc, uri, accessToken, encryptedRefreshToken);
+
+        // then
+        FeedDto.Response response = feedService.findFeedById(userDetails.getEmail(), feedId);
+        assertThat(response.getLikeCount()).isZero();
         actions
                 .andExpect(status().isOk());
     }

@@ -3,9 +3,11 @@ package com.frog.travelwithme.domain.feed.entity;
 import com.frog.travelwithme.domain.common.BaseTimeEntity;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.member.entity.Member;
+import com.frog.travelwithme.global.utils.StringListConverter;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.*;
 
 /**
@@ -22,6 +24,10 @@ public class Feed extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotEmpty
+    @Convert(converter = StringListConverter.class)
+    private List<String> imageUrls = new ArrayList<>();
 
     private String contents;
 
@@ -42,8 +48,16 @@ public class Feed extends BaseTimeEntity {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags = new LinkedHashSet<>();
 
+    @ManyToMany
+    @JoinTable(name = "feed_like",
+            joinColumns = @JoinColumn(name = "feed_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id"))
+    private List<Member> likedMembers = new ArrayList<>();
+
     @Builder
     public Feed(String contents, String location, Member member) {
+        // TODO: File 로직 추가 후 구현
+        this.imageUrls.add("defaultImageUrl");
         this.contents = contents;
         this.location = location;
         this.member = member;
@@ -58,5 +72,19 @@ public class Feed extends BaseTimeEntity {
 
     public void addTags(Set<Tag> tags) {
         this.tags.addAll(tags);
+    }
+
+    public void addLike(Member member) {
+        this.likedMembers.add(member);
+        this.likeCount += 1;
+    }
+
+    public void removeLike(Member member) {
+        this.likedMembers.remove(member);
+        this.likeCount -= 1;
+    }
+
+    public boolean isLikedByMember(Member member) {
+        return this.likedMembers.contains(member);
     }
 }

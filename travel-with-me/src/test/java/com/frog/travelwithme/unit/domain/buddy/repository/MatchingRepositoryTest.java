@@ -1,9 +1,9 @@
 package com.frog.travelwithme.unit.domain.buddy.repository;
 
-import com.frog.travelwithme.domain.buddy.entity.Buddy;
-import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
-import com.frog.travelwithme.domain.buddy.repository.BuddyRepository;
-import com.frog.travelwithme.domain.recruitment.repository.RecruitmentRepository;
+import com.frog.travelwithme.domain.buddy.entity.Matching;
+import com.frog.travelwithme.domain.buddy.entity.Recruitment;
+import com.frog.travelwithme.domain.buddy.repository.MatchingRepository;
+import com.frog.travelwithme.domain.buddy.repository.RecruitmentRepository;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.global.config.QuerydslConfig;
@@ -38,13 +38,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 @Import(QuerydslConfig.class)
 @ExtendWith(SpringExtension.class)
-class BuddyRepositoryTest {
+class MatchingRepositoryTest {
 
     @Autowired
     protected EntityManager entityManager;
 
     @Autowired
-    protected BuddyRepository buddyRepository;
+    protected MatchingRepository matchingRepository;
 
     @Autowired
     protected RecruitmentRepository recruitmentRepository;
@@ -55,7 +55,7 @@ class BuddyRepositoryTest {
 
     @Test
     @DisplayName("동행매칭 레포지토리 저장")
-    void BuddyMatchingRepositoryTest1() {
+    void matchingRepositoryTest1() {
         // given
         Member member = StubData.MockMember.getMember();
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
@@ -63,24 +63,24 @@ class BuddyRepositoryTest {
         Member saveMember = memberRepository.save(member);
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
 
-        Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.addMember(saveMember);
-        buddy.addRecruitment(saveRecruitment);
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(saveMember);
+        matching.addRecruitment(saveRecruitment);
 
         // when
-        Buddy saveBuddy = buddyRepository.save(buddy);
+        Matching saveMatching = matchingRepository.save(matching);
 
         // then
         assertAll(
-                () -> assertEquals(saveBuddy.getStatus(), buddy.getStatus()),
-                () -> assertEquals(saveBuddy.getMember(), buddy.getMember()),
-                () -> assertEquals(saveBuddy.getRecruitment(), buddy.getRecruitment())
+                () -> assertEquals(saveMatching.getStatus(), matching.getStatus()),
+                () -> assertEquals(saveMatching.getMember(), matching.getMember()),
+                () -> assertEquals(saveMatching.getRecruitment(), matching.getRecruitment())
         );
     }
 
     @Test
     @DisplayName("동행매칭 레포지토리 수정")
-    void BuddyMatchingRepositoryTest2() {
+    void matchingRepositoryTest2() {
         // given
         Member member = StubData.MockMember.getMember();
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
@@ -88,28 +88,28 @@ class BuddyRepositoryTest {
         Member saveMember = memberRepository.save(member);
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
 
-        Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.addMember(saveMember);
-        buddy.addRecruitment(saveRecruitment);
-        Buddy saveBuddy = buddyRepository.save(buddy);
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(saveMember);
+        matching.addRecruitment(saveRecruitment);
+        Matching saveMatching = matchingRepository.save(matching);
 
         entityManager.clear();
         entityManager.flush();
 
-        Buddy findBuddy = buddyRepository.findById(saveBuddy.getId()).get();
+        Matching findMatching = matchingRepository.findById(saveMatching.getId()).get();
 
         // when
-        findBuddy.approve();
+        findMatching.approve();
 
         // then
-        assertThat(findBuddy.getId()).isEqualTo(saveBuddy.getId());
-        assertThat(findBuddy.getStatus()) // Expect : APPROVE
-                .isNotEqualTo(buddy.getStatus()); // Result : WAIT
+        assertThat(findMatching.getId()).isEqualTo(saveMatching.getId());
+        assertThat(findMatching.getStatus()) // Expect : APPROVE
+                .isNotEqualTo(matching.getStatus()); // Result : WAIT
     }
 
     @Test
     @DisplayName("동행매칭 레포지토리 조회")
-    void BuddyMatchingRepositoryTest3() {
+    void matchingRepositoryTest3() {
         // given
         Member member = StubData.MockMember.getMember();
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
@@ -117,25 +117,25 @@ class BuddyRepositoryTest {
         Member saveMember = memberRepository.save(member);
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
 
-        Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.addMember(saveMember);
-        buddy.addRecruitment(saveRecruitment);
-        Buddy saveBuddy = buddyRepository.save(buddy);
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(saveMember);
+        matching.addRecruitment(saveRecruitment);
+        Matching saveMatching = matchingRepository.save(matching);
 
         // when
-        Buddy findBuddy = buddyRepository.findById(saveBuddy.getId()).get();
+        Matching findMatching = matchingRepository.findById(saveMatching.getId()).get();
 
         // then
         assertAll(
-                () -> assertEquals(findBuddy.getStatus(), buddy.getStatus()),
-                () -> assertEquals(findBuddy.getMember(), buddy.getMember()),
-                () -> assertEquals(findBuddy.getRecruitment(), buddy.getRecruitment())
+                () -> assertEquals(findMatching.getStatus(), matching.getStatus()),
+                () -> assertEquals(findMatching.getMember(), matching.getMember()),
+                () -> assertEquals(findMatching.getRecruitment(), matching.getRecruitment())
         );
     }
 
     @Test
     @DisplayName("동행매칭 레포지토리 삭제")
-    void BuddyMatchingRepositoryTest4() {
+    void matchingRepositoryTest4() {
         // given
         Member member = StubData.MockMember.getMember();
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
@@ -143,24 +143,24 @@ class BuddyRepositoryTest {
         Member saveMember = memberRepository.save(member);
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
 
-        Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.addMember(saveMember);
-        buddy.addRecruitment(saveRecruitment);
-        Buddy saveBuddy = buddyRepository.save(buddy);
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(saveMember);
+        matching.addRecruitment(saveRecruitment);
+        Matching saveMatching = matchingRepository.save(matching);
 
         // when
-        buddyRepository.delete(saveBuddy);
+        matchingRepository.delete(saveMatching);
 
-        Optional<Buddy> findBuddy = buddyRepository
-                .findById(saveBuddy.getId());
+        Optional<Matching> findMatching = matchingRepository
+                .findById(saveMatching.getId());
 
         // then
-        assertThatThrownBy(() -> findBuddy.get()).isInstanceOf(NoSuchElementException.class);
+        assertThatThrownBy(() -> findMatching.get()).isInstanceOf(NoSuchElementException.class);
     }
 
     @Test
     @DisplayName("동행매칭 회원&동행글로 찾기 : Querydsl")
-    void BuddyMatchingRepositoryTest5() {
+    void matchingRepositoryTest5() {
         // given
         Member member = StubData.MockMember.getMember();
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
@@ -168,28 +168,28 @@ class BuddyRepositoryTest {
         Member saveMember = memberRepository.save(member);
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
 
-        Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.addMember(saveMember);
-        buddy.addRecruitment(saveRecruitment);
-        Buddy saveBuddy = buddyRepository.save(buddy);
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(saveMember);
+        matching.addRecruitment(saveRecruitment);
+        Matching saveMatching = matchingRepository.save(matching);
 
         // when
-       Buddy findBuddy = buddyRepository.findBuddyByMemberAndRecruitment(
+       Matching findMatching = matchingRepository.findMatchingByMemberAndRecruitment(
                saveMember, saveRecruitment
        ).get();
 
         // then
         assertAll(
-                () -> assertEquals(findBuddy.getId(), saveBuddy.getId()),
-                () -> assertEquals(findBuddy.getStatus(), buddy.getStatus()),
-                () -> assertEquals(findBuddy.getMember(), buddy.getMember()),
-                () -> assertEquals(findBuddy.getRecruitment(), buddy.getRecruitment())
+                () -> assertEquals(findMatching.getId(), saveMatching.getId()),
+                () -> assertEquals(findMatching.getStatus(), matching.getStatus()),
+                () -> assertEquals(findMatching.getMember(), matching.getMember()),
+                () -> assertEquals(findMatching.getRecruitment(), matching.getRecruitment())
         );
     }
 
     @Test
     @DisplayName("동행매칭 회원&동행글로 찾기(반환값 없을 경우) : Querydsl")
-    void BuddyMatchingRepositoryTest6() {
+    void matchingRepositoryTest6() {
         // given
         Member member = StubData.MockMember.getMember();
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
@@ -198,18 +198,18 @@ class BuddyRepositoryTest {
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
 
         // when
-        Optional<Buddy> findBuddy = buddyRepository.findBuddyByMemberAndRecruitment(
+        Optional<Matching> findMatching = matchingRepository.findMatchingByMemberAndRecruitment(
                 saveMember, saveRecruitment
         );
 
         // then
-        assertThat(findBuddy.isEmpty()).isEqualTo(true);
-        assertThatThrownBy(() -> findBuddy.get()).isInstanceOf(NoSuchElementException.class);
+        assertThat(findMatching.isEmpty()).isEqualTo(true);
+        assertThatThrownBy(() -> findMatching.get()).isInstanceOf(NoSuchElementException.class);
     }
 
     @Test
     @DisplayName("동행매칭 id로 찾기(Recruitment Join) : Querydsl")
-    void BuddyMatchingRepositoryTest7() {
+    void matchingRepositoryTest7() {
         // given
         Member member = StubData.MockMember.getMember();
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
@@ -217,24 +217,24 @@ class BuddyRepositoryTest {
         Member saveMember = memberRepository.save(member);
         Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
 
-        Buddy buddy = StubData.MockBuddy.getBuddy();
-        buddy.addMember(saveMember);
-        buddy.addRecruitment(saveRecruitment);
-        Buddy saveBuddy = buddyRepository.save(buddy);
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(saveMember);
+        matching.addRecruitment(saveRecruitment);
+        Matching saveMatching = matchingRepository.save(matching);
 
         entityManager.flush();
         entityManager.clear();
         log.info("1차 캐시 clear");
 
         // when
-        Buddy findBuddy = buddyRepository.findBuddyByIdJoinRecruitment(saveBuddy.getId()).get();
-        Recruitment findRecruitment = findBuddy.getRecruitment();
+        Matching findMatching = matchingRepository.findMatchingByIdJoinRecruitment(saveMatching.getId()).get();
+        Recruitment findRecruitment = findMatching.getRecruitment();
 
         // then
         assertAll(
-                () -> assertEquals(findRecruitment.getId(), saveBuddy.getRecruitment().getId()),
-                () -> assertEquals(findRecruitment.getTitle(), saveBuddy.getRecruitment().getTitle()),
-                () -> assertEquals(findRecruitment.getContent(), saveBuddy.getRecruitment().getContent())
+                () -> assertEquals(findRecruitment.getId(), saveMatching.getRecruitment().getId()),
+                () -> assertEquals(findRecruitment.getTitle(), saveMatching.getRecruitment().getTitle()),
+                () -> assertEquals(findRecruitment.getContent(), saveMatching.getRecruitment().getContent())
         );
     }
 }

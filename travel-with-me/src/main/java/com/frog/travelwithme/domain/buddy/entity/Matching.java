@@ -1,7 +1,6 @@
 package com.frog.travelwithme.domain.buddy.entity;
 
 import com.frog.travelwithme.domain.member.entity.Member;
-import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,48 +17,48 @@ import static com.frog.travelwithme.global.enums.EnumCollection.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Buddy {
+public class Matching {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(value = EnumType.STRING)
-    private BuddyStatus status;
+    private MatchingStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recruitment_id")
     private Recruitment recruitment;
 
     @Builder
-    public Buddy(Long id, BuddyStatus status) {
+    public Matching(Long id, MatchingStatus status) {
         this.id = id;
         this.status = status;
     }
 
-    public Buddy( BuddyStatus status) {
+    public Matching(MatchingStatus status) {
         this.status = status;
     }
 
-    public Buddy request() {
-        this.status = BuddyStatus.REQUEST;
+    public Matching request() {
+        this.status = MatchingStatus.REQUEST;
         return this;
     }
-    public Buddy reject() {
-        this.status = BuddyStatus.REJECT;
+    public Matching reject() {
+        this.status = MatchingStatus.REJECT;
         return this;
     }
-    public Buddy approve() {
-        this.status = BuddyStatus.APPROVE;
+    public Matching approve() {
+        this.status = MatchingStatus.APPROVE;
         return this;
     }
 
-    public Buddy cancel() {
-        this.status = BuddyStatus.CANCEL;
+    public Matching cancel() {
+        this.status = MatchingStatus.CANCEL;
         return this;
     }
 

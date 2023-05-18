@@ -1,11 +1,11 @@
 
-package com.frog.travelwithme.domain.recruitment.service;
+package com.frog.travelwithme.domain.buddy.service;
 
 
-import com.frog.travelwithme.domain.recruitment.mapper.RecruitmentMapper;
-import com.frog.travelwithme.domain.recruitment.controller.dto.RecruitmentDto;
-import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
-import com.frog.travelwithme.domain.recruitment.repository.RecruitmentRepository;
+import com.frog.travelwithme.domain.buddy.mapper.RecruitmentMapper;
+import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.entity.Recruitment;
+import com.frog.travelwithme.domain.buddy.repository.RecruitmentRepository;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
@@ -74,8 +74,8 @@ public class RecruitmentService {
 
     @Transactional(readOnly = true)
     public Recruitment findRecruitmentByIdJoinMember(Long id) {
-        return recruitmentRepository.findRecruitmentByIdJoinMember(id).orElseThrow(() -> {
-            log.debug("RecruitmentService.findRecruitmentById exception occur id: {}", id);
+        return recruitmentRepository.findRecruitmentById(id).orElseThrow(() -> {
+            log.debug("RecruitmentService.findRecruitmentByIdJoinMember exception occur id: {}", id);
             throw new BusinessLogicException(ExceptionCode.RECRUITMENT_NOT_FOUND);
         });
     }
@@ -89,7 +89,7 @@ public class RecruitmentService {
 
     @Transactional(readOnly = true)
     public Recruitment findRecruitmentAndCheckEqualWriterAndUser(Long recruitmentId, String email) {
-        Recruitment recruitment = this.findRecruitmentByIdJoinMember(recruitmentId);
+        Recruitment recruitment = this.findRecruitmentById(recruitmentId);
         this.checkEqualWriterAndUser(recruitment, email);
         return recruitment;
     }

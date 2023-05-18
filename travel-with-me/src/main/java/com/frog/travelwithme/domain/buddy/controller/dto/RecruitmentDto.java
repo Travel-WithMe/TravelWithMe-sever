@@ -1,4 +1,4 @@
-package com.frog.travelwithme.domain.recruitment.controller.dto;
+package com.frog.travelwithme.domain.buddy.controller.dto;
 
 import lombok.*;
 

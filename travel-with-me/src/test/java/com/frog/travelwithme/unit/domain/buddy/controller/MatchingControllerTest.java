@@ -1,7 +1,7 @@
 package com.frog.travelwithme.unit.domain.buddy.controller;
 
-import com.frog.travelwithme.domain.buddy.controller.BuddyController;
-import com.frog.travelwithme.domain.buddy.service.BuddyService;
+import com.frog.travelwithme.domain.buddy.controller.MatchingController;
+import com.frog.travelwithme.domain.buddy.service.MatchingService;
 import com.frog.travelwithme.global.dto.MessageResponseDto;
 import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
@@ -33,21 +33,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  **/
 
 @WebMvcTest(
-        controllers = BuddyController.class,
+        controllers = MatchingController.class,
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfigurer.class)
         }
 )
-class BuddyControllerTest {
+class MatchingControllerTest {
 
     private final String BASE_URL = "/recruitments";
-    private final String SUB_URL = "/buddy";
+    private final String SUB_URL = "/matching";
 
     @Autowired
     protected MockMvc mvc;
 
     @MockBean
-    protected BuddyService buddyService;
+    protected MatchingService matchingService;
 
     @Mock
     protected CustomUserDetails userDetails;
@@ -55,10 +55,10 @@ class BuddyControllerTest {
     @Test
     @DisplayName("동행 매칭신청")
     @WithMockCustomUser
-    void buddyMatchingControllerTest1() throws Exception {
+    void matchingControllerTest1() throws Exception {
         // given
-        EnumCollection.ResponseBody requestBuddy = EnumCollection.ResponseBody.NEW_REQUEST_BUDDY;
-        given(buddyService.requestBuddyByEmail(any(),any())).willReturn(requestBuddy);
+        EnumCollection.ResponseBody requestMatching = EnumCollection.ResponseBody.NEW_REQUEST_MATCHING;
+        given(matchingService.requestMatchingByEmail(any(),any())).willReturn(requestMatching);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1 + "/" + SUB_URL +
@@ -67,7 +67,7 @@ class BuddyControllerTest {
 
         // then
         String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
-        assertThat(response).isEqualTo(requestBuddy.getDescription());
+        assertThat(response).isEqualTo(requestMatching.getDescription());
         actions
                 .andExpect(status().isOk());
     }
@@ -75,10 +75,10 @@ class BuddyControllerTest {
     @Test
     @DisplayName("동행 매칭취소")
     @WithMockCustomUser
-    void buddyMatchingControllerTest2() throws Exception {
+    void matchingControllerTest2() throws Exception {
         // given
-        EnumCollection.ResponseBody cancelBuddy = EnumCollection.ResponseBody.CANCEL_BUDDY;
-        given(buddyService.cancelBuddyByEmail(any(),any())).willReturn(cancelBuddy);
+        EnumCollection.ResponseBody cancelMatching = EnumCollection.ResponseBody.CANCEL_MATCHING;
+        given(matchingService.cancelMatchingByEmail(any(),any())).willReturn(cancelMatching);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1 + "/" + SUB_URL +
@@ -87,7 +87,7 @@ class BuddyControllerTest {
 
         // then
         String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
-        assertThat(response).isEqualTo(cancelBuddy.getDescription());
+        assertThat(response).isEqualTo(cancelMatching.getDescription());
         actions
                 .andExpect(status().isOk());
     }
@@ -95,10 +95,10 @@ class BuddyControllerTest {
     @Test
     @DisplayName("동행 매칭승인")
     @WithMockCustomUser
-    void buddyMatchingControllerTest3() throws Exception {
+    void matchingControllerTest3() throws Exception {
         // given
-        EnumCollection.ResponseBody approveBuddy = EnumCollection.ResponseBody.APPROVE_BUDDY;
-        given(buddyService.approveBuddyByEmail(any(),any(),any())).willReturn(approveBuddy);
+        EnumCollection.ResponseBody approveMatching = EnumCollection.ResponseBody.APPROVE_MATCHING;
+        given(matchingService.approveMatchingByEmail(any(),any(),any())).willReturn(approveMatching);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1 + "/" + SUB_URL +
@@ -108,7 +108,28 @@ class BuddyControllerTest {
 
         // then
         String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
-        assertThat(response).isEqualTo(approveBuddy.getDescription());
+        assertThat(response).isEqualTo(approveMatching.getDescription());
+        actions
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("동행 매칭거절")
+    @WithMockCustomUser
+    void matchingControllerTest4() throws Exception {
+        // given
+        EnumCollection.ResponseBody approveMatching = EnumCollection.ResponseBody.REJECT_MATCHING;
+        given(matchingService.rejectMatchingByEmail(any(),any(),any())).willReturn(approveMatching);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + 1 + "/" + SUB_URL +
+                "/" +  1 + "/" + "reject").build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.postRequestWithUserDetails(mvc, uri, userDetails);
+
+        // then
+        String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
+        assertThat(response).isEqualTo(approveMatching.getDescription());
         actions
                 .andExpect(status().isOk());
     }

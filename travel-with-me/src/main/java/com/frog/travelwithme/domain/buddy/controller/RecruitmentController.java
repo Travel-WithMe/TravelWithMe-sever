@@ -1,7 +1,7 @@
-package com.frog.travelwithme.domain.recruitment.controller;
+package com.frog.travelwithme.domain.buddy.controller;
 
-import com.frog.travelwithme.domain.recruitment.controller.dto.RecruitmentDto;
-import com.frog.travelwithme.domain.recruitment.service.RecruitmentService;
+import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.service.RecruitmentService;
 import com.frog.travelwithme.global.dto.SingleResponseDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;

@@ -8,6 +8,7 @@ import com.frog.travelwithme.domain.feed.mapper.FeedMapper;
 import com.frog.travelwithme.domain.feed.repository.FeedRepository;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
+import com.frog.travelwithme.global.enums.EnumCollection.ResponseBody;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -77,6 +78,24 @@ public class FeedService {
         String writerEmail = saveFeed.getMember().getEmail();
         checkWriter(email, writerEmail);
         feedRepository.deleteById(feedId);
+    }
+
+    public ResponseBody doLike(String email, long feedId) {
+        Member member = memberService.findMember(email);
+        Feed feed = this.findFeed(feedId);
+        if (!feed.isLikedByMember(member)) {
+            feed.addLike(member);
+        }
+        return ResponseBody.SUCCESS_FEED_LIKE;
+    }
+
+    public ResponseBody cancelLike(String email, long feedId) {
+        Member member = memberService.findMember(email);
+        Feed feed = this.findFeed(feedId);
+        if (feed.isLikedByMember(member)) {
+            feed.removeLike(member);
+        }
+        return ResponseBody.SUCCESS_CANCEL_FEED_LIKE;
     }
 
     private void checkWriter(String email, String writerEmail) {

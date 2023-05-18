@@ -129,6 +129,25 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
+    public static ResultActions postRequestWithContentAndTokenAndMultiPart(MockMvc mockMvc,
+                                                                           String url,
+                                                                           String json,
+                                                                           String accessToken,
+                                                                           String encryptedRefreshToken,
+                                                                           MockMultipartFile file
+    ) throws Exception {
+
+        return mockMvc.perform(multipart(url)
+                        .file(file)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .content(json)
+                        .with(csrf())
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
     public static ResultActions postRequestWithContentandMultiPart(MockMvc mockMvc,
                                                                    String url,
                                                                    String json,
@@ -137,6 +156,20 @@ public class ResultActionsUtils {
                         .file(file)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
+                        .with(csrf()))
+                .andDo(print());
+    }
+
+    public static ResultActions postRequestWithContentAndUserDetailsAndMultiPart(MockMvc mockMvc,
+                                                                                 String url,
+                                                                                 String json,
+                                                                                 CustomUserDetails userDetails,
+                                                                                 MockMultipartFile file) throws Exception {
+        return mockMvc.perform(multipart(url)
+                        .file(file)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(user(userDetails))
                         .with(csrf()))
                 .andDo(print());
     }

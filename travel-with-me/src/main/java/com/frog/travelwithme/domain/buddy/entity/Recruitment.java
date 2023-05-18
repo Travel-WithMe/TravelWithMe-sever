@@ -1,9 +1,8 @@
-package com.frog.travelwithme.domain.recruitment.entity;
+package com.frog.travelwithme.domain.buddy.entity;
 
-import com.frog.travelwithme.domain.buddy.entity.Buddy;
 import com.frog.travelwithme.domain.common.BaseTimeEntity;
 import com.frog.travelwithme.domain.common.DeletionEntity;
-import com.frog.travelwithme.domain.recruitment.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.global.enums.EnumCollection.RecruitmentStatus;
 import com.frog.travelwithme.global.utils.TimeUtils;
@@ -60,7 +59,7 @@ public class Recruitment extends BaseTimeEntity {
     private Member member;
 
     @OneToMany(mappedBy = "recruitment", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<Buddy> buddyList = new ArrayList<>();
+    private List<Matching> matchingList = new ArrayList<>();
 
     /*
     * TODO : 댓글과 연관관계 어떻게 지어줄지 생각하기
@@ -88,9 +87,9 @@ public class Recruitment extends BaseTimeEntity {
         return this;
     }
 
-    public Recruitment addBuddy(Buddy buddy) {
-        if(buddy != null) {
-            this.buddyList.add(buddy);
+    public Recruitment addMatching(Matching matching) {
+        if(matching != null) {
+            this.matchingList.add(matching);
         }
         return this;
     }

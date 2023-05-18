@@ -61,7 +61,7 @@ public class EnumCollection {
     }
 
     @AllArgsConstructor
-    public enum BuddyStatus implements EnumType {
+    public enum MatchingStatus implements EnumType {
         REQUEST("승인요청 상태"),
         APPROVE("승인완료 상태"),
         REJECT("거절 상태"),
@@ -100,10 +100,13 @@ public class EnumCollection {
 
     @AllArgsConstructor
     public enum ResponseBody implements EnumType {
-        NEW_REQUEST_BUDDY("동행 매칭신청이 완료되었습니다."),
-        RETRY_REQUEST_BUDDY("동행 재신청이 완료되었습니다."),
-        CANCEL_BUDDY("동행 매칭신청이 취소되었습니다."),
-        APPROVE_BUDDY("동행 매칭신청이 승인되었습니다.");
+        NEW_REQUEST_MATCHING("동행 매칭신청이 완료되었습니다."),
+        RETRY_REQUEST_MATCHING("동행 재신청이 완료되었습니다."),
+        CANCEL_MATCHING("동행 매칭신청이 취소되었습니다."),
+        APPROVE_MATCHING("동행 매칭신청이 승인되었습니다."),
+        REJECT_MATCHING("동행 매칭신청이 거절되었습니다."),
+        SUCCESS_FEED_LIKE("피드를 좋아요했습니다."),
+        SUCCESS_CANCEL_FEED_LIKE("피드 좋아요를 취소했습니다.");
 
         private final String description;
 

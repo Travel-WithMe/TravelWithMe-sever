@@ -1,8 +1,8 @@
-package com.frog.travelwithme.domain.recruitment.mapper;
+package com.frog.travelwithme.domain.buddy.mapper;
 
-import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
+import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.common.DeletionEntity;
-import com.frog.travelwithme.domain.recruitment.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
 import com.frog.travelwithme.global.utils.TimeUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;

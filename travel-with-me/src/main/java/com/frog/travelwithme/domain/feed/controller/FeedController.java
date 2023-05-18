@@ -4,14 +4,17 @@ import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
 import com.frog.travelwithme.domain.feed.service.FeedService;
 import com.frog.travelwithme.domain.feed.service.TagService;
+import com.frog.travelwithme.global.dto.MessageResponseDto;
 import com.frog.travelwithme.global.dto.PagelessMultiResponseDto;
 import com.frog.travelwithme.global.dto.SingleResponseDto;
+import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -30,8 +33,10 @@ public class FeedController {
     private final TagService tagService;
 
     @PostMapping
-    public ResponseEntity postFeed(@Valid @RequestBody FeedDto.Post postDto,
+    public ResponseEntity postFeed(@RequestPart(value = "file") List<MultipartFile> multipartFiles,
+                                   @Valid @RequestBody FeedDto.Post postDto,
                                    @AuthenticationPrincipal CustomUserDetails user) {
+        // TODO: MultiPartFile 로직 추가
         FeedDto.Response response = feedService.postFeed(user.getEmail(), postDto);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
@@ -56,8 +61,10 @@ public class FeedController {
 
     @PatchMapping("/{feed-id}")
     public ResponseEntity patchFeed(@PathVariable("feed-id") Long feedId,
+                                    @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles,
                                     @Valid @RequestBody FeedDto.Patch patchDto,
                                     @AuthenticationPrincipal CustomUserDetails user) {
+        // TODO: MultiPartFile 로직 추가
         FeedDto.Response response = feedService.updateFeed(user.getEmail(), feedId, patchDto);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
@@ -80,13 +87,19 @@ public class FeedController {
     }
 
     @PostMapping("/{feed-id}/likes")
-    public ResponseEntity postLike() {
-        return new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity<EnumCollection.ResponseBody> postLike(@PathVariable("feed-id") Long feedId,
+                                                                @AuthenticationPrincipal CustomUserDetails user) {
+        EnumCollection.ResponseBody responseBody = feedService.doLike(user.getEmail(), feedId);
+
+        return new ResponseEntity(new MessageResponseDto(responseBody.getDescription()), HttpStatus.OK);
     }
 
     @DeleteMapping("/{feed-id}/likes")
-    public ResponseEntity deleteLike() {
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    public ResponseEntity<EnumCollection.ResponseBody> deleteLike(@PathVariable("feed-id") Long feedId,
+                                                                  @AuthenticationPrincipal CustomUserDetails user) {
+        EnumCollection.ResponseBody responseBody = feedService.cancelLike(user.getEmail(), feedId);
+
+        return new ResponseEntity(new MessageResponseDto(responseBody.getDescription()), HttpStatus.OK);
     }
 
     @PostMapping("/{feed-id}/comments")

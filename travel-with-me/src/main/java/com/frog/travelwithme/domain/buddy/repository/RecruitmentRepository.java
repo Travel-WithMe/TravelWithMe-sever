@@ -1,6 +1,6 @@
 package com.frog.travelwithme.domain.buddy.repository;
 
-import com.frog.travelwithme.domain.buddy.entity.Buddy;
+import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * 작성일자: 2023/04/11
  **/
 
-public interface BuddyRepository extends JpaRepository<Buddy, Long>, BuddyCustomRepository {
-
-
+public interface RecruitmentRepository extends JpaRepository<Recruitment, Long>, RecruitmentCustomRepository {
 
 }

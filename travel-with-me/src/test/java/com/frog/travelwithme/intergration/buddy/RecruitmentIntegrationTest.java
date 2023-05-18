@@ -1,8 +1,8 @@
-package com.frog.travelwithme.intergration.recruitment;
+package com.frog.travelwithme.intergration.buddy;
 
-import com.frog.travelwithme.domain.recruitment.controller.dto.RecruitmentDto;
-import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
-import com.frog.travelwithme.domain.recruitment.repository.RecruitmentRepository;
+import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.entity.Recruitment;
+import com.frog.travelwithme.domain.buddy.repository.RecruitmentRepository;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;

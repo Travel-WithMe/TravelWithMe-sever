@@ -1,10 +1,10 @@
-package com.frog.travelwithme.unit.domain.recruitment.service;
+package com.frog.travelwithme.unit.domain.buddy.service;
 
-import com.frog.travelwithme.domain.recruitment.controller.dto.RecruitmentDto;
-import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
-import com.frog.travelwithme.domain.recruitment.mapper.RecruitmentMapper;
-import com.frog.travelwithme.domain.recruitment.repository.RecruitmentRepository;
-import com.frog.travelwithme.domain.recruitment.service.RecruitmentService;
+import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.entity.Recruitment;
+import com.frog.travelwithme.domain.buddy.mapper.RecruitmentMapper;
+import com.frog.travelwithme.domain.buddy.repository.RecruitmentRepository;
+import com.frog.travelwithme.domain.buddy.service.RecruitmentService;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
@@ -86,7 +86,7 @@ class RecruitmentServiceTest {
         Member member = StubData.MockMember.getMember();
         recruitment.addMember(member);
 
-        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
         when(buddyMapper.toPatchResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);
 
         //when
@@ -115,7 +115,7 @@ class RecruitmentServiceTest {
         Member user = StubData.MockMember.getMemberByEmailAndNickname("kkd718@gmail.com", "KCB");
         recruitment.addMember(writer);
 
-        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
         //then
@@ -136,7 +136,7 @@ class RecruitmentServiceTest {
         Member member = StubData.MockMember.getMember();
         recruitment.addMember(member);
 
-        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
         recruitmentService.deleteRecruitmentByEmail(recruitment.getId(), member.getEmail());
@@ -154,7 +154,7 @@ class RecruitmentServiceTest {
         Member user = StubData.MockMember.getMemberByEmailAndNickname("kkd718@gmail.com", "KCB");
         recruitment.addMember(writer);
 
-        when(recruitmentRepository.findRecruitmentByIdJoinMember(recruitment.getId())).thenReturn(Optional.of(recruitment));
+        when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
 
         //when
         //then

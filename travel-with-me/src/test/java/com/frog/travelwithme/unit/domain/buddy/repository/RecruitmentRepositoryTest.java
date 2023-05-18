@@ -1,9 +1,9 @@
-package com.frog.travelwithme.unit.domain.recruitment.repository;
+package com.frog.travelwithme.unit.domain.buddy.repository;
 
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
-import com.frog.travelwithme.domain.recruitment.entity.Recruitment;
-import com.frog.travelwithme.domain.recruitment.repository.RecruitmentRepository;
+import com.frog.travelwithme.domain.buddy.entity.Recruitment;
+import com.frog.travelwithme.domain.buddy.repository.RecruitmentRepository;
 import com.frog.travelwithme.global.config.QuerydslConfig;
 import com.frog.travelwithme.utils.StubData;
 import lombok.extern.slf4j.Slf4j;
@@ -134,7 +134,7 @@ class RecruitmentRepositoryTest {
         log.info("1차 캐시 clear");
 
         // when
-        Recruitment findRecruitment = recruitmentRepository.findRecruitmentByIdJoinMember(saveRecruitment.getId()).get();
+        Recruitment findRecruitment = recruitmentRepository.findRecruitmentById(saveRecruitment.getId()).get();
         Member findMember = findRecruitment.getMember();
 
         // then

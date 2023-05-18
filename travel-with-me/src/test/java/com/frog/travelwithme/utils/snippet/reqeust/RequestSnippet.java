@@ -114,4 +114,13 @@ public class RequestSnippet {
                 )
         );
     }
+
+    public static Snippet getPostFeedSnippet() {
+        return requestFields(
+                fieldWithPath("contents").type(JsonFieldType.STRING).description("피드 내용"),
+                fieldWithPath("location").type(JsonFieldType.STRING).description("피드 이미지 위치")
+        );
+    }
+
+
 }
