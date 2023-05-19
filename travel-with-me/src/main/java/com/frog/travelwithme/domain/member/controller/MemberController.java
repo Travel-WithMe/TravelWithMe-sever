@@ -30,7 +30,7 @@ public class MemberController {
 
     @PostMapping("/signup")
     public ResponseEntity signUp(@RequestPart(value = "file", required = false) MultipartFile multipartFile,
-                                 @Valid @RequestBody MemberDto.SignUp signUpDto) {
+                                 @Valid @RequestPart(value = "data") MemberDto.SignUp signUpDto) {
         // TODO: multipartFile S3에 저장 후 url 반환 로직 추가
         MemberDto.Response response = memberService.signUp(signUpDto);
 
