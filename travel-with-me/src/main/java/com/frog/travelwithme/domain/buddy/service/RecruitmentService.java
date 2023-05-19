@@ -74,8 +74,8 @@ public class RecruitmentService {
 
     @Transactional(readOnly = true)
     public Recruitment findRecruitmentByIdJoinMember(Long id) {
-        return recruitmentRepository.findRecruitmentByIdJoinMember(id).orElseThrow(() -> {
-            log.debug("RecruitmentService.findRecruitmentById exception occur id: {}", id);
+        return recruitmentRepository.findRecruitmentById(id).orElseThrow(() -> {
+            log.debug("RecruitmentService.findRecruitmentByIdJoinMember exception occur id: {}", id);
             throw new BusinessLogicException(ExceptionCode.RECRUITMENT_NOT_FOUND);
         });
     }
@@ -89,7 +89,7 @@ public class RecruitmentService {
 
     @Transactional(readOnly = true)
     public Recruitment findRecruitmentAndCheckEqualWriterAndUser(Long recruitmentId, String email) {
-        Recruitment recruitment = this.findRecruitmentByIdJoinMember(recruitmentId);
+        Recruitment recruitment = this.findRecruitmentById(recruitmentId);
         this.checkEqualWriterAndUser(recruitment, email);
         return recruitment;
     }
