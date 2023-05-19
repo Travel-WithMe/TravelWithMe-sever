@@ -71,17 +71,15 @@ class FeedControllerTest {
         FeedDto.Post postDto = StubData.MockFeed.getPostDto();
         FeedDto.Response response = StubData.MockFeed.getResponseDto();
         given(feedService.postFeed(any(), any(FeedDto.Post.class))).willReturn(response);
-        MockMultipartFile file = new MockMultipartFile("file",
-                "test.png",
-                "image/png",
-                "fileContent".getBytes());
+        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(postDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContentAndUserDetailsAndMultiPart(
-                mvc, uri, json, userDetails, file);
+        MockMultipartFile data = StubData.CustomMockMultipartFile.getData(json);
+        ResultActions actions = ResultActionsUtils.postRequestWithUserDetailsAndTwoMultiPart(
+                mvc, uri, userDetails, file, data);
 
         // then
         actions
@@ -131,13 +129,15 @@ class FeedControllerTest {
         // given
         FeedDto.Patch patchDto = StubData.MockFeed.getPatchDto();
         FeedDto.Response response = StubData.MockFeed.getResponseDto();
+        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
         given(feedService.updateFeed(any(), anyLong(), any(FeedDto.Patch.class))).willReturn(response);
 
         // when
         String json = ObjectMapperUtils.asJsonString(patchDto);
+        MockMultipartFile data = StubData.CustomMockMultipartFile.getData(json);
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/1")
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.patchRequestWithContentAndUserDetails(mvc, uri, json, userDetails);
+        ResultActions actions = ResultActionsUtils.patchRequestWithTwoMultipartAndUserDetails(mvc, uri, file, data, userDetails);
 
         // then
         actions
