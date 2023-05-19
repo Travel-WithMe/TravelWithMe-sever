@@ -18,6 +18,8 @@ import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDt
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.global.utils.TimeUtils;
 import lombok.Getter;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -381,6 +383,19 @@ public class StubData {
                     .name(tagName + addName)
                     .count(tagCount)
                     .build();
+        }
+    }
+
+    public static class CustomMockMultipartFile {
+
+        public static MockMultipartFile getFile() {
+            return new MockMultipartFile("file", "originalFilename",
+                    MediaType.MULTIPART_FORM_DATA_VALUE, "fileContent".getBytes());
+        }
+
+        public static MockMultipartFile getData(String json) {
+            return new MockMultipartFile("data", null,
+                    MediaType.APPLICATION_JSON_VALUE, json.getBytes());
         }
     }
 }

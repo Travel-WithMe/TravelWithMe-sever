@@ -91,17 +91,15 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
         FeedDto.Post postDto = StubData.MockFeed.getPostDto();
-        MockMultipartFile file = new MockMultipartFile("file",
-                "test.png",
-                "image/png",
-                "fileContent".getBytes());
+        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(postDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContentAndTokenAndMultiPart(
-                mvc, uri, json, accessToken, encryptedRefreshToken, file);
+        MockMultipartFile data = StubData.CustomMockMultipartFile.getData(json);
+        ResultActions actions = ResultActionsUtils.postRequestWithTokenAndMultiPart(
+                mvc, uri, accessToken, encryptedRefreshToken, file, data);
 
         // then
         FeedDto.Response response = ObjectMapperUtils.actionsSingleToResponseWithData(
@@ -180,13 +178,15 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
         FeedDto.Patch patchDto = StubData.MockFeed.getPatchDto();
+        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
 
         // when
         String json = ObjectMapperUtils.asJsonString(patchDto);
+        MockMultipartFile data = StubData.CustomMockMultipartFile.getData(json);
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + feedId)
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.patchRequestWithContentAndToken(
-                mvc, uri, json, accessToken, encryptedRefreshToken);
+        ResultActions actions = ResultActionsUtils.patchRequestWithTwoMultiPartAndToken(
+                mvc, uri, accessToken, encryptedRefreshToken, file, data);
 
         // then
         FeedDto.Response response = ObjectMapperUtils.actionsSingleToResponseWithData(
