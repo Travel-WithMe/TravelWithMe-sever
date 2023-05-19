@@ -68,8 +68,7 @@ class MemberControllerTest {
     @WithMockCustomUser
     void memberControllerTest1() throws Exception {
         // given
-        MockMultipartFile file = new MockMultipartFile("file",
-                "originalFilename", "text/plain", "fileContent".getBytes());
+        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
         MemberDto.Response response = StubData.MockMember.getResponseDto();
         given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
@@ -78,7 +77,8 @@ class MemberControllerTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContentandMultiPart(mvc, uri, json, file);
+        MockMultipartFile data = StubData.CustomMockMultipartFile.getData(json);
+        ResultActions actions = ResultActionsUtils.postRequestWithTwoMultiPart(mvc, uri, file, data);
 
         // then
         actions
@@ -353,8 +353,7 @@ class MemberControllerTest {
     @WithMockCustomUser
     void memberControllerTest15() throws Exception {
         // given
-        MockMultipartFile file = new MockMultipartFile("file",
-                "originalFilename", "text/plain", "fileContent".getBytes());
+        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
         MemberDto.Response response = StubData.MockMember.getResponseDto();
         given(memberService.changeProfileImage(any(MultipartFile.class), any())).willReturn(response);
 

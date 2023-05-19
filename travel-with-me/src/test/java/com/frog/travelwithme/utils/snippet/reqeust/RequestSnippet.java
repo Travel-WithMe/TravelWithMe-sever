@@ -1,7 +1,6 @@
 package com.frog.travelwithme.utils.snippet.reqeust;
 
 import com.google.common.net.HttpHeaders;
-import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.snippet.Snippet;
 
@@ -9,8 +8,8 @@ import java.util.List;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 
 /**
@@ -20,30 +19,16 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
  * 작성일자: 2023/03/18
  **/
 public class RequestSnippet {
-    public static RequestFieldsSnippet getSignUpSnippet() {
-        return requestFields(
-                List.of(
-                        fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
-                        fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호"),
-                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
-                        fieldWithPath("gender").type(JsonFieldType.STRING).description("회원 성별 (남자/여자)"),
-                        fieldWithPath("address").type(JsonFieldType.STRING).description("회원 주소"),
-                        fieldWithPath("introduction").type(JsonFieldType.STRING).description("자기 소개"),
-                        fieldWithPath("nation").type(JsonFieldType.STRING).description("회원 국가"),
-                        fieldWithPath("role").type(JsonFieldType.STRING).description("회원 역할")
-                )
-        );
-    }
 
     public static Snippet getMemberPatchSnippet() {
         return requestFields(
                 List.of(
-                        fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호"),
-                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
-                        fieldWithPath("address").type(JsonFieldType.STRING).description("회원 주소"),
-                        fieldWithPath("introduction").type(JsonFieldType.STRING).description("자기 소개"),
-                        fieldWithPath("gender").type(JsonFieldType.STRING).description("회원 성별 (남자/여자)"),
-                        fieldWithPath("nation").type(JsonFieldType.STRING).description("회원 국가")
+                        fieldWithPath("password").type(STRING).description("회원 비밀번호"),
+                        fieldWithPath("nickname").type(STRING).description("회원 닉네임"),
+                        fieldWithPath("address").type(STRING).description("회원 주소"),
+                        fieldWithPath("introduction").type(STRING).description("자기 소개"),
+                        fieldWithPath("gender").type(STRING).description("회원 성별 (남자/여자)"),
+                        fieldWithPath("nation").type(STRING).description("회원 국가")
                 )
         );
     }
@@ -51,11 +36,11 @@ public class RequestSnippet {
     public static RequestFieldsSnippet getPostRecruitmentSnippet() {
         return requestFields(
                 List.of(
-                        fieldWithPath("title").type(JsonFieldType.STRING).description("동행모집 게시글 제목"),
-                        fieldWithPath("content").type(JsonFieldType.STRING).description("동행모집 게시글 내용"),
-                        fieldWithPath("travelNationality").type(JsonFieldType.STRING).description("동행모집 국가"),
-                        fieldWithPath("travelStartDate").type(JsonFieldType.STRING).description("동행모집 여행 시작날짜"),
-                        fieldWithPath("travelEndDate").type(JsonFieldType.STRING).description("동행모집 여행 종료날짜")
+                        fieldWithPath("title").type(STRING).description("동행모집 게시글 제목"),
+                        fieldWithPath("content").type(STRING).description("동행모집 게시글 내용"),
+                        fieldWithPath("travelNationality").type(STRING).description("동행모집 국가"),
+                        fieldWithPath("travelStartDate").type(STRING).description("동행모집 여행 시작날짜"),
+                        fieldWithPath("travelEndDate").type(STRING).description("동행모집 여행 종료날짜")
                 )
         );
     }
@@ -63,11 +48,11 @@ public class RequestSnippet {
     public static RequestFieldsSnippet getPatchRecruitmentSnippet() {
         return requestFields(
                 List.of(
-                        fieldWithPath("title").type(JsonFieldType.STRING).description("동행모집 게시글 제목"),
-                        fieldWithPath("content").type(JsonFieldType.STRING).description("동행모집 게시글 내용"),
-                        fieldWithPath("travelNationality").type(JsonFieldType.STRING).description("동행모집 국가"),
-                        fieldWithPath("travelStartDate").type(JsonFieldType.STRING).description("동행모집 여행 시작날짜"),
-                        fieldWithPath("travelEndDate").type(JsonFieldType.STRING).description("동행모집 여행 종료날짜")
+                        fieldWithPath("title").type(STRING).description("동행모집 게시글 제목"),
+                        fieldWithPath("content").type(STRING).description("동행모집 게시글 내용"),
+                        fieldWithPath("travelNationality").type(STRING).description("동행모집 국가"),
+                        fieldWithPath("travelStartDate").type(STRING).description("동행모집 여행 시작날짜"),
+                        fieldWithPath("travelEndDate").type(STRING).description("동행모집 여행 종료날짜")
                 )
         );
     }
@@ -90,12 +75,27 @@ public class RequestSnippet {
         );
     }
 
+    public static Snippet getProfileImageMultipartSnippet() {
+        return requestParts(
+                partWithName("file").description("회원의 프로필 이미지").optional());
+    }
+
     public static Snippet getSignUpMultipartSnippet() {
         return requestParts(
-                List.of(
-                        partWithName("file").description("회원의 프로필 이미지").optional()
-                )
-        );
+                partWithName("file").description("회원의 프로필 이미지").optional(),
+                partWithName("data").description("회원 데이터"));
+    }
+
+    public static Snippet getSignUpMultipartDataFieldSnippet() {
+        return requestPartFields("data",
+                fieldWithPath("email").type(STRING).description("회원 이메일"),
+                fieldWithPath("password").type(STRING).description("회원 비밀번호"),
+                fieldWithPath("nickname").type(STRING).description("회원 닉네임"),
+                fieldWithPath("gender").type(STRING).description("회원 성별 (남자/여자)"),
+                fieldWithPath("address").type(STRING).description("회원 주소"),
+                fieldWithPath("introduction").type(STRING).description("자기 소개"),
+                fieldWithPath("nation").type(STRING).description("회원 국가"),
+                fieldWithPath("role").type(STRING).description("회원 역할"));
     }
 
     public static Snippet getTokenSnippet() {
@@ -117,8 +117,8 @@ public class RequestSnippet {
 
     public static Snippet getPostFeedSnippet() {
         return requestFields(
-                fieldWithPath("contents").type(JsonFieldType.STRING).description("피드 내용"),
-                fieldWithPath("location").type(JsonFieldType.STRING).description("피드 이미지 위치")
+                fieldWithPath("contents").type(STRING).description("피드 내용"),
+                fieldWithPath("location").type(STRING).description("피드 이미지 위치")
         );
     }
 

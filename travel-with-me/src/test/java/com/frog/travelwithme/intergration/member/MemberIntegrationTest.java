@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
@@ -72,8 +73,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
     @DisplayName("회원가입")
     void memberIntegrationTest1() throws Exception {
         // given
-        MockMultipartFile file = new MockMultipartFile("file",
-                "originalFilename", "text/plain", "fileContent".getBytes());
+        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
         memberService.deleteMember(EMAIL);
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
 
@@ -81,7 +81,8 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContentandMultiPart(mvc, uri, json, file);
+        MockMultipartFile data = StubData.CustomMockMultipartFile.getData(json);
+        ResultActions actions = ResultActionsUtils.postRequestWithTwoMultiPart(mvc, uri, file, data);
 
         // then
         Response response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, Response.class);
@@ -97,7 +98,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getSignUpMultipartSnippet(),
-                        RequestSnippet.getSignUpSnippet(),
+                        RequestSnippet.getSignUpMultipartDataFieldSnippet(),
                         ResponseSnippet.getMemberSnippet()));
     }
 
@@ -277,8 +278,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
     @WithMockCustomUser
     void memberControllerTest8() throws Exception {
         // given
-        MockMultipartFile file = new MockMultipartFile("file",
-                "originalFilename", "text/plain", "fileContent".getBytes());
+        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
         String accessToken = tokenDto.getAccessToken();
@@ -301,7 +301,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
-                        RequestSnippet.getSignUpMultipartSnippet(),
+                        RequestSnippet.getProfileImageMultipartSnippet(),
                         ResponseSnippet.getMemberSnippet()));
     }
 
@@ -318,15 +318,16 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(failedSignUpDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContentandMultiPart(mvc, uri, json, file);
+        MockMultipartFile data =
+                new MockMultipartFile("data", null, MediaType.APPLICATION_JSON_VALUE, json.getBytes());
+        ResultActions actions = ResultActionsUtils.postRequestWithTwoMultiPart(mvc, uri, file, data);
 
         // then
         actions
                 .andExpect(status().is4xxClientError())
                 .andDo(document("signup-fail1",
                         getRequestPreProcessor(),
-                        getResponsePreProcessor(),
                         RequestSnippet.getSignUpMultipartSnippet(),
-                        RequestSnippet.getSignUpSnippet()));
+                        RequestSnippet.getSignUpMultipartDataFieldSnippet()));
     }
 }
