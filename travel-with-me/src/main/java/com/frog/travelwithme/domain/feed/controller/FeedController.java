@@ -34,7 +34,7 @@ public class FeedController {
 
     @PostMapping
     public ResponseEntity postFeed(@RequestPart(value = "file") List<MultipartFile> multipartFiles,
-                                   @Valid @RequestBody FeedDto.Post postDto,
+                                   @Valid @RequestPart(value = "data") FeedDto.Post postDto,
                                    @AuthenticationPrincipal CustomUserDetails user) {
         // TODO: MultiPartFile 로직 추가
         FeedDto.Response response = feedService.postFeed(user.getEmail(), postDto);
@@ -62,7 +62,7 @@ public class FeedController {
     @PatchMapping("/{feed-id}")
     public ResponseEntity patchFeed(@PathVariable("feed-id") Long feedId,
                                     @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles,
-                                    @Valid @RequestBody FeedDto.Patch patchDto,
+                                    @Valid @RequestPart(value = "data") FeedDto.Patch patchDto,
                                     @AuthenticationPrincipal CustomUserDetails user) {
         // TODO: MultiPartFile 로직 추가
         FeedDto.Response response = feedService.updateFeed(user.getEmail(), feedId, patchDto);
