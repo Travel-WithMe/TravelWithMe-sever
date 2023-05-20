@@ -61,7 +61,13 @@ public enum ExceptionCode {
     STRING_IS_NOT_LOCAL_DATE_FORMAT(404,"문자열 데이터 형식이 LocalDate 형식이 아닙니다."),
     STRING_IS_NOT_LOCAL_DATE_TIME_FORMAT(404,"문자열 데이터 형식이 LocalDateTime 형식이 아닙니다."),
     UNABLE_TO_CONVERT_LIST_TO_STRING(404, "리스트를 문자열로 변환할 수 없습니다."),
-    UNABLE_TO_CONVERT_STRING_TO_LIST(404, "문자열을 리스트로 변환할 수 없습니다.");
+    UNABLE_TO_CONVERT_STRING_TO_LIST(404, "문자열을 리스트로 변환할 수 없습니다."),
+
+    // File
+    FILE_DOES_NOT_EXIST(404, "파일이 존재하지 않습니다."),
+    FAIL_TO_UPLOAD_FILE(404, "파일을 업로드할 수 없습니다."),
+    EXTENSION_IS_NOT_VALID(404, "파일의 확장자는 jpeg 또는 png만 업로드 가능합니다."),
+    FAILED_TO_DELETE_FILE(404, "파일을 삭제할 수 없습니다.");
 
     @Getter
     private final int status;

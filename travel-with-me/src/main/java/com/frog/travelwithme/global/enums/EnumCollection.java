@@ -3,6 +3,7 @@ package com.frog.travelwithme.global.enums;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -152,4 +153,15 @@ public class EnumCollection {
         }
     }
 
+    public enum AwsS3Path {
+        PROFILEIMAGE("/profileimage"),
+        FEEDIMAGE("/feedimage");
+
+        @Getter
+        private final String path;
+
+        AwsS3Path(String path) {
+            this.path = path;
+        }
+    }
 }
