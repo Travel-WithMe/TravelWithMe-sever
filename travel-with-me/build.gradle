@@ -47,6 +47,9 @@ dependencies {
 	implementation group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
 	implementation 'com.google.code.gson:gson'
 
+	// s3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 	//querydsl
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
