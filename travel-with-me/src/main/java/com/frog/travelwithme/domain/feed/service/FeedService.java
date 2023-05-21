@@ -79,6 +79,7 @@ public class FeedService {
         Feed saveFeed = this.findFeed(feedId);
         String writerEmail = saveFeed.getMember().getEmail();
         checkWriter(email, writerEmail);
+        this.removeFeedImages(saveFeed.getImageUrls(), saveFeed);
         feedRepository.deleteById(feedId);
     }
 
