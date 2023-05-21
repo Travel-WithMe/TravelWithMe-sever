@@ -70,7 +70,7 @@ public class MatchingService {
         } else {
             Matching matching = findMatching.get();
             this.checkPossibleToRequestMatching(matching);
-            this.updateMatchingByStatus(matching, MatchingStatus.CANCEL);
+            this.updateMatchingByStatus(matching, MatchingStatus.REQUEST);
             return ResponseBody.RETRY_REQUEST_MATCHING;
         }
     }

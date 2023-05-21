@@ -77,6 +77,16 @@ public class ResponseSnippet {
         );
     }
 
+    public static ResponseFieldsSnippet getMatchingRequestMemberListSnippet() {
+        return responseFields(
+                List.of(
+                        fieldWithPath("data[].id").description("회원 ID"),
+                        fieldWithPath("data[].nickname").description("작성자 닉네임 및 타입"),
+                        fieldWithPath("data[].image").description("프로필 이미지 url")
+                )
+        );
+    }
+
     public static ResponseFieldsSnippet getMatchingSnippet() {
         return responseFields(
                 fieldWithPath("message").type(JsonFieldType.STRING).description("매칭 신청 성공 메세지")

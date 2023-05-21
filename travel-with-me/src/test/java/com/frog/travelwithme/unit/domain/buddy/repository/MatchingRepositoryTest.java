@@ -227,7 +227,7 @@ class MatchingRepositoryTest {
         log.info("1차 캐시 clear");
 
         // when
-        Matching findMatching = matchingRepository.findMatchingByIdJoinRecruitment(saveMatching.getId()).get();
+        Matching findMatching = matchingRepository.findMatchingById(saveMatching.getId()).get();
         Recruitment findRecruitment = findMatching.getRecruitment();
 
         // then

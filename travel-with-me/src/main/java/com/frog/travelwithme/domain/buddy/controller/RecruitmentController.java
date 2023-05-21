@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 /**
  * 작성자: 이재혁
@@ -73,5 +74,13 @@ public class RecruitmentController {
 //
 //        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
 //    }
+
+    @GetMapping("/{recruitment-id}/matching-request-list")
+    public ResponseEntity getMatchingRequestMemberList(@Positive @PathVariable("recruitment-id") Long recruitmentsId) {
+
+        List<RecruitmentDto.MatchingRequestMemberResponse> response = recruitmentService
+                .getMatchingRequestMemberList(recruitmentsId);
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+    }
 
 }

@@ -142,7 +142,7 @@ public class StubData {
 
         public static Member getMemberByEmailAndNickname(String email, String nickname) {
             return Member.builder()
-                    .id(id)
+//                    .id(id)
                     .email(email)
                     .password(password)
                     .nickname(nickname)
@@ -151,6 +151,7 @@ public class StubData {
                     .introduction(introduction)
                     .nation(nation)
                     .role(role)
+                    .oauthstatus(OAuthStatus.NORMAL)
                     .build();
         }
 
@@ -216,6 +217,15 @@ public class StubData {
         public static EmailVerificationResult getEmailVerificationResult(boolean authResult) {
             return EmailVerificationResult.from(authResult);
         }
+
+        public static RecruitmentDto.MatchingRequestMemberResponse getMatchingRequestMemberResponse(Long id,
+                                                                                                    String nickname) {
+            return RecruitmentDto.MatchingRequestMemberResponse.builder()
+                    .id(id)
+                    .nickname(nickname)
+                    .image(image)
+                    .build();
+        }
     }
 
     public static class MockRecruitment {
@@ -240,7 +250,6 @@ public class StubData {
 
         public static Recruitment getRecruitment() {
             return Recruitment.builder()
-                    .id(id)
                     .title(title)
                     .content(content)
                     .travelNationality(travelNationality)
