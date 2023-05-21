@@ -106,8 +106,9 @@ public class MemberService {
 
     public MemberDto.Response changeProfileImage(@RequestPart MultipartFile file, String email) {
         Member findMember = this.findMember(email);
-        // TODO: 수정된 image url 변경 예정
-        findMember.changeImage("newImageUrl");
+        fileUploadService.remove(findMember.getImage());
+        String newImageUrl = fileUploadService.upload(file, PROFILEIMAGE);
+        findMember.changeImage(newImageUrl);
 
         return memberMapper.toDto(findMember);
     }
