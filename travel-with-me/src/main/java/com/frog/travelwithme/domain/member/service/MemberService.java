@@ -100,7 +100,8 @@ public class MemberService {
     }
 
     public void deleteMember(String email) {
-        this.findMember(email);
+        Member member = this.findMember(email);
+        fileUploadService.remove(member.getImage());
         memberRepository.deleteByEmail(email);
     }
 
