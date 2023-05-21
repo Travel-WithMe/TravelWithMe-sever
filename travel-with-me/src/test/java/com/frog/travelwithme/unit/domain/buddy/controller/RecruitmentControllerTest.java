@@ -22,6 +22,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -58,7 +61,7 @@ class RecruitmentControllerTest {
     @Test
     @DisplayName("동행 모집글 작성")
     @WithMockCustomUser
-    void buddyRecruitmentControllerTest1() throws Exception {
+    void recruitmentControllerTest1() throws Exception {
         // given
         RecruitmentDto.Post postDto = StubData.MockRecruitment.getPostRecruitment();
         RecruitmentDto.PostResponse responseRecruitmentDto = StubData.MockRecruitment.getPostResponseRecruitment();
@@ -88,7 +91,7 @@ class RecruitmentControllerTest {
     @Test
     @DisplayName("동행 모집글 수정")
     @WithMockCustomUser
-    void buddyRecruitmentControllerTest2() throws Exception {
+    void recruitmentControllerTest2() throws Exception {
         // given
         RecruitmentDto.Patch patchDto = StubData.MockRecruitment.getPatchRecruitment();
         RecruitmentDto.PatchResponse responseRecruitmentDto = StubData.MockRecruitment.getPatchResponseRecruitment();
@@ -118,7 +121,7 @@ class RecruitmentControllerTest {
     @Test
     @DisplayName("동행 모집글 삭제")
     @WithMockCustomUser
-    void buddyRecruitmentControllerTest3() throws Exception {
+    void recruitmentControllerTest3() throws Exception {
         // given
         doNothing().when(recruitmentService).deleteRecruitmentByEmail(any(), any());
 
@@ -133,4 +136,44 @@ class RecruitmentControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @DisplayName("동행 모집글 매칭신청 회원 리스트 조회")
+    @WithMockCustomUser
+    void recruitmentControllerTest4() throws Exception {
+        // given
+        RecruitmentDto.MatchingRequestMemberResponse matchingRequestMemberResponse1
+                = StubData.MockMember.getMatchingRequestMemberResponse(1L, "dhfif718");
+        RecruitmentDto.MatchingRequestMemberResponse matchingRequestMemberResponse2
+                = StubData.MockMember.getMatchingRequestMemberResponse(2L, "kkd718");
+        RecruitmentDto.MatchingRequestMemberResponse matchingRequestMemberResponse3
+                = StubData.MockMember.getMatchingRequestMemberResponse(3L, "리젤란");
+
+        List<RecruitmentDto.MatchingRequestMemberResponse> matchingRequestMemberResponseList = new ArrayList<>();
+        matchingRequestMemberResponseList.add(matchingRequestMemberResponse1);
+        matchingRequestMemberResponseList.add(matchingRequestMemberResponse2);
+        matchingRequestMemberResponseList.add(matchingRequestMemberResponse3);
+
+        given(recruitmentService.getMatchingRequestMemberList(any())).willReturn(matchingRequestMemberResponseList);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance()
+                .path(BASE_URL + "/" + 1 + "/" + "matching-request-list")
+                .build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.getRequest(mvc, uri);
+
+        // then
+        List<RecruitmentDto.MatchingRequestMemberResponse> response = List.of(ObjectMapperUtils.actionsSingleToResponseWithData(
+                actions, RecruitmentDto.MatchingRequestMemberResponse[].class
+        ));
+
+
+        actions
+                .andExpect(status().isOk());
+        for (int i = 0; i < response.size(); i++) {
+            assertThat(response.get(i).getId()).isEqualTo(matchingRequestMemberResponseList.get(i).getId());
+            assertThat(response.get(i).getNickname()).isEqualTo(matchingRequestMemberResponseList.get(i).getNickname());
+            assertThat(response.get(i).getImage()).isEqualTo(matchingRequestMemberResponseList.get(i).getImage());
+        }
+    }
 }

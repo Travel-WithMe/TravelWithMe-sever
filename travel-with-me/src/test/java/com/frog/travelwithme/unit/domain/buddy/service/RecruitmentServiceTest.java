@@ -1,12 +1,14 @@
 package com.frog.travelwithme.unit.domain.buddy.service;
 
 import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.buddy.mapper.RecruitmentMapper;
 import com.frog.travelwithme.domain.buddy.repository.RecruitmentRepository;
 import com.frog.travelwithme.domain.buddy.service.RecruitmentService;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
+import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.utils.TimeUtils;
 import com.frog.travelwithme.utils.StubData;
@@ -17,9 +19,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.annotation.Import;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import static com.frog.travelwithme.global.enums.EnumCollection.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -41,14 +48,14 @@ class RecruitmentServiceTest {
     protected RecruitmentRepository recruitmentRepository;
 
     @Mock
-    protected RecruitmentMapper buddyMapper;
+    protected RecruitmentMapper recruitmentMapper;
 
     @Mock
     protected MemberService memberService;
 
     @Test
     @DisplayName("동행 모집글 작성")
-    void buddyRecruitmentServiceTest1() {
+    void recruitmentServiceTest1() {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         RecruitmentDto.Post postDto = StubData.MockRecruitment.getPostRecruitment();
@@ -57,9 +64,9 @@ class RecruitmentServiceTest {
         recruitment.addMember(member);
 
         when(memberService.findMember(member.getEmail())).thenReturn(member);
-        when(buddyMapper.toEntity(postDto)).thenReturn(recruitment);
+        when(recruitmentMapper.toEntity(postDto)).thenReturn(recruitment);
         when(recruitmentRepository.save(recruitment)).thenReturn(recruitment);
-        when(buddyMapper.toPostResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);
+        when(recruitmentMapper.toPostResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);
 
         //when
         RecruitmentDto.PostResponse responseRecruitment = recruitmentService.createRecruitmentByEmail(
@@ -78,7 +85,7 @@ class RecruitmentServiceTest {
 
     @Test
     @DisplayName("동행 모집글 수정")
-    void buddyRecruitmentServiceTest2() {
+    void recruitmentServiceTest2() {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         RecruitmentDto.Patch patchDto = StubData.MockRecruitment.getPatchRecruitment();
@@ -87,7 +94,7 @@ class RecruitmentServiceTest {
         recruitment.addMember(member);
 
         when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
-        when(buddyMapper.toPatchResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);
+        when(recruitmentMapper.toPatchResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);
 
         //when
         RecruitmentDto.PatchResponse responseRecruitment = recruitmentService.updateRecruitmentByEmail(
@@ -106,7 +113,7 @@ class RecruitmentServiceTest {
 
     @Test
     @DisplayName("동행 모집글 수정 - 작성자, 유저 불일치")
-    void buddyRecruitmentServiceTest3() {
+    void recruitmentServiceTest3() {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         RecruitmentDto.Patch patchDto = StubData.MockRecruitment.getPatchRecruitment();
@@ -130,7 +137,7 @@ class RecruitmentServiceTest {
 
     @Test
     @DisplayName("동행 모집글 삭제")
-    void buddyRecruitmentServiceTest4() {
+    void recruitmentServiceTest4() {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         Member member = StubData.MockMember.getMember();
@@ -147,7 +154,7 @@ class RecruitmentServiceTest {
 
     @Test
     @DisplayName("동행 모집글 삭제 - 작성자, 유저 불일치")
-    void buddyRecruitmentServiceTest5() {
+    void recruitmentServiceTest5() {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         Member writer = StubData.MockMember.getMemberByEmailAndNickname("dhfif718@naver.com", "LJH");
@@ -160,6 +167,86 @@ class RecruitmentServiceTest {
         //then
         assertThatThrownBy(
                 () -> recruitmentService.deleteRecruitmentByEmail(recruitment.getId(), user.getEmail())
+        ).isInstanceOf(BusinessLogicException.class);
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭신청 회원 리스트 조회")
+    void recruitmentServiceTest6() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        RecruitmentDto.MatchingRequestMemberResponse matchingRequestMemberResponse1
+                = StubData.MockMember.getMatchingRequestMemberResponse(1L, "dhfif718");
+        RecruitmentDto.MatchingRequestMemberResponse matchingRequestMemberResponse2
+                = StubData.MockMember.getMatchingRequestMemberResponse(2L, "kkd718");
+        RecruitmentDto.MatchingRequestMemberResponse matchingRequestMemberResponse3
+                = StubData.MockMember.getMatchingRequestMemberResponse(3L, "리젤란");
+
+        List<RecruitmentDto.MatchingRequestMemberResponse> matchingRequestMemberResponseList = new ArrayList<>();
+        matchingRequestMemberResponseList.add(matchingRequestMemberResponse1);
+        matchingRequestMemberResponseList.add(matchingRequestMemberResponse2);
+        matchingRequestMemberResponseList.add(matchingRequestMemberResponse3);
+        Member writer = StubData.MockMember.getMember();
+        Member user1 = StubData.MockMember.getMember();
+        Member user2 = StubData.MockMember.getMember();
+        Member user3 = StubData.MockMember.getMember();
+        recruitment.addMember(writer);
+
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(user1);
+        matching.addMember(user2);
+        matching.addMember(user3);
+        matching.addRecruitment(recruitment);
+        matching.request();
+        recruitment.addMatching(matching);
+
+
+        when(recruitmentRepository.findRecruitmentByIdAndMatchingStatus(recruitment.getId(), MatchingStatus.REQUEST))
+                .thenReturn(Optional.of(recruitment));
+        when(recruitmentMapper.toMatchingRequestMemberList(recruitment.getMatchingList()))
+                .thenReturn(matchingRequestMemberResponseList);
+
+        //when
+         List<RecruitmentDto.MatchingRequestMemberResponse> response
+                 = recruitmentService.getMatchingRequestMemberList(recruitment.getId());
+
+        //then
+        assertThat(response.size()).isEqualTo(3);
+        assertThat(response.get(0).getNickname()).isEqualTo(matchingRequestMemberResponse1.getNickname());
+        assertThat(response.get(1).getNickname()).isEqualTo(matchingRequestMemberResponse2.getNickname());
+        assertThat(response.get(2).getNickname()).isEqualTo(matchingRequestMemberResponse3.getNickname());
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭신청 회원 리스트 조회 (모집이 종료된 게시글)")
+    void recruitmentServiceTest7() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.end();
+
+        when(recruitmentRepository.findRecruitmentByIdAndMatchingStatus(recruitment.getId(), MatchingStatus.REQUEST))
+                .thenReturn(Optional.of(recruitment));
+
+        //when
+        //then
+        assertThatThrownBy(
+                () -> recruitmentService.getMatchingRequestMemberList(recruitment.getId())
+        ).isInstanceOf(BusinessLogicException.class);
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭신청 회원 리스트 조회 (동행 모집글이 없음)")
+    void recruitmentServiceTest8() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+
+        when(recruitmentRepository.findRecruitmentByIdAndMatchingStatus(recruitment.getId(), MatchingStatus.REQUEST))
+                .thenReturn(Optional.empty());
+
+        //when
+        //then
+        assertThatThrownBy(
+                () -> recruitmentService.getMatchingRequestMemberList(recruitment.getId())
         ).isInstanceOf(BusinessLogicException.class);
     }
 }

@@ -82,7 +82,7 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("동행 매칭신청 신규)")
+    @DisplayName("동행 매칭신청 (신규)")
     void matchingIntegrationTest1() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
@@ -451,7 +451,7 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
         String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
         assertThat(response).isEqualTo(ResponseBody.APPROVE_MATCHING.getDescription());
 
-        Optional<Matching> findMatching = matchingRepository.findMatchingByIdJoinRecruitment(matchingId);
+        Optional<Matching> findMatching = matchingRepository.findMatchingById(matchingId);
         assertThat(findMatching.get().getStatus()).isEqualTo(MatchingStatus.APPROVE);
         actions
                 .andDo(document("post-matching-approve",
@@ -631,7 +631,7 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
 
         // then
         String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
-        Optional<Matching> findMatching = matchingRepository.findMatchingByIdJoinRecruitment(matchingId);
+        Optional<Matching> findMatching = matchingRepository.findMatchingById(matchingId);
 
         assertThat(response).isEqualTo(ResponseBody.REJECT_MATCHING.getDescription());
         assertThat(findMatching.get().getStatus()).isEqualTo(MatchingStatus.REJECT);
