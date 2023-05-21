@@ -406,5 +406,10 @@ public class StubData {
             return new MockMultipartFile("data", null,
                     MediaType.APPLICATION_JSON_VALUE, json.getBytes());
         }
+
+        public static MockMultipartFile getFailFile() {
+            return new MockMultipartFile("file", "originalFilename",
+                    MediaType.IMAGE_GIF_VALUE, "fileContent".getBytes());
+        }
     }
 }
