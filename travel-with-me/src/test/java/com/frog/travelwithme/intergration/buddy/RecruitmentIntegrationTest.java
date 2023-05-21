@@ -1,13 +1,17 @@
 package com.frog.travelwithme.intergration.buddy;
 
 import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
+import com.frog.travelwithme.domain.buddy.repository.MatchingRepository;
 import com.frog.travelwithme.domain.buddy.repository.RecruitmentRepository;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
+import com.frog.travelwithme.global.exception.ErrorResponse;
+import com.frog.travelwithme.global.exception.ExceptionCode;
 import com.frog.travelwithme.global.security.auth.controller.dto.TokenDto;
 import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
@@ -17,6 +21,7 @@ import com.frog.travelwithme.utils.ResultActionsUtils;
 import com.frog.travelwithme.utils.StubData;
 import com.frog.travelwithme.utils.StubData.MockMember;
 import com.frog.travelwithme.utils.snippet.reqeust.RequestSnippet;
+import com.frog.travelwithme.utils.snippet.response.ErrorResponseSnippet;
 import com.frog.travelwithme.utils.snippet.response.ResponseSnippet;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +42,8 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
 
     private final String BASE_URL = "/recruitments";
     private String EMAIL;
-    private String EMAIL_OTHER;
+    private String EMAIL_OTHER_ONE;
+    private String EMAIL_OTHER_TWO;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
@@ -47,6 +53,9 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private RecruitmentRepository recruitmentRepository;
+
+    @Autowired
+    private MatchingRepository matchingRepository;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -68,11 +77,19 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
                 "이재혁"
         );
         memberService.signUp(memberTwo);
-        EMAIL_OTHER = memberTwo.getEmail();
+        EMAIL_OTHER_ONE = memberTwo.getEmail();
+
+        // kkd718@naver.com 회원 추가
+        MemberDto.SignUp memberThree = MockMember.getSignUpDtoByEmailAndNickname(
+                "kkd718@naver.com",
+                "리젤란"
+        );
+        memberService.signUp(memberThree);
+        EMAIL_OTHER_TWO = memberThree.getEmail();
     }
 
     @Test
-    @DisplayName("동행 작성 테스트")
+    @DisplayName("동행 모집글 작성 테스트")
     void recruitmentIntegrationTest1() throws Exception {
         // given
         CustomUserDetails userDetails = MockMember.getUserDetails();
@@ -117,7 +134,7 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("동행 수정 테스트")
+    @DisplayName("동행 모집글 수정 테스트")
     void recruitmentIntegrationTest2() throws Exception {
         // given
         CustomUserDetails userDetails = MockMember.getUserDetails();
@@ -131,10 +148,11 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         Member writer = memberRepository.findByEmail(EMAIL).get();
         recruitment.addMember(writer);
-        Recruitment saveBuddy = recruitmentRepository.save(recruitment);
+        Recruitment savedRecruitment = recruitmentRepository.save(recruitment);
+        Long recruitmentId = savedRecruitment.getId();
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + saveBuddy.getId())
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId)
                 .build().toUri().toString();
         String json = ObjectMapperUtils.objectToJsonString(patchDto);
 
@@ -146,7 +164,7 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
         RecruitmentDto.PatchResponse response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
                 RecruitmentDto.PatchResponse.class);
 
-        assertThat(response.getId()).isEqualTo(saveBuddy.getId());
+        assertThat(response.getId()).isEqualTo(savedRecruitment.getId());
         assertThat(response.getTitle()).isEqualTo(patchDto.getTitle());
         assertThat(response.getContent()).isEqualTo(patchDto.getContent());
         assertThat(response.getTravelNationality()).isEqualTo(patchDto.getTravelNationality());
@@ -164,7 +182,7 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("동행 삭제 테스트")
+    @DisplayName("동행 모집글 삭제 테스트")
     void recruitmentIntegrationTest3() throws Exception {
         // given
         CustomUserDetails userDetails = MockMember.getUserDetails();
@@ -176,11 +194,12 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         Member writer = memberRepository.findByEmail(EMAIL).get();
         recruitment.addMember(writer);
-        Recruitment saveBuddy = recruitmentRepository.save(recruitment);
+        Recruitment savedRecruitment = recruitmentRepository.save(recruitment);
+        Long recruitmentId = savedRecruitment.getId();
 
         // when
         String uri = UriComponentsBuilder.newInstance()
-                .path(BASE_URL + "/" + saveBuddy.getId())
+                .path(BASE_URL + "/" + recruitmentId)
                 .build().toUri().toString();
 
         ResultActions actions = ResultActionsUtils.deleteRequestWithToken(
@@ -194,6 +213,131 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
                 .andDo(document("delete-recruitment",
                         getRequestPreProcessor(),
                         getResponsePreProcessor()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭신청 회원 리스트 조회")
+    void recruitmentIntegrationTest4() throws Exception {
+        // given
+        Member writer = memberRepository.findByEmail(EMAIL).get();
+        Member user1 = memberRepository.findByEmail(EMAIL_OTHER_ONE).get();
+        Member user2 = memberRepository.findByEmail(EMAIL_OTHER_TWO).get();
+
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(writer);
+        Recruitment savedRecruitment = recruitmentRepository.save(recruitment);
+        Long recruitmentId = savedRecruitment.getId();
+
+        Matching matching1 = StubData.MockMatching.getMatching();
+        matching1.addMember(user1);
+        matching1.addRecruitment(savedRecruitment);
+        Matching matching2 = StubData.MockMatching.getMatching();
+        matching2.addMember(user2);
+        matching2.addRecruitment(savedRecruitment);
+
+        savedRecruitment.addMatching(matching1);
+        savedRecruitment.addMatching(matching2);
+
+        matchingRepository.save(matching1);
+        matchingRepository.save(matching2);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance()
+                .path(BASE_URL + "/" + recruitmentId + "/" + "matching-request-list")
+                .build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.getRequest(
+                mvc, uri
+        );
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("get-matching-request-member-list-recruitment",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ResponseSnippet.getMatchingRequestMemberListSnippet()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭신청 회원 리스트 조회 (모집이 종료된 게시글)")
+    void recruitmentIntegrationTest5() throws Exception {
+        // given
+        Member writer = memberRepository.findByEmail(EMAIL).get();
+        Member user1 = memberRepository.findByEmail(EMAIL_OTHER_ONE).get();
+        Member user2 = memberRepository.findByEmail(EMAIL_OTHER_TWO).get();
+
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(writer);
+        Recruitment savedRecruitment = recruitmentRepository.save(recruitment);
+        Long recruitmentId = savedRecruitment.getId();
+
+        Matching matching1 = StubData.MockMatching.getMatching();
+        matching1.addMember(user1);
+        matching1.addRecruitment(savedRecruitment);
+        Matching matching2 = StubData.MockMatching.getMatching();
+        matching2.addMember(user2);
+        matching2.addRecruitment(savedRecruitment);
+
+        savedRecruitment.addMatching(matching1);
+        savedRecruitment.addMatching(matching2);
+        savedRecruitment.end();
+
+        matchingRepository.save(matching1);
+        matchingRepository.save(matching2);
+
+
+        // when
+        String uri = UriComponentsBuilder.newInstance()
+                .path(BASE_URL + "/" + recruitmentId + "/" + "matching-request-list")
+                .build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.getRequest(
+                mvc, uri
+        );
+
+        // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getStatus());
+        assertThat(response.getMessage()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getMessage());
+        actions
+                .andDo(document("get-matching-request-member-list-recruitment-exception-2",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭신청 회원 리스트 조회 (동행 모집글이 없음)")
+    void recruitmentIntegrationTest6() throws Exception {
+        // given
+        Long recruitmentId = 1L;
+
+        // when
+        String uri = UriComponentsBuilder.newInstance()
+                .path(BASE_URL + "/" + recruitmentId + "/" + "matching-request-list")
+                .build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.getRequest(
+                mvc, uri
+        );
+
+        // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus())
+                .isEqualTo(ExceptionCode.RECRUITMENT_MATCHING_REQUEST_MEMBER_NOT_FOUND.getStatus());
+        assertThat(response.getMessage())
+                .isEqualTo(ExceptionCode.RECRUITMENT_MATCHING_REQUEST_MEMBER_NOT_FOUND.getMessage());
+        actions
+                .andDo(document("get-matching-request-member-list-recruitment-exception-1",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
                 ));
     }
 }

@@ -1,5 +1,6 @@
 package com.frog.travelwithme.domain.buddy.mapper;
 
+import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.common.DeletionEntity;
 import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
@@ -8,6 +9,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.frog.travelwithme.global.enums.EnumCollection.RecruitmentStatus;
 
@@ -99,4 +102,30 @@ public interface RecruitmentMapper {
                 .memberImage(recruitment.getMember().getImage())
                 .build();
     }
+
+    default RecruitmentDto.MatchingRequestMemberResponse toMatchingRequestMember(Matching matching) {
+        if(matching == null) {
+            return null;
+        }
+
+        return RecruitmentDto.MatchingRequestMemberResponse.builder()
+                .id(matching.getMember().getId())
+                .nickname(matching.getMember().getNickname())
+                .image(matching.getMember().getImage())
+                .build();
+    }
+
+    default List<RecruitmentDto.MatchingRequestMemberResponse> toMatchingRequestMemberList(List<Matching> matchingList) {
+        if(matchingList == null) {
+            return null;
+        }
+
+        List<RecruitmentDto.MatchingRequestMemberResponse> matchingRequestMemberResponseList = new ArrayList<>();
+
+        for (Matching matching : matchingList) {
+            matchingRequestMemberResponseList.add(this.toMatchingRequestMember(matching));
+        }
+        return matchingRequestMemberResponseList;
+    }
+
 }

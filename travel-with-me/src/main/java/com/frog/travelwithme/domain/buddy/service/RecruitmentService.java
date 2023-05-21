@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.frog.travelwithme.global.enums.EnumCollection.*;
 
 /**
@@ -64,6 +66,12 @@ public class RecruitmentService {
 //        return null;
 //    }
 
+    public List<RecruitmentDto.MatchingRequestMemberResponse> getMatchingRequestMemberList(Long recruitmentId) {
+        Recruitment recruitment = this.findRecruitmentByIdAndMatchingStatusRequest(recruitmentId);
+        this.checkExpiredRecruitment(recruitment);
+        return recruitmentMapper.toMatchingRequestMemberList(recruitment.getMatchingList());
+    }
+
     @Transactional(readOnly = true)
     public Recruitment findRecruitmentById(Long id) {
         return recruitmentRepository.findById(id).orElseThrow(() -> {
@@ -78,6 +86,15 @@ public class RecruitmentService {
             log.debug("RecruitmentService.findRecruitmentByIdJoinMember exception occur id: {}", id);
             throw new BusinessLogicException(ExceptionCode.RECRUITMENT_NOT_FOUND);
         });
+    }
+
+    @Transactional(readOnly = true)
+    public Recruitment findRecruitmentByIdAndMatchingStatusRequest(Long id) {
+        return recruitmentRepository.findRecruitmentByIdAndMatchingStatus(id, MatchingStatus.REQUEST)
+                .orElseThrow(() -> {
+                    log.debug("RecruitmentService.findRecruitmentByIdAndMatchingStatusRequest exception occur id: {}", id);
+                    throw new BusinessLogicException(ExceptionCode.RECRUITMENT_MATCHING_REQUEST_MEMBER_NOT_FOUND);
+                });
     }
 
     @Transactional(readOnly = true)
