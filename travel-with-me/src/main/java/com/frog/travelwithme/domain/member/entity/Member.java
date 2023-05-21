@@ -67,7 +67,7 @@ public class Member extends BaseTimeEntity {
 
     @Builder
     public Member(Long id, String email, String nickname, String password, Gender gender, String nation,
-                  String address, String introduction, String role, OAuthStatus oauthstatus) {
+                  String address, String introduction, String role, OAuthStatus oauthstatus, String image) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;
@@ -75,8 +75,7 @@ public class Member extends BaseTimeEntity {
         this.gender = gender;
         this.nation = nation;
         this.address = address;
-        // TODO: File 로직 구현 후 실제 url로 변경
-        this.image = "defaultImageUrl";
+        this.image = image;
         this.introduction = introduction;
         this.role = role;
         this.oauthstatus = oauthstatus;
