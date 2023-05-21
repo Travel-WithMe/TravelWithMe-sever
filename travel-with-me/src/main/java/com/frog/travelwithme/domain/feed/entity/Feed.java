@@ -96,4 +96,19 @@ public class Feed extends BaseTimeEntity {
                 .collect(Collectors.toList())
                 .contains(email);
     }
+
+    public void addImageUrl(String imageUrl) {
+        if (this.imageUrls == null) {
+            this.imageUrls = new ArrayList<>();
+        }
+        this.imageUrls.add(imageUrl);
+    }
+
+    public void removeImageUrl(String imageUrl) {
+        this.imageUrls.remove(imageUrl);
+    }
+
+    public boolean isImageUrlsSizeOne() {
+        return this.imageUrls.size() == 1;
+    }
 }

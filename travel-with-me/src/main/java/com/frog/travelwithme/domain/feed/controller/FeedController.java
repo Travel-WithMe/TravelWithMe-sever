@@ -63,8 +63,7 @@ public class FeedController {
                                     @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles,
                                     @Valid @RequestPart(value = "data") FeedDto.Patch patchDto,
                                     @AuthenticationPrincipal CustomUserDetails user) {
-        // TODO: MultiPartFile 로직 추가
-        FeedDto.Response response = feedService.updateFeed(user.getEmail(), feedId, patchDto);
+        FeedDto.Response response = feedService.updateFeed(user.getEmail(), feedId, patchDto, multipartFiles);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
