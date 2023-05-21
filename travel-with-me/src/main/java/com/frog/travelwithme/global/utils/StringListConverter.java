@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * StringListConverter 설명: List 필드를 DB에 저장될 때 String으로 변환하고 가져올 때는 퍼상햐소 List로 반환하는 클래스
+ * StringListConverter 설명: List 필드를 DB에 저장될 때 String으로 변환하고 가져올 때는 퍼싱해서 List로 반환하는 클래스
  * 작성자: 김찬빈
  * 버전 정보: 1.0.0
  * 작성일자: 2023/05/08
