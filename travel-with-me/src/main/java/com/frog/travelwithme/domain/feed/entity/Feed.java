@@ -56,12 +56,11 @@ public class Feed extends BaseTimeEntity {
     private List<Member> likedMembers = new ArrayList<>();
 
     @Builder
-    public Feed(String contents, String location, Member member) {
-        // TODO: File 로직 추가 후 구현
-        this.imageUrls.add("defaultImageUrl");
+    public Feed(String contents, String location, Member member, List<String> imageUrls) {
         this.contents = contents;
         this.location = location;
         this.member = member;
+        this.imageUrls = imageUrls;
     }
 
     public void updateFeedData(FeedDto.InternalPatch internalPatchDto) {

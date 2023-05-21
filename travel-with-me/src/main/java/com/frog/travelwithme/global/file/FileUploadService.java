@@ -47,7 +47,6 @@ public class FileUploadService {
 
     private boolean isNotJpegOrPngByContentType(String contentType) {
         return ObjectUtils.isEmpty(contentType)
-                || !contentType.contains(IMAGE_JPEG_VALUE)
-                || !contentType.contains(IMAGE_PNG_VALUE);
+                || (!contentType.contains(IMAGE_JPEG_VALUE) && !contentType.contains(IMAGE_PNG_VALUE));
     }
 }

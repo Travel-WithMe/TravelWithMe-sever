@@ -11,13 +11,18 @@ import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.enums.EnumCollection.ResponseBody;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
+import com.frog.travelwithme.global.file.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.frog.travelwithme.global.enums.EnumCollection.AwsS3Path.FEEDIMAGE;
 
 /**
  * 작성자: 김찬빈
@@ -34,10 +39,13 @@ public class FeedService {
     private final MemberService memberService;
     private final TagService tagService;
     private final FeedMapper feedMapper;
+    private final FileUploadService fileUploadService;
 
-    public Response postFeed(String email, FeedDto.Post postDto) {
+    public Response postFeed(String email, FeedDto.Post postDto, List<MultipartFile> multipartFiles) {
         Member saveMember = memberService.findMember(email);
-        Feed feed = feedMapper.postDtoToFeed(postDto, saveMember);
+        List<String> imageUrls = multipartFiles.stream()
+                .map(multipartFile -> fileUploadService.upload(multipartFile, FEEDIMAGE)).collect(Collectors.toList());
+        Feed feed = feedMapper.postDtoToFeed(postDto, saveMember, imageUrls);
         if (postDto.getTags() != null) {
             Set<Tag> tags = tagService.findOrCreateTagsByName(postDto.getTags());
             feed.addTags(tags);
