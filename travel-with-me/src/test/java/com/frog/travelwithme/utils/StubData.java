@@ -20,7 +20,12 @@ import com.frog.travelwithme.global.utils.TimeUtils;
 import lombok.Getter;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -398,8 +403,14 @@ public class StubData {
     public static class CustomMockMultipartFile {
 
         public static MockMultipartFile getFile() {
-            return new MockMultipartFile("file", "originalFilename",
-                    MediaType.MULTIPART_FORM_DATA_VALUE, "fileContent".getBytes());
+            return new MockMultipartFile("file", "originalFilename.png",
+                    MediaType.IMAGE_JPEG_VALUE, "fileContent".getBytes());
+        }
+
+        public static List<MockMultipartFile> getFiles() {
+            MockMultipartFile file = new MockMultipartFile("files", "originalFilename.png",
+                    MediaType.IMAGE_JPEG_VALUE, "fileContent".getBytes());
+            return new ArrayList<>(List.of(file, file));
         }
 
         public static MockMultipartFile getData(String json) {
@@ -408,8 +419,68 @@ public class StubData {
         }
 
         public static MockMultipartFile getFailFile() {
-            return new MockMultipartFile("file", "originalFilename",
+            return new MockMultipartFile("file", "originalFilename.gif",
                     MediaType.IMAGE_GIF_VALUE, "fileContent".getBytes());
+        }
+    }
+
+    public static class CustomMultipartFile {
+
+        @Getter
+        static final String FILE = "file";
+        @Getter
+        static final String FILES = "files";
+
+        public static MultipartFile getMultipartFile() {
+            return getFile(FILE);
+        }
+
+        public static List<MultipartFile> getMultipartFiles() {
+            return new ArrayList<>(List.of(getFile(FILES), getFile(FILES)));
+        }
+
+        private static MultipartFile getFile(String multipartFileName) {
+            return new MultipartFile() {
+                @Override
+                public String getName() {
+                    return multipartFileName;
+                }
+
+                @Override
+                public String getOriginalFilename() {
+                    return "filename.png";
+                }
+
+                @Override
+                public String getContentType() {
+                    return MediaType.IMAGE_PNG_VALUE;
+                }
+
+                @Override
+                public boolean isEmpty() {
+                    return false;
+                }
+
+                @Override
+                public long getSize() {
+                    return "File content".getBytes().length;
+                }
+
+                @Override
+                public byte[] getBytes() throws IOException {
+                    return "File content".getBytes();
+                }
+
+                @Override
+                public InputStream getInputStream() throws IOException {
+                    return new ByteArrayInputStream("File content".getBytes());
+                }
+
+                @Override
+                public void transferTo(File dest) throws IOException, IllegalStateException {
+
+                }
+            };
         }
     }
 }

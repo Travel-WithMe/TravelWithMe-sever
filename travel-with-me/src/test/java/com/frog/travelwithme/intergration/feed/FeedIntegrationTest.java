@@ -17,6 +17,7 @@ import com.frog.travelwithme.intergration.BaseIntegrationTest;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.ResultActionsUtils;
 import com.frog.travelwithme.utils.StubData;
+import com.frog.travelwithme.utils.StubData.CustomMockMultipartFile;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,9 +27,12 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.persistence.EntityManager;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 class FeedIntegrationTest extends BaseIntegrationTest {
 
-    private final String BASE_URL = "/feed";
+    private final String BASE_URL = "/feeds";
 
     private final String EMAIL = StubData.MockMember.getEmail();
 
@@ -70,13 +74,14 @@ class FeedIntegrationTest extends BaseIntegrationTest {
     @BeforeEach
     public void beforEach() {
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
+        List<MultipartFile> files = StubData.CustomMultipartFile.getMultipartFiles();
         memberService.signUp(signUpDto);
         Tag tagOne = Tag.builder().name(TAG_NAME + "1").build();
         tagRepository.save(tagOne);
         Tag tagTwo = Tag.builder().name(TAG_NAME + "2").build();
         tagRepository.save(tagTwo);
         FeedDto.Post postDto = StubData.MockFeed.getPostDto();
-        FeedDto.Response response = feedService.postFeed(this.EMAIL, postDto);
+        FeedDto.Response response = feedService.postFeed(this.EMAIL, postDto, files);
         feedId = response.getId();
     }
 
@@ -91,15 +96,15 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
         FeedDto.Post postDto = StubData.MockFeed.getPostDto();
-        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
+        List<MockMultipartFile> files = CustomMockMultipartFile.getFiles();
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(postDto);
-        MockMultipartFile data = StubData.CustomMockMultipartFile.getData(json);
-        ResultActions actions = ResultActionsUtils.postRequestWithTokenAndMultiPart(
-                mvc, uri, accessToken, encryptedRefreshToken, file, data);
+        MockMultipartFile data = CustomMockMultipartFile.getData(json);
+        ResultActions actions = ResultActionsUtils.postRequestWithTokenAndMultipartListAndMultipartData(
+                mvc, uri, accessToken, encryptedRefreshToken, files, data);
 
         // then
         FeedDto.Response response = ObjectMapperUtils.actionsSingleToResponseWithData(
@@ -112,6 +117,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getCommentCount()).isZero();
         assertThat(response.getLikeCount()).isZero();
         assertThat(response.getNickname()).isNotNull();
+        assertThat(response.getImageUrls()).isNotEmpty();
         actions
                 .andExpect(status().isCreated())
                 /*.andDo(document("post-feed",
@@ -178,11 +184,11 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
         FeedDto.Patch patchDto = StubData.MockFeed.getPatchDto();
-        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
+        MockMultipartFile file = CustomMockMultipartFile.getFile();
 
         // when
         String json = ObjectMapperUtils.asJsonString(patchDto);
-        MockMultipartFile data = StubData.CustomMockMultipartFile.getData(json);
+        MockMultipartFile data = CustomMockMultipartFile.getData(json);
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + feedId)
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.patchRequestWithTwoMultiPartAndToken(
