@@ -54,9 +54,8 @@ public class MemberController {
     }
 
     @PatchMapping("/images")
-    public ResponseEntity patchMember(@AuthenticationPrincipal CustomUserDetails user,
+    public ResponseEntity patchProfileImage(@AuthenticationPrincipal CustomUserDetails user,
                                       @RequestPart("file") MultipartFile multipartFile) {
-        // TODO: multipartFile S3에 저장 후 url 반환 로직 추가
         String email = user.getEmail();
         MemberDto.Response response = memberService.changeProfileImage(multipartFile, email);
 
