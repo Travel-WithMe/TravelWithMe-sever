@@ -130,7 +130,7 @@ class FeedControllerTest {
         FeedDto.Patch patchDto = StubData.MockFeed.getPatchDto();
         FeedDto.Response response = StubData.MockFeed.getResponseDto();
         MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
-        given(feedService.updateFeed(any(), anyLong(), any(FeedDto.Patch.class))).willReturn(response);
+        given(feedService.updateFeed(any(), anyLong(), any(FeedDto.Patch.class), anyList())).willReturn(response);
 
         // when
         String json = ObjectMapperUtils.asJsonString(patchDto);

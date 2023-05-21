@@ -363,4 +363,22 @@ public class ResultActionsUtils {
         return mockMvc.perform(requestBuilder)
                 .andDo(print());
     }
+
+    public static ResultActions patchRequestWithTwoMultiPartAndToken(MockMvc mockMvc,
+                                                                     String url,
+                                                                     String accessToken,
+                                                                     String encryptedRefreshToken,
+                                                                     List<MockMultipartFile> files,
+                                                                     MockMultipartFile data) throws Exception {
+        MockMultipartHttpServletRequestBuilder requestBuilder = (MockMultipartHttpServletRequestBuilder) multipart(HttpMethod.PATCH, url)
+                .file(data)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                .header(REFRESH_HEADER, encryptedRefreshToken);
+        for (MockMultipartFile file : files) {
+            requestBuilder.file(file);
+        }
+        return mockMvc.perform(requestBuilder)
+                .andDo(print());
+    }
 }
