@@ -1,5 +1,6 @@
 package com.frog.travelwithme.intergration.feed;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.entity.Tag;
 import com.frog.travelwithme.domain.feed.repository.TagRepository;
@@ -8,6 +9,7 @@ import com.frog.travelwithme.domain.feed.service.TagService;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
+import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ErrorResponse;
 import com.frog.travelwithme.global.exception.ExceptionCode;
 import com.frog.travelwithme.global.security.auth.controller.dto.TokenDto;
@@ -35,6 +37,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
@@ -70,6 +73,9 @@ class FeedIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private AmazonS3 amazonS3;
 
     @BeforeEach
     public void beforEach() {
@@ -184,7 +190,8 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
         FeedDto.Patch patchDto = StubData.MockFeed.getPatchDto();
-        MockMultipartFile file = CustomMockMultipartFile.getFile();
+        List<MockMultipartFile> files = CustomMockMultipartFile.getFiles();
+        FeedDto.Response feed = feedService.findFeedById(userDetails.getEmail(), feedId);
 
         // when
         String json = ObjectMapperUtils.asJsonString(patchDto);
@@ -192,7 +199,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + feedId)
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.patchRequestWithTwoMultiPartAndToken(
-                mvc, uri, accessToken, encryptedRefreshToken, file, data);
+                mvc, uri, accessToken, encryptedRefreshToken, files, data);
 
         // then
         FeedDto.Response response = ObjectMapperUtils.actionsSingleToResponseWithData(
@@ -203,6 +210,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getCommentCount()).isZero();
         assertThat(response.getLikeCount()).isZero();
         assertThat(response.getNickname()).isNotNull();
+        assertThat(response.getImageUrls()).hasSize(feed.getImageUrls().size() + files.size());
         actions
                 .andExpect(status().isOk());
     }
@@ -216,6 +224,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+        FeedDto.Response feed = feedService.findFeedById(userDetails.getEmail(), feedId);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + feedId)
@@ -224,6 +233,9 @@ class FeedIntegrationTest extends BaseIntegrationTest {
                 mvc, uri, accessToken, encryptedRefreshToken);
 
         // then
+        assertThatThrownBy(() -> feedService.findFeedById(userDetails.getEmail(), feedId))
+                .isInstanceOf(BusinessLogicException.class)
+                .hasMessage(ExceptionCode.FEED_NOT_FOUND.getMessage());
         actions
                 .andExpect(status().isOk());
     }
