@@ -7,6 +7,7 @@ import com.frog.travelwithme.domain.member.mapper.MemberMapper;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
+import com.frog.travelwithme.global.file.FileUploadService;
 import com.frog.travelwithme.global.mail.MailService;
 import com.frog.travelwithme.global.redis.RedisService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.time.Duration;
 import java.util.Optional;
 import java.util.Random;
 
+import static com.frog.travelwithme.global.enums.EnumCollection.AwsS3Path.PROFILEIMAGE;
 import static com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus.NORMAL;
 import static com.frog.travelwithme.global.security.auth.utils.CustomAuthorityUtils.verifiedRole;
 
@@ -50,17 +52,18 @@ public class MemberService {
 
     private final RedisService redisService;
 
+    private final FileUploadService fileUploadService;
+
     @Value("${spring.mail.auth-code-expiration-millis}")
     private long authCodeExpirationMillis;
 
-    public MemberDto.Response signUp(MemberDto.SignUp signUpDto) {
+    public MemberDto.Response signUp(MemberDto.SignUp signUpDto, MultipartFile multipartFile) {
         verifiedRole(signUpDto.getRole());
-        Member member = memberMapper.toEntity(signUpDto);
+        String imageUrl = fileUploadService.upload(multipartFile, PROFILEIMAGE);
+        Member member = memberMapper.toEntity(signUpDto, imageUrl);
         member.setOauthStatus(NORMAL);
         this.checkDuplicatedEmail(member.getEmail());
         member.passwordEncoding(passwordEncoder);
-
-        // TODO: 이메일 발송 로직 구현 추가 필요
         Member saveMember = memberRepository.save(member);
 
         return memberMapper.toDto(saveMember);

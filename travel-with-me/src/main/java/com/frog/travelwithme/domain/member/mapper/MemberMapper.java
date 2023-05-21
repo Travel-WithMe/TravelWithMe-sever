@@ -14,7 +14,7 @@ import org.mapstruct.ReportingPolicy;
  **/
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MemberMapper {
-    default Member toEntity(MemberDto.SignUp signUpDto) {
+    default Member toEntity(MemberDto.SignUp signUpDto, String imageUrl) {
         Member.MemberBuilder memberBuilder = Member.builder();
         memberBuilder
                 .email(signUpDto.getEmail())
@@ -24,7 +24,8 @@ public interface MemberMapper {
                 .nation(signUpDto.getNation())
                 .address(signUpDto.getAddress())
                 .introduction(signUpDto.getIntroduction())
-                .role(signUpDto.getRole());
+                .role(signUpDto.getRole())
+                .image(imageUrl);
         return memberBuilder.build();
     }
 
