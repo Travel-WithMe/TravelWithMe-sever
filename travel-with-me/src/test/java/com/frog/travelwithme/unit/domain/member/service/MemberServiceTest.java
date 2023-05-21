@@ -5,7 +5,9 @@ import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.mapper.MemberMapper;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.domain.member.service.MemberService;
+import com.frog.travelwithme.global.enums.EnumCollection.AwsS3Path;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
+import com.frog.travelwithme.global.file.FileUploadService;
 import com.frog.travelwithme.utils.StubData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -45,20 +48,25 @@ class MemberServiceTest {
     @Mock
     private MemberMapper memberMapper;
 
+    @Mock
+    private FileUploadService fileUploadService;
+
     @Test
     @DisplayName("회원가입")
     void memberServiceTest1() {
         // given
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
+        MultipartFile file = StubData.CustomMockMultipartFile.getFile();
         Member member = StubData.MockMember.getMember();
         MemberDto.Response expectedResponse = StubData.MockMember.getResponseDto();
-        given(memberMapper.toEntity(any(MemberDto.SignUp.class))).willReturn(member);
+        given(fileUploadService.upload(any(MultipartFile.class), any(AwsS3Path.class))).willReturn("imageUrl");
+        given(memberMapper.toEntity(any(MemberDto.SignUp.class), any())).willReturn(member);
         given(memberRepository.findByEmail(any())).willReturn(Optional.empty());
         given(memberRepository.save(any(Member.class))).willReturn(member);
         given(memberMapper.toDto(any(Member.class))).willReturn(expectedResponse);
 
         // when
-        MemberDto.Response response = memberService.signUp(signUpDto);
+        MemberDto.Response response = memberService.signUp(signUpDto, file);
 
         // then
         assertNotNull(response);
@@ -145,14 +153,16 @@ class MemberServiceTest {
     void memberServiceTest5() {
         // given
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
+        MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
         Member member = StubData.MockMember.getMember();
         MemberDto.Response expectedResponse = StubData.MockMember.getResponseDto();
-        given(memberMapper.toEntity(any(MemberDto.SignUp.class))).willReturn(member);
+        given(fileUploadService.upload(any(MultipartFile.class), any(AwsS3Path.class))).willReturn("imageUrl");
+        given(memberMapper.toEntity(any(MemberDto.SignUp.class), any())).willReturn(member);
         given(memberRepository.findByEmail(any())).willReturn(Optional.ofNullable(member));
 
         // when // then
         assertThrows(BusinessLogicException.class,
-                () -> memberService.signUp(signUpDto));
+                () -> memberService.signUp(signUpDto, file));
     }
 
     @Test
@@ -210,14 +220,14 @@ class MemberServiceTest {
     @DisplayName("프로필 이미지 변경")
     void memberServiceTest10() {
         // given
-        MockMultipartFile file = new MockMultipartFile("file",
-                "originalFilename", "text/plain", "fileContent".getBytes());
+        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
         String email = "email";
         Member originMember = StubData.MockMember.getMember();
         originMember.changeImage(StubData.MockMember.getImage());
         MemberDto.Response expectedResponse = StubData.MockMember.getResponseDto();
         given(memberRepository.findByEmail(any())).willReturn(Optional.of(originMember));
         given(memberMapper.toDto(any(Member.class))).willReturn(expectedResponse);
+        given(fileUploadService.upload(any(MultipartFile.class), any(AwsS3Path.class))).willReturn("imageUrl");
 
         // when
         MemberDto.Response response = memberService.changeProfileImage(file, email);

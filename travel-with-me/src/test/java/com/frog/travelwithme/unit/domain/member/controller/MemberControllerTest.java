@@ -71,7 +71,7 @@ class MemberControllerTest {
         MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
         MemberDto.Response response = StubData.MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
@@ -148,7 +148,7 @@ class MemberControllerTest {
         String failedEmail = "ema..il@gmail.com";
         MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByEmail(failedEmail);
         MemberDto.Response response = StubData.MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
@@ -169,7 +169,7 @@ class MemberControllerTest {
         String failedEmail = ".email@gmail.com";
         MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByEmail(failedEmail);
         MemberDto.Response response = StubData.MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
@@ -190,7 +190,7 @@ class MemberControllerTest {
         String failedEmail = "email.@gmail.com";
         MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByEmail(failedEmail);
         MemberDto.Response response = StubData.MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
@@ -211,7 +211,7 @@ class MemberControllerTest {
         String failedEmail = "emailemailemailemailemailemailemailemailemailemailemailemailemail@gmail.com";
         MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByEmail(failedEmail);
         MemberDto.Response response = StubData.MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
@@ -232,7 +232,7 @@ class MemberControllerTest {
         String failedPassword = "password1!";
         MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByPassword(failedPassword);
         MemberDto.Response response = StubData.MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
@@ -253,7 +253,7 @@ class MemberControllerTest {
         String failedPassword = "PASSWORD1!";
         MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByPassword(failedPassword);
         MemberDto.Response response = StubData.MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
@@ -274,7 +274,7 @@ class MemberControllerTest {
         String failedPassword = "Password!";
         MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByPassword(failedPassword);
         MemberDto.Response response = StubData.MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
@@ -295,7 +295,7 @@ class MemberControllerTest {
         String failedPassword = "Password1";
         MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByPassword(failedPassword);
         MemberDto.Response response = StubData.MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")

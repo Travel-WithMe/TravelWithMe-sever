@@ -26,6 +26,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
@@ -65,8 +66,9 @@ class MemberIntegrationTest extends BaseIntegrationTest {
 
     @BeforeEach
     void beforeEach() {
+        MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
-        memberService.signUp(signUpDto);
+        memberService.signUp(signUpDto, file);
     }
 
     @Test
@@ -92,6 +94,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         assertThat(signUpDto.getIntroduction()).isEqualTo(response.getIntroduction());
         assertThat(signUpDto.getNation()).isEqualTo(response.getNation());
         assertThat(signUpDto.getRole()).isEqualTo(response.getRole());
+        assertThat(response.getImage()).isNotNull();
         actions
                 .andExpect(status().isCreated())
                 .andDo(document("signup",
@@ -177,6 +180,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
+
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
@@ -188,7 +192,6 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 .andDo(document("delete-member",
                         getRequestPreProcessor(),
                         RequestSnippet.getTokenSnippet()));
-        memberService.signUp(signUpDto);
     }
 
     @Test
