@@ -1,6 +1,7 @@
 package com.frog.travelwithme.global.file;
 
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
@@ -16,17 +17,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+/**
+ * AmazonS3ResourceStorage 설명: S3 파일 업로드 및 삭제 로직 구현
+ * 작성자: 김찬빈
+ * 버전 정보: 1.0.0
+ * 작성일자: 2023/05/20
+ **/
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class AmazonS3ResourceStorage {
-    private final AmazonS3Client amazonS3Client;
+    private final AmazonS3 amazonS3;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
 
-    public String storeImage(MultipartFile image, EnumCollection.AwsS3Path awsS3Path) {
+    public String uploadImage(MultipartFile image, EnumCollection.AwsS3Path awsS3Path) {
         if (image.isEmpty()) {
             log.debug("FileService.storeImage exception occur image : {}, awsS3Path : {}",
                     image, awsS3Path);
@@ -37,7 +44,7 @@ public class AmazonS3ResourceStorage {
         String storeFileName = createStoreFileName(originalFilename);
 
         try (InputStream inputStream = image.getInputStream()) {
-            amazonS3Client.putObject(new PutObjectRequest(
+            amazonS3.putObject(new PutObjectRequest(
                     bucketName + awsS3Path.getPath(), storeFileName, inputStream, null));
         } catch (IOException e) {
             log.debug("FileService.storeImage exception occur image : {}, awsS3Path : {}",
@@ -45,7 +52,17 @@ public class AmazonS3ResourceStorage {
             throw new BusinessLogicException(ExceptionCode.FAIL_TO_UPLOAD_FILE);
         }
 
-        return amazonS3Client.getUrl(bucketName + awsS3Path.getPath(), storeFileName).toString();
+        return amazonS3.getUrl(bucketName + awsS3Path.getPath(), storeFileName).toString();
+    }
+
+    public void removeImage(String imageUrl) {
+        try {
+            String key = imageUrl.substring(64);
+            amazonS3.deleteObject(new DeleteObjectRequest(bucketName, key));
+        } catch (Exception e) {
+            log.debug("AmazonS3ResourceStorage.deleteImage exception occur imageUrl : {}", imageUrl);
+            throw new BusinessLogicException(ExceptionCode.FAILED_TO_DELETE_FILE);
+        }
     }
 
     private String createStoreFileName(String originalFilename) {
