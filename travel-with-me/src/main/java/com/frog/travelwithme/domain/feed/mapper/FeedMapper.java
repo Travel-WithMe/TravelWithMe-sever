@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface FeedMapper {
 
-    Feed postDtoToFeed(FeedDto.Post postDto, Member member, List<String> imageUrls);
+    Feed postDtoToFeed(FeedDto.Post postDto, Member member);
 
     FeedDto.InternalPatch toInternalDto(FeedDto.Patch patchDto);
 

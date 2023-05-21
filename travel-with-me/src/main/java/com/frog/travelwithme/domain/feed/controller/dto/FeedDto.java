@@ -33,6 +33,7 @@ public class FeedDto {
         String contents;
         String location;
         List<String> tags;
+        List<String> removeImageUrls;
     }
 
     @Getter
@@ -80,5 +81,6 @@ public class FeedDto {
         String contents;
         String location;
         List<String> tags;
+        List<String> removeImageUrls;
     }
 }
