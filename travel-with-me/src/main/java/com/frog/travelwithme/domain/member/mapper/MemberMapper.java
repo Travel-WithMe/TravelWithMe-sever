@@ -25,7 +25,8 @@ public interface MemberMapper {
                 .address(signUpDto.getAddress())
                 .introduction(signUpDto.getIntroduction())
                 .role(signUpDto.getRole())
-                .image(imageUrl);
+                .image(imageUrl == null ? "defaultImage" : imageUrl);
+
         return memberBuilder.build();
     }
 
