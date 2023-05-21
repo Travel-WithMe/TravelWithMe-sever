@@ -53,6 +53,7 @@ public class FeedDto {
         boolean liked;
         LocalDateTime createdAt;
         List<String> tags;
+        List<String> imageUrls;
     }
 
     @Getter
@@ -68,6 +69,7 @@ public class FeedDto {
         List<String> tags;
         // TODO: 댓글 구현 고민
         List<String> comments;
+        List<String> imageUrls;
     }
 
     @Getter
