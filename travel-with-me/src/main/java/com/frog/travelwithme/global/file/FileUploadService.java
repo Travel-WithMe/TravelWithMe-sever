@@ -13,6 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 
+/**
+ * FileUploadService 설명: 파일 유효성 검사 및 업로드,삭제 요청
+ * 작성자: 김찬빈
+ * 버전 정보: 1.0.0
+ * 작성일자: 2023/05/20
+ **/
 @Slf4j
 @Service
 @Transactional
@@ -20,9 +26,13 @@ import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 public class FileUploadService {
     private final AmazonS3ResourceStorage amazonS3ResourceStorage;
 
-    public String store(MultipartFile multipartFile, AwsS3Path awsS3Path) {
+    public String upload(MultipartFile multipartFile, AwsS3Path awsS3Path) {
         verifiedExenstion(multipartFile);
-        return amazonS3ResourceStorage.storeImage(multipartFile, awsS3Path);
+        return amazonS3ResourceStorage.uploadImage(multipartFile, awsS3Path);
+    }
+
+    public void remove(String imageUrl) {
+        amazonS3ResourceStorage.removeImage(imageUrl);
     }
 
     private void verifiedExenstion(MultipartFile multipartFile) {
