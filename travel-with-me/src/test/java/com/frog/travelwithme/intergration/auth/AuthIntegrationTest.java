@@ -1,5 +1,8 @@
 package com.frog.travelwithme.intergration.auth;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
@@ -11,8 +14,8 @@ import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.intergration.BaseIntegrationTest;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
-import com.frog.travelwithme.utils.StubData;
 import com.frog.travelwithme.utils.ResultActionsUtils;
+import com.frog.travelwithme.utils.StubData;
 import com.frog.travelwithme.utils.snippet.reqeust.RequestSnippet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +26,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URL;
 import java.time.Duration;
 
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
@@ -32,6 +36,8 @@ import static com.frog.travelwithme.utils.snippet.response.AuthResponseSnippet.g
 import static com.frog.travelwithme.utils.snippet.response.ErrorResponseSnippet.getFieldErrorSnippets;
 import static com.frog.travelwithme.utils.snippet.response.ErrorResponseSnippet.getFieldErrorSnippetsLong;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -55,8 +61,16 @@ class AuthIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private AES128Config aes128Config;
 
+    @Autowired
+    private AmazonS3 amazonS3;
+
     @BeforeEach
-    void befroeEach() {
+    void befroeEach() throws Exception {
+        // Mock S3 시나리오 설정
+        given(amazonS3.putObject(any(PutObjectRequest.class))).willReturn(new PutObjectResult());
+        given(amazonS3.getUrl(any(), any())).willReturn(
+                new URL(StubData.CustomMultipartFile.getIMAGE_URL()));
+
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
         MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
         memberService.signUp(signUpDto, file);

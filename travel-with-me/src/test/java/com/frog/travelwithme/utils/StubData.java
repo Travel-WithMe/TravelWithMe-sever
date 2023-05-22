@@ -427,6 +427,10 @@ public class StubData {
     public static class CustomMultipartFile {
 
         @Getter
+        static final String IMAGE_URL =
+                "https://s3.ap-northeast-2.amazonaws.com/travel-with-me-fileupload/image/example.png";
+
+        @Getter
         static final String FILE = "file";
         @Getter
         static final String FILES = "files";
