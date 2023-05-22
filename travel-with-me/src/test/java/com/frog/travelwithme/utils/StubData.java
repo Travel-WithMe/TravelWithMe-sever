@@ -218,9 +218,9 @@ public class StubData {
             return EmailVerificationResult.from(authResult);
         }
 
-        public static RecruitmentDto.MatchingRequestMemberResponse getMatchingRequestMemberResponse(Long id,
-                                                                                                    String nickname) {
-            return RecruitmentDto.MatchingRequestMemberResponse.builder()
+        public static RecruitmentDto.MatchingMemberResponse getMatchingRequestMemberResponse(Long id,
+                                                                                             String nickname) {
+            return RecruitmentDto.MatchingMemberResponse.builder()
                     .id(id)
                     .nickname(nickname)
                     .image(image)

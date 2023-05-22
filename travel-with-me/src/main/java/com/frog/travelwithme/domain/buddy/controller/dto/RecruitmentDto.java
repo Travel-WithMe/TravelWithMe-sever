@@ -95,14 +95,14 @@ public class RecruitmentDto {
         private String memberImage;
         private LocalDateTime createdAt;
         private Boolean recruitmentRequestStatus;
-        private List<MatchingRequestMemberResponse> buddyMembers;
+        private List<MatchingMemberResponse> members;
     }
 
     @Getter
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class MatchingRequestMemberResponse {
+    public static class MatchingMemberResponse {
         private Long id;
         private String nickname;
         private String image;

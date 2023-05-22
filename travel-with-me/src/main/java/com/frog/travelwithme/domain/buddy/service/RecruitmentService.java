@@ -47,12 +47,12 @@ public class RecruitmentService {
     public RecruitmentDto.PatchResponse updateRecruitmentByEmail(RecruitmentDto.Patch patchDto,
                                                                  Long recruitmentId,
                                                                  String email) {
-        Recruitment findRecruitment = this.findRecruitmentAndCheckEqualWriterAndUser(recruitmentId, email);
+        Recruitment findRecruitment = this.findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(recruitmentId, email);
         return this.updateRecruitment(patchDto, findRecruitment);
     }
 
     public void deleteRecruitmentByEmail(Long recruitmentId, String email) {
-        Recruitment findRecruitment = this.findRecruitmentAndCheckEqualWriterAndUser(recruitmentId, email);
+        Recruitment findRecruitment = this.findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(recruitmentId, email);
         this.deleteRecruitment(findRecruitment);
     }
 
@@ -66,10 +66,16 @@ public class RecruitmentService {
 //        return null;
 //    }
 
-    public List<RecruitmentDto.MatchingRequestMemberResponse> getMatchingRequestMemberList(Long recruitmentId) {
-        Recruitment recruitment = this.findRecruitmentByIdAndMatchingStatusRequest(recruitmentId);
-        this.checkExpiredRecruitment(recruitment);
-        return recruitmentMapper.toMatchingRequestMemberList(recruitment.getMatchingList());
+    public List<RecruitmentDto.MatchingMemberResponse> getMatchingRequestMemberList(Long recruitmentId) {
+        Recruitment recruitment =
+                this.findRecruitmentByIdAndMatchingStatusAndCheckExpired(recruitmentId, MatchingStatus.REQUEST);
+        return recruitmentMapper.toMatchingMemberResponseRecruitmentDtoList(recruitment.getMatchingList());
+    }
+
+    public List<RecruitmentDto.MatchingMemberResponse> getMatchingApprovedMemberList(Long recruitmentId) {
+        Recruitment recruitment =
+                this.findRecruitmentByIdAndMatchingStatusAndCheckExpired(recruitmentId, MatchingStatus.APPROVE);
+        return recruitmentMapper.toMatchingMemberResponseRecruitmentDtoList(recruitment.getMatchingList());
     }
 
     @Transactional(readOnly = true)
@@ -81,18 +87,18 @@ public class RecruitmentService {
     }
 
     @Transactional(readOnly = true)
-    public Recruitment findRecruitmentByIdJoinMember(Long id) {
-        return recruitmentRepository.findRecruitmentById(id).orElseThrow(() -> {
-            log.debug("RecruitmentService.findRecruitmentByIdJoinMember exception occur id: {}", id);
-            throw new BusinessLogicException(ExceptionCode.RECRUITMENT_NOT_FOUND);
-        });
+    public Recruitment findRecruitmentByIdAndMatchingStatusAndCheckExpired(Long id, MatchingStatus status) {
+        Recruitment recruitment = this.findRecruitmentByIdAndMatchingStatus(id, status);
+        this.checkExpiredRecruitment(recruitment);
+        return recruitment;
     }
 
     @Transactional(readOnly = true)
-    public Recruitment findRecruitmentByIdAndMatchingStatusRequest(Long id) {
-        return recruitmentRepository.findRecruitmentByIdAndMatchingStatus(id, MatchingStatus.REQUEST)
+    public Recruitment findRecruitmentByIdAndMatchingStatus(Long id, MatchingStatus status) {
+        return recruitmentRepository.findRecruitmentByIdAndMatchingStatus(id, status)
                 .orElseThrow(() -> {
-                    log.debug("RecruitmentService.findRecruitmentByIdAndMatchingStatusRequest exception occur id: {}", id);
+                    log.debug("RecruitmentService.findRecruitmentByIdAndMatchingStatus exception occur " +
+                            "id: {}, MatchingStatus: {}", id, status);
                     throw new BusinessLogicException(ExceptionCode.RECRUITMENT_MATCHING_REQUEST_MEMBER_NOT_FOUND);
                 });
     }
@@ -105,9 +111,10 @@ public class RecruitmentService {
     }
 
     @Transactional(readOnly = true)
-    public Recruitment findRecruitmentAndCheckEqualWriterAndUser(Long recruitmentId, String email) {
+    public Recruitment findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(Long recruitmentId, String email) {
         Recruitment recruitment = this.findRecruitmentById(recruitmentId);
         this.checkEqualWriterAndUser(recruitment, email);
+        this.checkExpiredRecruitment(recruitment);
         return recruitment;
     }
 

@@ -77,7 +77,7 @@ public class ResponseSnippet {
         );
     }
 
-    public static ResponseFieldsSnippet getMatchingRequestMemberListSnippet() {
+    public static ResponseFieldsSnippet getMatchingMemberListSnippet() {
         return responseFields(
                 List.of(
                         fieldWithPath("data[].id").description("회원 ID"),

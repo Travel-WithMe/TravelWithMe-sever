@@ -141,39 +141,80 @@ class RecruitmentControllerTest {
     @WithMockCustomUser
     void recruitmentControllerTest4() throws Exception {
         // given
-        RecruitmentDto.MatchingRequestMemberResponse matchingRequestMemberResponse1
+        RecruitmentDto.MatchingMemberResponse matchingMemberResponse1
                 = StubData.MockMember.getMatchingRequestMemberResponse(1L, "dhfif718");
-        RecruitmentDto.MatchingRequestMemberResponse matchingRequestMemberResponse2
+        RecruitmentDto.MatchingMemberResponse matchingMemberResponse2
                 = StubData.MockMember.getMatchingRequestMemberResponse(2L, "kkd718");
-        RecruitmentDto.MatchingRequestMemberResponse matchingRequestMemberResponse3
+        RecruitmentDto.MatchingMemberResponse matchingMemberResponse3
                 = StubData.MockMember.getMatchingRequestMemberResponse(3L, "리젤란");
 
-        List<RecruitmentDto.MatchingRequestMemberResponse> matchingRequestMemberResponseList = new ArrayList<>();
-        matchingRequestMemberResponseList.add(matchingRequestMemberResponse1);
-        matchingRequestMemberResponseList.add(matchingRequestMemberResponse2);
-        matchingRequestMemberResponseList.add(matchingRequestMemberResponse3);
+        List<RecruitmentDto.MatchingMemberResponse> matchingMemberResponseList = new ArrayList<>();
+        matchingMemberResponseList.add(matchingMemberResponse1);
+        matchingMemberResponseList.add(matchingMemberResponse2);
+        matchingMemberResponseList.add(matchingMemberResponse3);
 
-        given(recruitmentService.getMatchingRequestMemberList(any())).willReturn(matchingRequestMemberResponseList);
+        given(recruitmentService.getMatchingRequestMemberList(any())).willReturn(matchingMemberResponseList);
 
         // when
         String uri = UriComponentsBuilder.newInstance()
-                .path(BASE_URL + "/" + 1 + "/" + "matching-request-list")
+                .path(BASE_URL + "/" + 1 + "/" + "matching-request-member-list")
                 .build().toUri().toString();
 
         ResultActions actions = ResultActionsUtils.getRequest(mvc, uri);
 
         // then
-        List<RecruitmentDto.MatchingRequestMemberResponse> response = List.of(ObjectMapperUtils.actionsSingleToResponseWithData(
-                actions, RecruitmentDto.MatchingRequestMemberResponse[].class
+        List<RecruitmentDto.MatchingMemberResponse> response = List.of(ObjectMapperUtils.actionsSingleToResponseWithData(
+                actions, RecruitmentDto.MatchingMemberResponse[].class
         ));
 
 
         actions
                 .andExpect(status().isOk());
         for (int i = 0; i < response.size(); i++) {
-            assertThat(response.get(i).getId()).isEqualTo(matchingRequestMemberResponseList.get(i).getId());
-            assertThat(response.get(i).getNickname()).isEqualTo(matchingRequestMemberResponseList.get(i).getNickname());
-            assertThat(response.get(i).getImage()).isEqualTo(matchingRequestMemberResponseList.get(i).getImage());
+            assertThat(response.get(i).getId()).isEqualTo(matchingMemberResponseList.get(i).getId());
+            assertThat(response.get(i).getNickname()).isEqualTo(matchingMemberResponseList.get(i).getNickname());
+            assertThat(response.get(i).getImage()).isEqualTo(matchingMemberResponseList.get(i).getImage());
+        }
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭승인 회원 리스트 조회")
+    @WithMockCustomUser
+    void recruitmentControllerTest5() throws Exception {
+        // given
+        RecruitmentDto.MatchingMemberResponse matchingMemberResponse1
+                = StubData.MockMember.getMatchingRequestMemberResponse(1L, "dhfif718");
+        RecruitmentDto.MatchingMemberResponse matchingMemberResponse2
+                = StubData.MockMember.getMatchingRequestMemberResponse(2L, "kkd718");
+        RecruitmentDto.MatchingMemberResponse matchingMemberResponse3
+                = StubData.MockMember.getMatchingRequestMemberResponse(3L, "리젤란");
+
+        List<RecruitmentDto.MatchingMemberResponse> matchingMemberResponseList = new ArrayList<>();
+        matchingMemberResponseList.add(matchingMemberResponse1);
+        matchingMemberResponseList.add(matchingMemberResponse2);
+        matchingMemberResponseList.add(matchingMemberResponse3);
+
+        given(recruitmentService.getMatchingRequestMemberList(any())).willReturn(matchingMemberResponseList);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance()
+                .path(BASE_URL + "/" + 1 + "/" + "matching-approved-member-list")
+                .build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.getRequest(mvc, uri);
+
+        // then
+        List<RecruitmentDto.MatchingMemberResponse> response = List.of(ObjectMapperUtils.actionsSingleToResponseWithData(
+                actions, RecruitmentDto.MatchingMemberResponse[].class
+        ));
+
+
+        actions
+                .andExpect(status().isOk());
+        for (int i = 0; i < response.size(); i++) {
+            assertThat(response.get(i).getId()).isEqualTo(matchingMemberResponseList.get(i).getId());
+            assertThat(response.get(i).getNickname()).isEqualTo(matchingMemberResponseList.get(i).getNickname());
+            assertThat(response.get(i).getImage()).isEqualTo(matchingMemberResponseList.get(i).getImage());
         }
     }
 }

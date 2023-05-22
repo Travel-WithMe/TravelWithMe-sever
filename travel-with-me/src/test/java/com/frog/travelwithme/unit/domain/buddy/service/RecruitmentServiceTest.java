@@ -8,7 +8,6 @@ import com.frog.travelwithme.domain.buddy.repository.RecruitmentRepository;
 import com.frog.travelwithme.domain.buddy.service.RecruitmentService;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
-import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.utils.TimeUtils;
 import com.frog.travelwithme.utils.StubData;
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.annotation.Import;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -175,17 +173,17 @@ class RecruitmentServiceTest {
     void recruitmentServiceTest6() {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
-        RecruitmentDto.MatchingRequestMemberResponse matchingRequestMemberResponse1
+        RecruitmentDto.MatchingMemberResponse matchingMemberResponse1
                 = StubData.MockMember.getMatchingRequestMemberResponse(1L, "dhfif718");
-        RecruitmentDto.MatchingRequestMemberResponse matchingRequestMemberResponse2
+        RecruitmentDto.MatchingMemberResponse matchingMemberResponse2
                 = StubData.MockMember.getMatchingRequestMemberResponse(2L, "kkd718");
-        RecruitmentDto.MatchingRequestMemberResponse matchingRequestMemberResponse3
+        RecruitmentDto.MatchingMemberResponse matchingMemberResponse3
                 = StubData.MockMember.getMatchingRequestMemberResponse(3L, "리젤란");
 
-        List<RecruitmentDto.MatchingRequestMemberResponse> matchingRequestMemberResponseList = new ArrayList<>();
-        matchingRequestMemberResponseList.add(matchingRequestMemberResponse1);
-        matchingRequestMemberResponseList.add(matchingRequestMemberResponse2);
-        matchingRequestMemberResponseList.add(matchingRequestMemberResponse3);
+        List<RecruitmentDto.MatchingMemberResponse> matchingMemberResponseList = new ArrayList<>();
+        matchingMemberResponseList.add(matchingMemberResponse1);
+        matchingMemberResponseList.add(matchingMemberResponse2);
+        matchingMemberResponseList.add(matchingMemberResponse3);
         Member writer = StubData.MockMember.getMember();
         Member user1 = StubData.MockMember.getMember();
         Member user2 = StubData.MockMember.getMember();
@@ -199,22 +197,23 @@ class RecruitmentServiceTest {
         matching.addRecruitment(recruitment);
         matching.request();
         recruitment.addMatching(matching);
+        Long recruitmentId = recruitment.getId();
 
 
-        when(recruitmentRepository.findRecruitmentByIdAndMatchingStatus(recruitment.getId(), MatchingStatus.REQUEST))
+        when(recruitmentRepository.findRecruitmentByIdAndMatchingStatus(recruitmentId, MatchingStatus.REQUEST))
                 .thenReturn(Optional.of(recruitment));
-        when(recruitmentMapper.toMatchingRequestMemberList(recruitment.getMatchingList()))
-                .thenReturn(matchingRequestMemberResponseList);
+        when(recruitmentMapper.toMatchingMemberResponseRecruitmentDtoList(recruitment.getMatchingList()))
+                .thenReturn(matchingMemberResponseList);
 
         //when
-         List<RecruitmentDto.MatchingRequestMemberResponse> response
-                 = recruitmentService.getMatchingRequestMemberList(recruitment.getId());
+         List<RecruitmentDto.MatchingMemberResponse> response
+                 = recruitmentService.getMatchingRequestMemberList(recruitmentId);
 
         //then
         assertThat(response.size()).isEqualTo(3);
-        assertThat(response.get(0).getNickname()).isEqualTo(matchingRequestMemberResponse1.getNickname());
-        assertThat(response.get(1).getNickname()).isEqualTo(matchingRequestMemberResponse2.getNickname());
-        assertThat(response.get(2).getNickname()).isEqualTo(matchingRequestMemberResponse3.getNickname());
+        assertThat(response.get(0).getNickname()).isEqualTo(matchingMemberResponse1.getNickname());
+        assertThat(response.get(1).getNickname()).isEqualTo(matchingMemberResponse2.getNickname());
+        assertThat(response.get(2).getNickname()).isEqualTo(matchingMemberResponse3.getNickname());
     }
 
     @Test
@@ -223,14 +222,15 @@ class RecruitmentServiceTest {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         recruitment.end();
+        Long recruitmentId = recruitment.getId();
 
-        when(recruitmentRepository.findRecruitmentByIdAndMatchingStatus(recruitment.getId(), MatchingStatus.REQUEST))
+        when(recruitmentRepository.findRecruitmentByIdAndMatchingStatus(recruitmentId, MatchingStatus.REQUEST))
                 .thenReturn(Optional.of(recruitment));
 
         //when
         //then
         assertThatThrownBy(
-                () -> recruitmentService.getMatchingRequestMemberList(recruitment.getId())
+                () -> recruitmentService.getMatchingRequestMemberList(recruitmentId)
         ).isInstanceOf(BusinessLogicException.class);
     }
 
@@ -239,14 +239,98 @@ class RecruitmentServiceTest {
     void recruitmentServiceTest8() {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Long recruitmentId = recruitment.getId();
 
-        when(recruitmentRepository.findRecruitmentByIdAndMatchingStatus(recruitment.getId(), MatchingStatus.REQUEST))
+        when(recruitmentRepository.findRecruitmentByIdAndMatchingStatus(recruitmentId, MatchingStatus.REQUEST))
                 .thenReturn(Optional.empty());
 
         //when
         //then
         assertThatThrownBy(
-                () -> recruitmentService.getMatchingRequestMemberList(recruitment.getId())
+                () -> recruitmentService.getMatchingRequestMemberList(recruitmentId)
+        ).isInstanceOf(BusinessLogicException.class);
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭승인 회원 리스트 조회")
+    void recruitmentServiceTest9() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        RecruitmentDto.MatchingMemberResponse matchingMemberResponse1
+                = StubData.MockMember.getMatchingRequestMemberResponse(1L, "dhfif718");
+        RecruitmentDto.MatchingMemberResponse matchingMemberResponse2
+                = StubData.MockMember.getMatchingRequestMemberResponse(2L, "kkd718");
+        RecruitmentDto.MatchingMemberResponse matchingMemberResponse3
+                = StubData.MockMember.getMatchingRequestMemberResponse(3L, "리젤란");
+
+        List<RecruitmentDto.MatchingMemberResponse> matchingMemberResponseList = new ArrayList<>();
+        matchingMemberResponseList.add(matchingMemberResponse1);
+        matchingMemberResponseList.add(matchingMemberResponse2);
+        matchingMemberResponseList.add(matchingMemberResponse3);
+        Member writer = StubData.MockMember.getMember();
+        Member user1 = StubData.MockMember.getMember();
+        Member user2 = StubData.MockMember.getMember();
+        Member user3 = StubData.MockMember.getMember();
+        recruitment.addMember(writer);
+
+        Matching matching = StubData.MockMatching.getMatching();
+        matching.addMember(user1);
+        matching.addMember(user2);
+        matching.addMember(user3);
+        matching.addRecruitment(recruitment);
+        matching.approve();
+        recruitment.addMatching(matching);
+        Long recruitmentId = recruitment.getId();
+
+
+        when(recruitmentRepository.findRecruitmentByIdAndMatchingStatus(recruitmentId, MatchingStatus.APPROVE))
+                .thenReturn(Optional.of(recruitment));
+        when(recruitmentMapper.toMatchingMemberResponseRecruitmentDtoList(recruitment.getMatchingList()))
+                .thenReturn(matchingMemberResponseList);
+
+        //when
+        List<RecruitmentDto.MatchingMemberResponse> response
+                = recruitmentService.getMatchingApprovedMemberList(recruitmentId);
+
+        //then
+        assertThat(response.size()).isEqualTo(3);
+        assertThat(response.get(0).getNickname()).isEqualTo(matchingMemberResponse1.getNickname());
+        assertThat(response.get(1).getNickname()).isEqualTo(matchingMemberResponse2.getNickname());
+        assertThat(response.get(2).getNickname()).isEqualTo(matchingMemberResponse3.getNickname());
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭승인 회원 리스트 조회 (모집이 종료된 게시글)")
+    void recruitmentServiceTest10() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.end();
+        Long recruitmentId = recruitment.getId();
+
+        when(recruitmentRepository.findRecruitmentByIdAndMatchingStatus(recruitmentId, MatchingStatus.APPROVE))
+                .thenReturn(Optional.of(recruitment));
+
+        //when
+        //then
+        assertThatThrownBy(
+                () -> recruitmentService.getMatchingApprovedMemberList(recruitmentId)
+        ).isInstanceOf(BusinessLogicException.class);
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭승인 회원 리스트 조회 (동행 모집글이 없음)")
+    void recruitmentServiceTest11() {
+        //given
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        Long recruitmentId = recruitment.getId();
+
+        when(recruitmentRepository.findRecruitmentByIdAndMatchingStatus(recruitmentId, MatchingStatus.APPROVE))
+                .thenReturn(Optional.empty());
+
+        //when
+        //then
+        assertThatThrownBy(
+                () -> recruitmentService.getMatchingApprovedMemberList(recruitmentId)
         ).isInstanceOf(BusinessLogicException.class);
     }
 }
