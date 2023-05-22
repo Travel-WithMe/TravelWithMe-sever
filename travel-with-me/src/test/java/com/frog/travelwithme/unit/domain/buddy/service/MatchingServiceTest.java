@@ -225,9 +225,8 @@ class MatchingServiceTest {
         matching.request();
 
 
-        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
+        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(recruitment.getId(), writer.getEmail()))
                 .thenReturn(recruitment);
-        doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);
         when(matchingRepository.findById(matching.getId())).thenReturn(Optional.of(matching));
 
 
@@ -256,10 +255,9 @@ class MatchingServiceTest {
         matching.addRecruitment(recruitment);
         matching.request();
 
-
-        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
-                .thenReturn(recruitment);
-        doThrow(BusinessLogicException.class).when(recruitmentService).checkExpiredRecruitment(recruitment);
+        doThrow(BusinessLogicException.class)
+                .when(recruitmentService)
+                .findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(recruitment.getId(), writer.getEmail());
 
         //when
         //then
@@ -284,7 +282,7 @@ class MatchingServiceTest {
 
 
         doThrow(BusinessLogicException.class).when(recruitmentService)
-                .findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail());
+                .findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(recruitment.getId(), writer.getEmail());
 
         //when
         //then
@@ -307,9 +305,8 @@ class MatchingServiceTest {
         matching.request();
 
 
-        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
+        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(recruitment.getId(), writer.getEmail()))
                 .thenReturn(recruitment);
-        doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);
         when(matchingRepository.findById(matching.getId())).thenReturn(Optional.of(matching));
 
         //when
@@ -335,9 +332,8 @@ class MatchingServiceTest {
         matching.request();
 
 
-        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
+        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(recruitment.getId(), writer.getEmail()))
                 .thenReturn(recruitment);
-        doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);
         when(matchingRepository.findById(matching.getId())).thenReturn(Optional.of(matching));
 
 
@@ -367,9 +363,9 @@ class MatchingServiceTest {
         matching.request();
 
 
-        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
-                .thenReturn(recruitment);
-        doThrow(BusinessLogicException.class).when(recruitmentService).checkExpiredRecruitment(recruitment);
+        doThrow(BusinessLogicException.class)
+                .when(recruitmentService)
+                .findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(recruitment.getId(), writer.getEmail());
 
         //when
         //then
@@ -394,7 +390,7 @@ class MatchingServiceTest {
 
 
         doThrow(BusinessLogicException.class).when(recruitmentService)
-                .findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail());
+                .findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(recruitment.getId(), writer.getEmail());
 
         //when
         //then
@@ -417,9 +413,8 @@ class MatchingServiceTest {
         matching.request();
 
 
-        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitment.getId(), writer.getEmail()))
+        when(recruitmentService.findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(recruitment.getId(), writer.getEmail()))
                 .thenReturn(recruitment);
-        doNothing().when(recruitmentService).checkExpiredRecruitment(recruitment);
         when(matchingRepository.findById(matching.getId())).thenReturn(Optional.of(matching));
 
         //when

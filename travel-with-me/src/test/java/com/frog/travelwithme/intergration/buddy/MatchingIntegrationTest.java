@@ -107,7 +107,10 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
 
         // then
         String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
+        Optional<Recruitment> findRecruitment = recruitmentRepository.findById(recruitmentId);
+
         assertThat(response).isEqualTo(ResponseBody.NEW_REQUEST_MATCHING.getDescription());
+        assertThat(findRecruitment.get().getMatchingList().get(0).getStatus()).isEqualTo(MatchingStatus.REQUEST);
         actions
                 .andExpect(status().isOk())
                 .andDo(document("post-matching-request-new",
@@ -118,7 +121,7 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("동행 매칭신청 재신청")
+    @DisplayName("동행 매칭신청 (재신청)")
     void matchingIntegrationTest2() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
@@ -149,7 +152,10 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
 
         // then
         String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
+        Optional<Recruitment> findRecruitment = recruitmentRepository.findById(recruitmentId);
+
         assertThat(response).isEqualTo(ResponseBody.RETRY_REQUEST_MATCHING.getDescription());
+        assertThat(findRecruitment.get().getMatchingList().get(0).getStatus()).isEqualTo(MatchingStatus.REQUEST);
         actions
                 .andExpect(status().isOk())
                 .andDo(document("post-matching-request-retry",

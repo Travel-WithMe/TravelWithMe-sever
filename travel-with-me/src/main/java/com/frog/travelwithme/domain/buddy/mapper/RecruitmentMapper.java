@@ -103,29 +103,29 @@ public interface RecruitmentMapper {
                 .build();
     }
 
-    default RecruitmentDto.MatchingRequestMemberResponse toMatchingRequestMember(Matching matching) {
+    default RecruitmentDto.MatchingMemberResponse toMatchingMemberResponseRecruitmentDto(Matching matching) {
         if(matching == null) {
             return null;
         }
 
-        return RecruitmentDto.MatchingRequestMemberResponse.builder()
+        return RecruitmentDto.MatchingMemberResponse.builder()
                 .id(matching.getMember().getId())
                 .nickname(matching.getMember().getNickname())
                 .image(matching.getMember().getImage())
                 .build();
     }
 
-    default List<RecruitmentDto.MatchingRequestMemberResponse> toMatchingRequestMemberList(List<Matching> matchingList) {
+    default List<RecruitmentDto.MatchingMemberResponse> toMatchingMemberResponseRecruitmentDtoList(List<Matching> matchingList) {
         if(matchingList == null) {
             return null;
         }
 
-        List<RecruitmentDto.MatchingRequestMemberResponse> matchingRequestMemberResponseList = new ArrayList<>();
+        List<RecruitmentDto.MatchingMemberResponse> matchingMemberResponseList = new ArrayList<>();
 
         for (Matching matching : matchingList) {
-            matchingRequestMemberResponseList.add(this.toMatchingRequestMember(matching));
+            matchingMemberResponseList.add(this.toMatchingMemberResponseRecruitmentDto(matching));
         }
-        return matchingRequestMemberResponseList;
+        return matchingMemberResponseList;
     }
 
 }
