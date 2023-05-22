@@ -75,11 +75,19 @@ public class RecruitmentController {
 //        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
 //    }
 
-    @GetMapping("/{recruitment-id}/matching-request-list")
+    @GetMapping("/{recruitment-id}/matching-request-member-list")
     public ResponseEntity getMatchingRequestMemberList(@Positive @PathVariable("recruitment-id") Long recruitmentsId) {
 
-        List<RecruitmentDto.MatchingRequestMemberResponse> response = recruitmentService
-                .getMatchingRequestMemberList(recruitmentsId);
+        List<RecruitmentDto.MatchingMemberResponse> response =
+                recruitmentService.getMatchingRequestMemberList(recruitmentsId);
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+    }
+
+    @GetMapping("/{recruitment-id}/matching-approved-member-list")
+    public ResponseEntity getMatchingApprovedMemberList(@Positive @PathVariable("recruitment-id") Long recruitmentsId) {
+
+        List<RecruitmentDto.MatchingMemberResponse> response =
+                recruitmentService.getMatchingApprovedMemberList(recruitmentsId);
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
 

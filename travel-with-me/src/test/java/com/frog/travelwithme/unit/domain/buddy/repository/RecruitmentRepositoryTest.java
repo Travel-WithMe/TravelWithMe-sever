@@ -131,33 +131,8 @@ class RecruitmentRepositoryTest {
     }
 
     @Test
-    @DisplayName("동행글 id 조회(Member Join) : Querydsl")
-    void recruitmentRepositoryTest5() {
-        // given
-        Member member = StubData.MockMember.getMember();
-        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
-        Member saveMember = memberRepository.save(member);
-        recruitment.addMember(saveMember);
-        Recruitment saveRecruitment = recruitmentRepository.save(recruitment);
-
-        entityManager.flush();
-        entityManager.clear();
-        log.info("1차 캐시 clear");
-
-        // when
-        Recruitment findRecruitment = recruitmentRepository.findRecruitmentById(saveRecruitment.getId()).get();
-        Member findMember = findRecruitment.getMember();
-
-        // then
-        assertAll(
-                () -> assertEquals(findMember.getEmail(), recruitment.getMember().getEmail()),
-                () -> assertEquals(findMember.getNickname(), recruitment.getMember().getNickname())
-        );
-    }
-
-    @Test
     @DisplayName("동행글 id 조회(Matching Join) : Querydsl")
-    void recruitmentRepositoryTest6() {
+    void recruitmentRepositoryTest5() {
         // given
         Member writer = StubData.MockMember.getMember();
         Member member1 = StubData.MockMember.getMemberByEmailAndNickname("kkd718@naver.com","멤버1");
@@ -219,7 +194,7 @@ class RecruitmentRepositoryTest {
 
     @Test
     @DisplayName("동행글 id 조회 시 매칭이 없는 경우 (Matching Join) : Querydsl")
-    void recruitmentRepositoryTest7() {
+    void recruitmentRepositoryTest6() {
         // given
         Member writer = StubData.MockMember.getMember();
         Member member1 = StubData.MockMember.getMemberByEmailAndNickname("kkd718@naver.com","멤버1");

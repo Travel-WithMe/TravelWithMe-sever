@@ -24,17 +24,6 @@ public class RecruitmentCustomRepositoryImpl implements RecruitmentCustomReposit
 
     private final JPAQueryFactory queryFactory;
 
-
-    @Override
-    public Optional<Recruitment> findRecruitmentById(Long id) {
-        return Optional.ofNullable(queryFactory
-                .select(recruitment)
-                .from(recruitment)
-                .leftJoin(recruitment.member, member).fetchJoin()
-                .where(recruitment.id.eq(id))
-                .fetchOne());
-    }
-
     @Override
     public Optional<Recruitment> findRecruitmentByIdAndMatchingStatus(Long id, MatchingStatus status) {
 

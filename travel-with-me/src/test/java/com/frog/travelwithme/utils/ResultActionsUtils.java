@@ -126,6 +126,22 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
+    public static ResultActions postRequestWithTokenAndMultiPart(MockMvc mockMvc,
+                                                                 String url,
+                                                                 String accessToken,
+                                                                 String encryptedRefreshToken,
+                                                                 MockMultipartFile file,
+                                                                 MockMultipartFile data) throws Exception {
+        return mockMvc.perform(multipart(url)
+                        .file(file)
+                        .file(data)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .with(csrf())
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
     public static ResultActions patchRequest(MockMvc mockMvc,
                                              String url) throws Exception {
         return mockMvc.perform(patch(url)
@@ -174,6 +190,32 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
+    public static ResultActions patchRequestWithMultiPartAndToken(MockMvc mockMvc,
+                                                                  String url,
+                                                                  MockMultipartFile file,
+                                                                  String accessToken,
+                                                                  String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(multipart(HttpMethod.PATCH, url)
+                        .file(file)
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                        .with(csrf())
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions patchRequestWithUserDetailsAndMultiPart(MockMvc mockMvc,
+                                                                        String url,
+                                                                        CustomUserDetails userDetails,
+                                                                        MockMultipartFile file) throws Exception {
+        return mockMvc.perform(multipart(HttpMethod.PATCH, url)
+                        .file(file)
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                        .with(user(userDetails))
+                        .with(csrf()))
+                .andDo(print());
+    }
+
     public static ResultActions patchRequestWithContentAndUserDetails(MockMvc mockMvc,
                                                                       String url,
                                                                       String json,
@@ -183,6 +225,36 @@ public class ResultActionsUtils {
                         .content(json)
                         .with(csrf())
                         .with(user(userDetails)))
+                .andDo(print());
+    }
+
+    public static ResultActions patchRequestWithTwoMultipartAndUserDetails(MockMvc mockMvc,
+                                                                           String url,
+                                                                           MockMultipartFile file,
+                                                                           MockMultipartFile data,
+                                                                           CustomUserDetails userDetails) throws Exception {
+        return mockMvc.perform(multipart(HttpMethod.PATCH, url)
+                        .file(file)
+                        .file(data)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .with(csrf())
+                        .with(user(userDetails)))
+                .andDo(print());
+    }
+
+    public static ResultActions patchRequestWithTwoMultiPartAndToken(MockMvc mockMvc,
+                                                                     String url,
+                                                                     String accessToken,
+                                                                     String encryptedRefreshToken,
+                                                                     MockMultipartFile file,
+                                                                     MockMultipartFile data) throws Exception {
+        return mockMvc.perform(multipart(HttpMethod.PATCH, url)
+                        .file(file)
+                        .file(data)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .with(csrf())
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
                 .andDo(print());
     }
 
@@ -204,6 +276,13 @@ public class ResultActionsUtils {
                         .with(csrf())
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
                         .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions getRequest(MockMvc mockMvc,
+                                           String url) throws Exception {
+        return mockMvc.perform(get(url)
+                        .with(csrf()))
                 .andDo(print());
     }
 
@@ -246,32 +325,6 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
-    public static ResultActions patchRequestWithMultiPartAndToken(MockMvc mockMvc,
-                                                                  String url,
-                                                                  MockMultipartFile file,
-                                                                  String accessToken,
-                                                                  String encryptedRefreshToken) throws Exception {
-        return mockMvc.perform(multipart(HttpMethod.PATCH, url)
-                        .file(file)
-                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                        .with(csrf())
-                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
-                        .header(REFRESH_HEADER, encryptedRefreshToken))
-                .andDo(print());
-    }
-
-    public static ResultActions patchRequestWithUserDetailsAndMultiPart(MockMvc mockMvc,
-                                                                        String url,
-                                                                        CustomUserDetails userDetails,
-                                                                        MockMultipartFile file) throws Exception {
-        return mockMvc.perform(multipart(HttpMethod.PATCH, url)
-                        .file(file)
-                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                        .with(user(userDetails))
-                        .with(csrf()))
-                .andDo(print());
-    }
-
     public static ResultActions getRequestWithTokenAndTwoParams(MockMvc mockMvc,
                                                                 String url,
                                                                 String accessToken,
@@ -282,52 +335,6 @@ public class ResultActionsUtils {
                         .with(csrf())
                         .params(tagNamePapram)
                         .params(sizePapram)
-                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
-                        .header(REFRESH_HEADER, encryptedRefreshToken))
-                .andDo(print());
-    }
-
-    public static ResultActions patchRequestWithTwoMultipartAndUserDetails(MockMvc mockMvc,
-                                                                           String url,
-                                                                           MockMultipartFile file,
-                                                                           MockMultipartFile data,
-                                                                           CustomUserDetails userDetails) throws Exception {
-        return mockMvc.perform(multipart(HttpMethod.PATCH, url)
-                        .file(file)
-                        .file(data)
-                        .contentType(MediaType.MULTIPART_FORM_DATA)
-                        .with(csrf())
-                        .with(user(userDetails)))
-                .andDo(print());
-    }
-
-    public static ResultActions postRequestWithTokenAndMultiPart(MockMvc mockMvc,
-                                                                 String url,
-                                                                 String accessToken,
-                                                                 String encryptedRefreshToken,
-                                                                 MockMultipartFile file,
-                                                                 MockMultipartFile data) throws Exception {
-        return mockMvc.perform(multipart(url)
-                        .file(file)
-                        .file(data)
-                        .contentType(MediaType.MULTIPART_FORM_DATA)
-                        .with(csrf())
-                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
-                        .header(REFRESH_HEADER, encryptedRefreshToken))
-                .andDo(print());
-    }
-
-    public static ResultActions patchRequestWithTwoMultiPartAndToken(MockMvc mockMvc,
-                                                                     String url,
-                                                                     String accessToken,
-                                                                     String encryptedRefreshToken,
-                                                                     MockMultipartFile file,
-                                                                     MockMultipartFile data) throws Exception {
-        return mockMvc.perform(multipart(HttpMethod.PATCH, url)
-                        .file(file)
-                        .file(data)
-                        .contentType(MediaType.MULTIPART_FORM_DATA)
-                        .with(csrf())
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
                         .header(REFRESH_HEADER, encryptedRefreshToken))
                 .andDo(print());
