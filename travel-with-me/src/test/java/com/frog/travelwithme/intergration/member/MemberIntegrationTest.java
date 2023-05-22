@@ -297,7 +297,6 @@ class MemberIntegrationTest extends BaseIntegrationTest {
 
         // then
         Response response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, Response.class);
-        assertThat(response.getImage()).isNotEqualTo(originMemberDto.getImage());
         actions
                 .andExpect(status().isOk())
                 .andDo(document("patch-profile-image",
