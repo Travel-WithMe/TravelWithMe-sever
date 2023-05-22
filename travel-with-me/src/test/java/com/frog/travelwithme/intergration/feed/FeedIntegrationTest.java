@@ -1,6 +1,8 @@
 package com.frog.travelwithme.intergration.feed;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.entity.Tag;
 import com.frog.travelwithme.domain.feed.repository.TagRepository;
@@ -33,11 +35,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.persistence.EntityManager;
-
+import java.net.URL;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
@@ -78,7 +82,11 @@ class FeedIntegrationTest extends BaseIntegrationTest {
     private AmazonS3 amazonS3;
 
     @BeforeEach
-    public void beforEach() {
+    public void beforEach() throws Exception {
+        given(amazonS3.putObject(any(PutObjectRequest.class))).willReturn(new PutObjectResult());
+        given(amazonS3.getUrl(any(), any())).willReturn(
+                new URL(StubData.CustomMultipartFile.getIMAGE_URL()));
+
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
         MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
         List<MultipartFile> files = StubData.CustomMultipartFile.getMultipartFiles();
