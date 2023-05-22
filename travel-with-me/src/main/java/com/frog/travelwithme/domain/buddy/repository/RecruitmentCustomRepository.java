@@ -17,7 +17,5 @@ import static com.frog.travelwithme.global.enums.EnumCollection.*;
  **/
 
 public interface RecruitmentCustomRepository {
-
-    Optional<Recruitment> findRecruitmentById(Long id);
     Optional<Recruitment> findRecruitmentByIdAndMatchingStatus(Long id, MatchingStatus status);
 }
