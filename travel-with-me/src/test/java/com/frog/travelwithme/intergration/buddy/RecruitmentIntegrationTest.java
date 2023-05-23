@@ -2,7 +2,9 @@ package com.frog.travelwithme.intergration.buddy;
 
 import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
 import com.frog.travelwithme.domain.buddy.entity.Matching;
+import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
+import com.frog.travelwithme.domain.buddy.repository.MatchingRepository;
 import com.frog.travelwithme.domain.buddy.repository.MatchingRepository;
 import com.frog.travelwithme.domain.buddy.repository.RecruitmentRepository;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
@@ -10,6 +12,8 @@ import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
+import com.frog.travelwithme.global.exception.ErrorResponse;
+import com.frog.travelwithme.global.exception.ExceptionCode;
 import com.frog.travelwithme.global.exception.ErrorResponse;
 import com.frog.travelwithme.global.exception.ExceptionCode;
 import com.frog.travelwithme.global.security.auth.controller.dto.TokenDto;
@@ -22,6 +26,7 @@ import com.frog.travelwithme.utils.StubData;
 import com.frog.travelwithme.utils.StubData.MockMember;
 import com.frog.travelwithme.utils.snippet.reqeust.RequestSnippet;
 import com.frog.travelwithme.utils.snippet.response.ErrorResponseSnippet;
+import com.frog.travelwithme.utils.snippet.response.ErrorResponseSnippet;
 import com.frog.travelwithme.utils.snippet.response.ResponseSnippet;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +34,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
@@ -68,7 +74,8 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
     void beforeEach() {
         // e_ma-il@gmail.com 회원 추가
         MemberDto.SignUp memberOne = MockMember.getSignUpDto();
-        memberService.signUp(memberOne);
+        MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
+        memberService.signUp(memberOne, file);
         EMAIL = memberOne.getEmail();
 
         // dhfif718@gmail.com 회원 추가
@@ -76,7 +83,7 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
                 "dhfif718@gmail.com",
                 "이재혁"
         );
-        memberService.signUp(memberTwo);
+        memberService.signUp(memberTwo,file);
         EMAIL_OTHER_ONE = memberTwo.getEmail();
 
         // kkd718@naver.com 회원 추가
@@ -84,7 +91,7 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
                 "kkd718@naver.com",
                 "리젤란"
         );
-        memberService.signUp(memberThree);
+        memberService.signUp(memberThree, file);
         EMAIL_OTHER_TWO = memberThree.getEmail();
     }
 
@@ -120,7 +127,6 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getViewCount()).isEqualTo(0L);
         assertThat(response.getCommentCount()).isEqualTo(0L);
         assertThat(response.getNickname()).isEqualTo("nickname");
-        assertThat(response.getMemberImage()).isEqualTo(MockMember.getImage());
 
 
         actions

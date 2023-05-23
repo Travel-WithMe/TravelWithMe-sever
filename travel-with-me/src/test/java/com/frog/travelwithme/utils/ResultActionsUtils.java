@@ -6,9 +6,11 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.util.MultiValueMap;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -115,14 +117,17 @@ public class ResultActionsUtils {
     public static ResultActions postRequestWithUserDetailsAndTwoMultiPart(MockMvc mockMvc,
                                                                           String url,
                                                                           CustomUserDetails userDetails,
-                                                                          MockMultipartFile file,
+                                                                          List<MockMultipartFile> files,
                                                                           MockMultipartFile data) throws Exception {
-        return mockMvc.perform(multipart(url)
-                        .file(file)
-                        .file(data)
-                        .contentType(MediaType.MULTIPART_FORM_DATA)
-                        .with(user(userDetails))
-                        .with(csrf()))
+        MockMultipartHttpServletRequestBuilder requestBuilder = (MockMultipartHttpServletRequestBuilder) multipart(url)
+                .file(data)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .with(user(userDetails))
+                .with(csrf());
+        for (MockMultipartFile file : files) {
+            requestBuilder.file(file);
+        }
+        return mockMvc.perform(requestBuilder)
                 .andDo(print());
     }
 
@@ -337,6 +342,43 @@ public class ResultActionsUtils {
                         .params(sizePapram)
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
                         .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions postRequestWithTokenAndMultipartListAndMultipartData(MockMvc mockMvc,
+                                                                 String url,
+                                                                 String accessToken,
+                                                                 String encryptedRefreshToken,
+                                                                 List<MockMultipartFile> files,
+                                                                 MockMultipartFile data) throws Exception {
+        MockMultipartHttpServletRequestBuilder requestBuilder = (MockMultipartHttpServletRequestBuilder) multipart(url)
+                .file(data)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .with(csrf())
+                .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                .header(REFRESH_HEADER, encryptedRefreshToken);
+        for (MockMultipartFile file : files) {
+            requestBuilder.file(file);
+        }
+        return mockMvc.perform(requestBuilder)
+                .andDo(print());
+    }
+
+    public static ResultActions patchRequestWithTwoMultiPartAndToken(MockMvc mockMvc,
+                                                                     String url,
+                                                                     String accessToken,
+                                                                     String encryptedRefreshToken,
+                                                                     List<MockMultipartFile> files,
+                                                                     MockMultipartFile data) throws Exception {
+        MockMultipartHttpServletRequestBuilder requestBuilder = (MockMultipartHttpServletRequestBuilder) multipart(HttpMethod.PATCH, url)
+                .file(data)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                .header(REFRESH_HEADER, encryptedRefreshToken);
+        for (MockMultipartFile file : files) {
+            requestBuilder.file(file);
+        }
+        return mockMvc.perform(requestBuilder)
                 .andDo(print());
     }
 }

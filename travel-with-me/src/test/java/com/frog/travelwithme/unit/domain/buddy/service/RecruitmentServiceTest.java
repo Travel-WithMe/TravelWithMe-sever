@@ -76,8 +76,7 @@ class RecruitmentServiceTest {
                 () -> assertEquals(responseRecruitment.getTitle(), recruitment.getTitle()),
                 () -> assertEquals(responseRecruitment.getContent(), recruitment.getContent()),
                 () -> assertEquals(responseRecruitment.getTravelNationality(), recruitment.getTravelNationality()),
-                () -> assertEquals(responseRecruitment.getNickname(), recruitment.getMember().getNickname()),
-                () -> assertEquals(responseRecruitment.getMemberImage(), recruitment.getMember().getImage())
+                () -> assertEquals(responseRecruitment.getNickname(), recruitment.getMember().getNickname())
         );
     }
 

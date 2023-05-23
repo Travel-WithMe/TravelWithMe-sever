@@ -11,13 +11,17 @@ import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.enums.EnumCollection.ResponseBody;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
+import com.frog.travelwithme.global.file.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
+
+import static com.frog.travelwithme.global.enums.EnumCollection.AwsS3Path.FEEDIMAGE;
 
 /**
  * 작성자: 김찬빈
@@ -34,15 +38,15 @@ public class FeedService {
     private final MemberService memberService;
     private final TagService tagService;
     private final FeedMapper feedMapper;
+    private final FileUploadService fileUploadService;
 
-    public Response postFeed(String email, FeedDto.Post postDto) {
+    public Response postFeed(String email, FeedDto.Post postDto, List<MultipartFile> multipartFiles) {
         Member saveMember = memberService.findMember(email);
         Feed feed = feedMapper.postDtoToFeed(postDto, saveMember);
-        if (postDto.getTags() != null) {
-            Set<Tag> tags = tagService.findOrCreateTagsByName(postDto.getTags());
-            feed.addTags(tags);
-        }
+        this.handleTags(postDto.getTags(), feed);
+        this.uploadFeedImages(multipartFiles, feed);
         Feed saveFeed = feedRepository.save(feed);
+
 
         return feedMapper.toResponse(saveFeed, email);
     }
@@ -59,16 +63,14 @@ public class FeedService {
         return feedMapper.toResponseList(feedList, email);
     }
 
-    public Response updateFeed(String email, long feedId, FeedDto.Patch patchDto) {
+    public Response updateFeed(String email, long feedId, FeedDto.Patch patchDto, List<MultipartFile> multipartFiles) {
         Feed saveFeed = this.findFeed(feedId);
-        String writerEmail = saveFeed.getMember().getEmail();
-        this.checkWriter(email, writerEmail);
+        this.checkWriter(email, saveFeed.getMember().getEmail());
         FeedDto.InternalPatch internalPatchDto = feedMapper.toInternalDto(patchDto);
         saveFeed.updateFeedData(internalPatchDto);
-        if (internalPatchDto.getTags() != null) {
-            Set<Tag> tags = tagService.findOrCreateTagsByName(internalPatchDto.getTags());
-            saveFeed.addTags(tags);
-        }
+        this.uploadFeedImages(multipartFiles, saveFeed);
+        this.removeFeedImages(internalPatchDto.getRemoveImageUrls(), saveFeed);
+        this.handleTags(internalPatchDto.getTags(), saveFeed);
 
         return feedMapper.toResponse(saveFeed, email);
     }
@@ -77,6 +79,7 @@ public class FeedService {
         Feed saveFeed = this.findFeed(feedId);
         String writerEmail = saveFeed.getMember().getEmail();
         checkWriter(email, writerEmail);
+        this.removeFeedImages(saveFeed.getImageUrls(), saveFeed);
         feedRepository.deleteById(feedId);
     }
 
@@ -103,7 +106,6 @@ public class FeedService {
         }
         return ResponseBody.SUCCESS_CANCEL_FEED_LIKE;
     }
-
     private void checkWriter(String email, String writerEmail) {
         if (!email.equals(writerEmail)) {
             log.debug("FeedService.checkWriter exception occur email : {}, writerEmail : {}",
@@ -118,5 +120,37 @@ public class FeedService {
                     log.debug("FeedService.findFeed exception occur feedId : {}", feedId);
                     throw new BusinessLogicException(ExceptionCode.FEED_NOT_FOUND);
                 });
+    }
+
+    private void handleTags(List<String> tags, Feed saveFeed) {
+        if (tags != null) {
+            Set<Tag> saveTags = tagService.findOrCreateTagsByName(tags);
+            saveFeed.addTags(saveTags);
+        }
+    }
+
+    private void uploadFeedImages(List<MultipartFile> multipartFiles, Feed saveFeed) {
+        if (multipartFiles != null) {
+            multipartFiles.forEach(multipartFile -> {
+                String imageUrl = fileUploadService.upload(multipartFile, FEEDIMAGE);
+                saveFeed.addImageUrl(imageUrl);
+            });
+        }
+    }
+
+    private void removeFeedImages(List<String> removeImageUrls, Feed feed) {
+        if (removeImageUrls != null) {
+            if (feed.isImageUrlsSizeOne()) {
+                log.debug("FeedService.updateFeed exception occur " +
+                                "removeImageUrls : {}, saveFeedImageUrls : {}",
+                        removeImageUrls,
+                        feed.getImageUrls().toString());
+                throw new BusinessLogicException(ExceptionCode.UNABLE_TO_DELETE_FEED_IMAGE);
+            }
+            for (String imageUrl : removeImageUrls) {
+                fileUploadService.remove(imageUrl);
+                feed.removeImageUrl(imageUrl);
+            }
+        }
     }
 }

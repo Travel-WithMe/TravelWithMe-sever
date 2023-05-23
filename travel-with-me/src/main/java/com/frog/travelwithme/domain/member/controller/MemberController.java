@@ -31,8 +31,7 @@ public class MemberController {
     @PostMapping("/signup")
     public ResponseEntity signUp(@RequestPart(value = "file", required = false) MultipartFile multipartFile,
                                  @Valid @RequestPart(value = "data") MemberDto.SignUp signUpDto) {
-        // TODO: multipartFile S3에 저장 후 url 반환 로직 추가
-        MemberDto.Response response = memberService.signUp(signUpDto);
+        MemberDto.Response response = memberService.signUp(signUpDto, multipartFile);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
     }
@@ -55,9 +54,8 @@ public class MemberController {
     }
 
     @PatchMapping("/images")
-    public ResponseEntity patchMember(@AuthenticationPrincipal CustomUserDetails user,
+    public ResponseEntity patchProfileImage(@AuthenticationPrincipal CustomUserDetails user,
                                       @RequestPart("file") MultipartFile multipartFile) {
-        // TODO: multipartFile S3에 저장 후 url 반환 로직 추가
         String email = user.getEmail();
         MemberDto.Response response = memberService.changeProfileImage(multipartFile, email);
 

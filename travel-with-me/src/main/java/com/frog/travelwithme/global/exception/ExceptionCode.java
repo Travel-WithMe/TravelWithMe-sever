@@ -35,6 +35,7 @@ public enum ExceptionCode {
     FEED_WRITER_NOT_MATCH(404, "해당 피드를 작성한 유저가 아닙니다."),
     ALREADY_LIKED_FEED(409, "이미 좋아요한 피드입니다."),
     UNABLE_TO_CANCEL_LIKE(409, "좋아요를 하지 않았기 때문에 좋아요를 취소할 수 없습니다. "),
+    UNABLE_TO_DELETE_FEED_IMAGE(404, "피드 이미지는 최소 한 장 이상 존재해야 합니다."),
 
     // Security, JWT
     NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),
@@ -61,7 +62,13 @@ public enum ExceptionCode {
     STRING_IS_NOT_LOCAL_DATE_FORMAT(404,"문자열 데이터 형식이 LocalDate 형식이 아닙니다."),
     STRING_IS_NOT_LOCAL_DATE_TIME_FORMAT(404,"문자열 데이터 형식이 LocalDateTime 형식이 아닙니다."),
     UNABLE_TO_CONVERT_LIST_TO_STRING(404, "리스트를 문자열로 변환할 수 없습니다."),
-    UNABLE_TO_CONVERT_STRING_TO_LIST(404, "문자열을 리스트로 변환할 수 없습니다.");
+    UNABLE_TO_CONVERT_STRING_TO_LIST(404, "문자열을 리스트로 변환할 수 없습니다."),
+
+    // File
+    FILE_DOES_NOT_EXIST(404, "파일이 존재하지 않습니다."),
+    FAIL_TO_UPLOAD_FILE(404, "파일을 업로드할 수 없습니다."),
+    EXTENSION_IS_NOT_VALID(404, "파일의 확장자는 jpeg 또는 png만 업로드 가능합니다."),
+    FAILED_TO_DELETE_FILE(404, "파일을 삭제할 수 없습니다.");
 
     @Getter
     private final int status;

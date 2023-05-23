@@ -20,6 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Duration;
@@ -57,7 +58,8 @@ class AuthIntegrationTest extends BaseIntegrationTest {
     @BeforeEach
     void befroeEach() {
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
-        memberService.signUp(signUpDto);
+        MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
+        memberService.signUp(signUpDto, file);
     }
 
     @AfterEach

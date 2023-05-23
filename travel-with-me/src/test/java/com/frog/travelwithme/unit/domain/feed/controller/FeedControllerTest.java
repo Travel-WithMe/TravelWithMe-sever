@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 class FeedControllerTest {
 
-    private final String BASE_URL = "/feed";
+    private final String BASE_URL = "/feeds";
 
     private final String TAG_NAME = StubData.MockFeed.getTagName();
 
@@ -70,8 +70,8 @@ class FeedControllerTest {
         // given
         FeedDto.Post postDto = StubData.MockFeed.getPostDto();
         FeedDto.Response response = StubData.MockFeed.getResponseDto();
-        given(feedService.postFeed(any(), any(FeedDto.Post.class))).willReturn(response);
-        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
+        given(feedService.postFeed(any(), any(FeedDto.Post.class), anyList())).willReturn(response);
+        List<MockMultipartFile> files = StubData.CustomMockMultipartFile.getFiles();
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
@@ -79,7 +79,7 @@ class FeedControllerTest {
         String json = ObjectMapperUtils.asJsonString(postDto);
         MockMultipartFile data = StubData.CustomMockMultipartFile.getData(json);
         ResultActions actions = ResultActionsUtils.postRequestWithUserDetailsAndTwoMultiPart(
-                mvc, uri, userDetails, file, data);
+                mvc, uri, userDetails, files, data);
 
         // then
         actions
@@ -130,7 +130,7 @@ class FeedControllerTest {
         FeedDto.Patch patchDto = StubData.MockFeed.getPatchDto();
         FeedDto.Response response = StubData.MockFeed.getResponseDto();
         MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
-        given(feedService.updateFeed(any(), anyLong(), any(FeedDto.Patch.class))).willReturn(response);
+        given(feedService.updateFeed(any(), anyLong(), any(FeedDto.Patch.class), anyList())).willReturn(response);
 
         // when
         String json = ObjectMapperUtils.asJsonString(patchDto);

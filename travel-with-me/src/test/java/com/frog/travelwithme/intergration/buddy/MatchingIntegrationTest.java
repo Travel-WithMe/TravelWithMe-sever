@@ -27,6 +27,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
@@ -69,7 +70,8 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
     void beforeEach() {
         // e_ma-il@gmail.com 회원 추가
         MemberDto.SignUp memberOne = StubData.MockMember.getSignUpDto();
-        memberService.signUp(memberOne);
+        MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
+        memberService.signUp(memberOne, file);
         EMAIL = memberOne.getEmail();
 
         // dhfif718@gmail.com 회원 추가
@@ -77,7 +79,7 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
                 "dhfif718@gmail.com",
                 "이재혁"
         );
-        memberService.signUp(memberTwo);
+        memberService.signUp(memberTwo, file);
         EMAIL_OTHER = memberTwo.getEmail();
     }
 
