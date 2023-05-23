@@ -1,5 +1,8 @@
 package com.frog.travelwithme.intergration.buddy;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.buddy.repository.MatchingRepository;
@@ -30,12 +33,16 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Optional;
 
 import static com.frog.travelwithme.global.enums.EnumCollection.*;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getResponsePreProcessor;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -65,9 +72,16 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private MemberService memberService;
 
+    @Autowired
+    private AmazonS3 amazonS3;
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach() throws MalformedURLException {
+        // Mock S3 시나리오 설정
+        given(amazonS3.putObject(any(PutObjectRequest.class))).willReturn(new PutObjectResult());
+        given(amazonS3.getUrl(any(), any())).willReturn(
+                new URL(StubData.CustomMultipartFile.getIMAGE_URL()));
+
         // e_ma-il@gmail.com 회원 추가
         MemberDto.SignUp memberOne = StubData.MockMember.getSignUpDto();
         MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
