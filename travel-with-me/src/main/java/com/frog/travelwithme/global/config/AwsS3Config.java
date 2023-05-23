@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 /**
  * AwsS3Config 설명: AwsS3 설정 관리
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * 작성일자: 2023/05/21
  **/
 @Configuration
+@Profile("!test")
 public class AwsS3Config {
     @Value("${cloud.aws.credentials.accessKey}")
     private String accessKey;
