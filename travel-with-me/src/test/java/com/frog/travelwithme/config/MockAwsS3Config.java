@@ -12,6 +12,7 @@ public class MockAwsS3Config extends AwsS3Config {
 
     @Bean
     @Primary
+    @Override
     public AmazonS3 amazonS3Client() {
         return Mockito.mock(AmazonS3.class);
     }
