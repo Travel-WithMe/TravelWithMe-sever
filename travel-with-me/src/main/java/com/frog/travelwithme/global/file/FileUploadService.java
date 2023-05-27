@@ -32,7 +32,9 @@ public class FileUploadService {
     }
 
     public void remove(String imageUrl) {
-        amazonS3ResourceStorage.removeImage(imageUrl);
+        if (!imageUrl.equals("defaultImageUrl")) {
+            amazonS3ResourceStorage.removeImage(imageUrl);
+        }
     }
 
     private void verifiedExenstion(MultipartFile multipartFile) {
