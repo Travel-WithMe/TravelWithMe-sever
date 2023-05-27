@@ -44,7 +44,7 @@ public class FeedService {
     public Response postFeed(String email, FeedDto.Post postDto, List<MultipartFile> multipartFiles) {
         Member saveMember = memberService.findMember(email);
         Feed feed = feedMapper.postDtoToFeed(postDto, saveMember);
-        this.handleTags(postDto.getTags(), feed);
+        this.addTags(postDto.getTags(), feed);
         List<String> addedImageUrls = this.uploadFeedImages(multipartFiles, feed);
         try {
             Feed saveFeed = feedRepository.save(feed);
@@ -73,7 +73,7 @@ public class FeedService {
         this.checkWriter(email, saveFeed.getMember().getEmail());
         FeedDto.InternalPatch internalPatchDto = feedMapper.toInternalDto(patchDto);
         saveFeed.updateFeedData(internalPatchDto);
-        this.handleTags(internalPatchDto.getTags(), saveFeed);
+        this.addTags(internalPatchDto.getTags(), saveFeed);
         this.uploadFeedImages(multipartFiles, saveFeed);
         this.removeFeedImages(internalPatchDto.getRemoveImageUrls(), saveFeed);
 
@@ -128,7 +128,7 @@ public class FeedService {
                 });
     }
 
-    private void handleTags(List<String> tags, Feed saveFeed) {
+    private void addTags(List<String> tags, Feed saveFeed) {
         if (tags != null) {
             Set<Tag> saveTags = tagService.findOrCreateTagsByName(tags);
             saveFeed.addTags(saveTags);
