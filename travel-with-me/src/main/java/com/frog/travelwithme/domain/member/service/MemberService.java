@@ -116,6 +116,15 @@ public class MemberService {
         return memberMapper.toDto(findMember);
     }
 
+    public MemberDto.Response removeProfileImage(String email) {
+        Member member = this.findMember(email);
+        String currentProfileImageUrl = member.getImage();
+        member.changeImage("defaultImageUrl");
+        fileUploadService.remove(currentProfileImageUrl);
+
+        return memberMapper.toDto(member);
+    }
+
     @Transactional(readOnly = true)
     public Member findMember(String email) {
         return memberRepository.findByEmail(email)
