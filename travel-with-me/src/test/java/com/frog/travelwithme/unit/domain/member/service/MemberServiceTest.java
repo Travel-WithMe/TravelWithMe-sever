@@ -156,7 +156,6 @@ class MemberServiceTest {
         MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
         Member member = StubData.MockMember.getMember();
         MemberDto.Response expectedResponse = StubData.MockMember.getResponseDto();
-        given(memberMapper.toEntity(any(MemberDto.SignUp.class))).willReturn(member);
         given(memberRepository.findByEmail(any())).willReturn(Optional.ofNullable(member));
 
         // when // then
