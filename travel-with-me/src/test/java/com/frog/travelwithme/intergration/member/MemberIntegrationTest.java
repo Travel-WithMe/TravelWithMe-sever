@@ -329,7 +329,8 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         MockMultipartFile file = new MockMultipartFile("file",
                 "originalFilename", "text/plain", "fileContent".getBytes());
         memberService.deleteMember(EMAIL);
-        MemberDto.SignUp failedSignUpDto = StubData.MockMember.getFailedSignUpDtoByGender("중성");
+        StubData.MockMember.MockGenderFailSingUp failedSignUpDto =
+                StubData.MockMember.getFailedSignUpDtoByGender("중성");
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
