@@ -2,7 +2,6 @@ package com.frog.travelwithme.domain.member.mapper;
 
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.entity.Member;
-import com.frog.travelwithme.global.enums.EnumCollection.Gender;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -20,7 +19,7 @@ public interface MemberMapper {
                 .email(signUpDto.getEmail())
                 .password(signUpDto.getPassword())
                 .nickname(signUpDto.getNickname())
-                .gender(Gender.from(signUpDto.getGender()))
+                .gender(signUpDto.getGender())
                 .nation(signUpDto.getNation())
                 .address(signUpDto.getAddress())
                 .introduction(signUpDto.getIntroduction())
@@ -30,8 +29,6 @@ public interface MemberMapper {
         return memberBuilder.build();
     }
 
-    @Mapping(target = "gender", expression = "java(com.frog.travelwithme.global.enums." +
-            "EnumCollection.Gender.from(patchDto.getGender()))")
     Member toEntity(MemberDto.Patch patchDto);
 
     @Mapping(target = "gender", expression = "java(member.getGender().getDescription())")

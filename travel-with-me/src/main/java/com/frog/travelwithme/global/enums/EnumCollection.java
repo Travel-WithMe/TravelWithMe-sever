@@ -1,5 +1,7 @@
 package com.frog.travelwithme.global.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
 import lombok.AllArgsConstructor;
@@ -129,6 +131,7 @@ public class EnumCollection {
 
         private final String description;
 
+        @JsonCreator
         public static Gender from(String sub) {
             if (sub == null) {
                 return null;
@@ -148,6 +151,7 @@ public class EnumCollection {
         }
 
         @Override
+        @JsonValue
         public String getDescription() {
             return this.description;
         }
