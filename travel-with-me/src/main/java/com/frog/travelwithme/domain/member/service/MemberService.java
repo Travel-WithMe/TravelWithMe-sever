@@ -59,13 +59,12 @@ public class MemberService {
 
     public MemberDto.Response signUp(MemberDto.SignUp signUpDto, MultipartFile multipartFile) {
         verifiedRole(signUpDto.getRole());
+        this.checkDuplicatedEmail(signUpDto.getEmail());
         Member member = memberMapper.toEntity(signUpDto);
         member.setOauthStatus(NORMAL);
-        this.checkDuplicatedEmail(member.getEmail());
         member.passwordEncoding(passwordEncoder);
         Member saveMember = memberRepository.save(member);
-        String imageUrl = fileUploadService.upload(multipartFile, PROFILEIMAGE);
-        saveMember.changeImage(imageUrl);
+        this.uploadAndAndChangeImage(multipartFile, saveMember);
 
         return memberMapper.toDto(saveMember);
     }
@@ -164,6 +163,14 @@ public class MemberService {
         } catch (NoSuchAlgorithmException e) {
             log.debug("MemberService.createCode() exception occur");
             throw new BusinessLogicException(ExceptionCode.NO_SUCH_ALGORITHM);
+        }
+    }
+
+    private void uploadAndAndChangeImage(MultipartFile multipartFile,
+                                         Member saveMember) {
+        if (multipartFile != null) {
+            String imageUrl = fileUploadService.upload(multipartFile, PROFILEIMAGE);
+            saveMember.changeImage(imageUrl);
         }
     }
 
