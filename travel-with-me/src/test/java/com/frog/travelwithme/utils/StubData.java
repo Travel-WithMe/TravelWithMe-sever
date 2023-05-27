@@ -49,7 +49,6 @@ public class StubData {
         static String nation = "nation";
         static String role = "USER";
         static Gender enumGender = Gender.MALE;
-        static String stringGender = enumGender.getDescription();
         static Gender patchEnumGender = Gender.FEMALE;
         static LocalDateTime createdAt = LocalDateTime.now();
         static LocalDateTime lastModifiedAt = LocalDateTime.now();
@@ -182,7 +181,7 @@ public class StubData {
                     .address(address)
                     .nation(nation)
                     .introduction(introduction)
-                    .gender(stringGender)
+                    .gender(enumGender)
                     .image(image)
                     .role(role)
                     .createdAt(createdAt)
