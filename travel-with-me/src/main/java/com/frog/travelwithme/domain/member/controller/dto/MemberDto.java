@@ -62,7 +62,7 @@ public class MemberDto {
         private String email;
         private String nickname;
         private String nation;
-        private String gender;
+        private Gender gender;
         private String image;
         private String address;
         private String introduction;

@@ -30,6 +30,5 @@ public interface MemberMapper {
 
     Member toEntity(MemberDto.Patch patchDto);
 
-//    @Mapping(target = "gender", expression = "java(member.getGender().getDescription())")
     MemberDto.Response toDto(Member member);
 }
