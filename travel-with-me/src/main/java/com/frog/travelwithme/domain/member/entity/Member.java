@@ -97,7 +97,7 @@ public class Member extends BaseTimeEntity {
         Optional.ofNullable(patchDto.getNation())
                 .ifPresent(updateNation -> this.nation = updateNation);
         Optional.ofNullable(patchDto.getGender())
-                .ifPresent(updateGender -> this.gender = Gender.from(patchDto.getGender()));
+                .ifPresent(updateGender -> this.gender = patchDto.getGender());
         Optional.ofNullable(patchDto.getAddress())
                 .ifPresent(updateAddress -> this.address = updateAddress);
         Optional.ofNullable(patchDto.getIntroduction())
