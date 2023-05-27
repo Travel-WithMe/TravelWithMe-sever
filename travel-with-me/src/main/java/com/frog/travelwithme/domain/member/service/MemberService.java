@@ -59,12 +59,13 @@ public class MemberService {
 
     public MemberDto.Response signUp(MemberDto.SignUp signUpDto, MultipartFile multipartFile) {
         verifiedRole(signUpDto.getRole());
-        String imageUrl = fileUploadService.upload(multipartFile, PROFILEIMAGE);
-        Member member = memberMapper.toEntity(signUpDto, imageUrl);
+        Member member = memberMapper.toEntity(signUpDto);
         member.setOauthStatus(NORMAL);
         this.checkDuplicatedEmail(member.getEmail());
         member.passwordEncoding(passwordEncoder);
         Member saveMember = memberRepository.save(member);
+        String imageUrl = fileUploadService.upload(multipartFile, PROFILEIMAGE);
+        saveMember.changeImage(imageUrl);
 
         return memberMapper.toDto(saveMember);
     }
@@ -107,9 +108,10 @@ public class MemberService {
 
     public MemberDto.Response changeProfileImage(@RequestPart MultipartFile file, String email) {
         Member findMember = this.findMember(email);
-        fileUploadService.remove(findMember.getImage());
+        String beforeImageUrl = findMember.getImage();
         String newImageUrl = fileUploadService.upload(file, PROFILEIMAGE);
         findMember.changeImage(newImageUrl);
+        fileUploadService.remove(beforeImageUrl);
 
         return memberMapper.toDto(findMember);
     }

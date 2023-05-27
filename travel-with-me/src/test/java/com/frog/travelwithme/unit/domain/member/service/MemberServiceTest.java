@@ -60,7 +60,7 @@ class MemberServiceTest {
         Member member = StubData.MockMember.getMember();
         MemberDto.Response expectedResponse = StubData.MockMember.getResponseDto();
         given(fileUploadService.upload(any(MultipartFile.class), any(AwsS3Path.class))).willReturn("imageUrl");
-        given(memberMapper.toEntity(any(MemberDto.SignUp.class), any())).willReturn(member);
+        given(memberMapper.toEntity(any(MemberDto.SignUp.class))).willReturn(member);
         given(memberRepository.findByEmail(any())).willReturn(Optional.empty());
         given(memberRepository.save(any(Member.class))).willReturn(member);
         given(memberMapper.toDto(any(Member.class))).willReturn(expectedResponse);
@@ -156,8 +156,7 @@ class MemberServiceTest {
         MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
         Member member = StubData.MockMember.getMember();
         MemberDto.Response expectedResponse = StubData.MockMember.getResponseDto();
-        given(fileUploadService.upload(any(MultipartFile.class), any(AwsS3Path.class))).willReturn("imageUrl");
-        given(memberMapper.toEntity(any(MemberDto.SignUp.class), any())).willReturn(member);
+        given(memberMapper.toEntity(any(MemberDto.SignUp.class))).willReturn(member);
         given(memberRepository.findByEmail(any())).willReturn(Optional.ofNullable(member));
 
         // when // then

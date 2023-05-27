@@ -3,7 +3,6 @@ package com.frog.travelwithme.domain.member.mapper;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 /**
@@ -13,7 +12,7 @@ import org.mapstruct.ReportingPolicy;
  **/
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MemberMapper {
-    default Member toEntity(MemberDto.SignUp signUpDto, String imageUrl) {
+    default Member toEntity(MemberDto.SignUp signUpDto) {
         Member.MemberBuilder memberBuilder = Member.builder();
         memberBuilder
                 .email(signUpDto.getEmail())
@@ -24,13 +23,13 @@ public interface MemberMapper {
                 .address(signUpDto.getAddress())
                 .introduction(signUpDto.getIntroduction())
                 .role(signUpDto.getRole())
-                .image(imageUrl == null ? "defaultImage" : imageUrl);
+                .image("defaultImageUrl");
 
         return memberBuilder.build();
     }
 
     Member toEntity(MemberDto.Patch patchDto);
 
-    @Mapping(target = "gender", expression = "java(member.getGender().getDescription())")
+//    @Mapping(target = "gender", expression = "java(member.getGender().getDescription())")
     MemberDto.Response toDto(Member member);
 }
