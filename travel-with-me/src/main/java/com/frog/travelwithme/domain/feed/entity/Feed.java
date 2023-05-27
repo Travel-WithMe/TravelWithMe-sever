@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
  **/
 @Entity
 @Getter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Feed extends BaseTimeEntity {
