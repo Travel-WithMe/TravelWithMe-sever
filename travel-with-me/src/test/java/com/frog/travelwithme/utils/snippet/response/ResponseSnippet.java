@@ -22,6 +22,7 @@ public class ResponseSnippet {
                         fieldWithPath("data.introduction").type(JsonFieldType.STRING).description("자기소개"),
                         fieldWithPath("data.role").type(JsonFieldType.STRING).description("회원 역할"),
                         fieldWithPath("data.gender").type(JsonFieldType.STRING).description("회원 성별 (남자/여자)"),
+                        fieldWithPath("data.interests").type(JsonFieldType.ARRAY).description("회원 관심사"),
                         fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("회원 가입일"),
                         fieldWithPath("data.lastModifiedAt").type(JsonFieldType.STRING).description("회원 정보 수정일")
                 )
