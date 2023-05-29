@@ -12,6 +12,7 @@ import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.enums.EnumCollection.Gender;
+import com.frog.travelwithme.global.enums.EnumCollection.Nation;
 import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDto;
@@ -46,7 +47,7 @@ public class StubData {
         static String image = "defaultImageUrl";
         static String address = "address";
         static String introduction = "introduction";
-        static String nation = "nation";
+        static Nation nation = Nation.KO;
         static String role = "USER";
         static Gender enumGender = Gender.MALE;
         static Gender patchEnumGender = Gender.FEMALE;
@@ -194,7 +195,7 @@ public class StubData {
                     .password("patch" + password)
                     .nickname("patch" + nickname)
                     .address("patch" + address)
-                    .nation("patch" + nation)
+                    .nation(Nation.JP)
                     .gender(patchEnumGender)
                     .introduction("patch" + introduction)
                     .build();
@@ -239,7 +240,7 @@ public class StubData {
             private String password;
             private String nickname;
             private String gender;
-            private String nation;
+            private Nation nation;
             private String address;
             private String introduction;
             private String role;
