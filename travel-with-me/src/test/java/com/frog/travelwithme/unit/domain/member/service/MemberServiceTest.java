@@ -4,6 +4,7 @@ import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.mapper.MemberMapper;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
+import com.frog.travelwithme.domain.member.service.InterestService;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.enums.EnumCollection.AwsS3Path;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
@@ -19,13 +20,13 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 
 /**
@@ -51,6 +52,9 @@ class MemberServiceTest {
     @Mock
     private FileUploadService fileUploadService;
 
+    @Mock
+    private InterestService interestService;
+
     @Test
     @DisplayName("회원가입")
     void memberServiceTest1() {
@@ -60,6 +64,7 @@ class MemberServiceTest {
         Member member = StubData.MockMember.getMember();
         MemberDto.Response expectedResponse = StubData.MockMember.getResponseDto();
         given(fileUploadService.upload(any(MultipartFile.class), any(AwsS3Path.class))).willReturn("imageUrl");
+        given(interestService.findInterests(anyList())).willReturn(new ArrayList<>());
         given(memberMapper.toEntity(any(MemberDto.SignUp.class))).willReturn(member);
         given(memberRepository.findByEmail(any())).willReturn(Optional.empty());
         given(memberRepository.save(any(Member.class))).willReturn(member);
@@ -133,6 +138,7 @@ class MemberServiceTest {
         Member member = StubData.MockMember.getMember();
         MemberDto.Response expectedResponse = StubData.MockMember.getResponseDto();
         given(memberRepository.findByEmail(any())).willReturn(Optional.ofNullable(member));
+        given(interestService.findInterests(anyList())).willReturn(new ArrayList<>());
         given(memberMapper.toDto(any(Member.class))).willReturn(expectedResponse);
 
         // when

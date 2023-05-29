@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
+import com.frog.travelwithme.domain.member.repository.InterestRepository;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
 import com.frog.travelwithme.global.redis.RedisService;
@@ -17,7 +18,6 @@ import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.ResultActionsUtils;
 import com.frog.travelwithme.utils.StubData;
 import com.frog.travelwithme.utils.snippet.reqeust.RequestSnippet;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,6 +64,9 @@ class AuthIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private AmazonS3 amazonS3;
 
+    @Autowired
+    private InterestRepository interestRepository;
+
     @BeforeEach
     void befroeEach() throws Exception {
         // Mock S3 시나리오 설정
@@ -74,11 +77,6 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
         MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
         memberService.signUp(signUpDto, file);
-    }
-
-    @AfterEach
-    void afterEach() {
-        memberService.deleteMember(EMAIL);
     }
 
     @Test

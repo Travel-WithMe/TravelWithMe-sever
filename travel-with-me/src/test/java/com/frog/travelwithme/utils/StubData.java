@@ -51,6 +51,8 @@ public class StubData {
         static String role = "USER";
         static Gender enumGender = Gender.MALE;
         static Gender patchEnumGender = Gender.FEMALE;
+        static List<String> interests = new ArrayList<>(List.of("하이킹", "전시회", "즉흥형"));
+        static List<String> patchInterests = new ArrayList<>(List.of("서핑", "사진 촬영", "계획형"));
         static LocalDateTime createdAt = LocalDateTime.now();
         static LocalDateTime lastModifiedAt = LocalDateTime.now();
         @Getter
@@ -75,6 +77,7 @@ public class StubData {
                     .nation(nation)
                     .gender(enumGender)
                     .role(role)
+                    .interests(interests)
                     .build();
         }
 
@@ -127,6 +130,7 @@ public class StubData {
                     .gender(failedGender)
                     .nation(nation)
                     .role(role)
+                    .interests(interests)
                     .build();
         }
 
@@ -198,6 +202,7 @@ public class StubData {
                     .nation(Nation.JP)
                     .gender(patchEnumGender)
                     .introduction("patch" + introduction)
+                    .interests(patchInterests)
                     .build();
         }
 
@@ -244,6 +249,7 @@ public class StubData {
             private String address;
             private String introduction;
             private String role;
+            private List<String> interests;
         }
     }
 
