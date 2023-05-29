@@ -68,6 +68,12 @@ public class Member extends BaseTimeEntity {
     @ManyToMany(mappedBy = "likedMembers")
     private List<Feed> likedFeeds = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(name = "member_interest",
+            joinColumns = @JoinColumn(name = "member_id"),
+            inverseJoinColumns = @JoinColumn(name = "interest_id"))
+    private List<Interest> interests = new ArrayList<>();
+
     @Builder
     public Member(Long id, String email, String nickname, String password, Gender gender, Nation nation,
                   String address, String introduction, String role, OAuthStatus oauthstatus, String image) {
