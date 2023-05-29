@@ -9,6 +9,7 @@ import lombok.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 작성자: 김찬빈
@@ -39,6 +40,7 @@ public class MemberDto {
         private String introduction;
         @NotBlank(message = "권한은 공백이 아니어야 합니다.")
         private String role;
+        private List<String> interests;
     }
 
     @Getter
@@ -52,6 +54,7 @@ public class MemberDto {
         private Nation nation;
         private String address;
         private String introduction;
+        private List<String> interests;
     }
 
     @Getter
@@ -68,6 +71,7 @@ public class MemberDto {
         private String address;
         private String introduction;
         private String role;
+        private List<String> interests;
         private LocalDateTime createdAt;
         private LocalDateTime lastModifiedAt;
     }

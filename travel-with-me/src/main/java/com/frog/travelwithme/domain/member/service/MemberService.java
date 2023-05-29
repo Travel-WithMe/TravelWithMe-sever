@@ -2,6 +2,7 @@ package com.frog.travelwithme.domain.member.service;
 
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
+import com.frog.travelwithme.domain.member.entity.Interest;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.mapper.MemberMapper;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
@@ -22,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -54,15 +57,21 @@ public class MemberService {
 
     private final FileUploadService fileUploadService;
 
+    private final InterestService interestService;
+
     @Value("${spring.mail.auth-code-expiration-millis}")
     private long authCodeExpirationMillis;
 
     public MemberDto.Response signUp(MemberDto.SignUp signUpDto, MultipartFile multipartFile) {
         verifiedRole(signUpDto.getRole());
         this.checkDuplicatedEmail(signUpDto.getEmail());
+        List<Interest> interests = interestService
+                .findInterests(Optional.ofNullable(signUpDto.getInterests()).orElse(Collections.emptyList()));
         Member member = memberMapper.toEntity(signUpDto);
         member.setOauthStatus(NORMAL);
         member.passwordEncoding(passwordEncoder);
+        member.changeInterests(interests);
+
         Member saveMember = memberRepository.save(member);
         this.uploadAndAndChangeImage(multipartFile, saveMember);
 
@@ -86,6 +95,9 @@ public class MemberService {
     public MemberDto.Response updateMember(MemberDto.Patch patchDto, String email) {
         Member findMember = this.findMember(email);
         findMember.updateMemberData(patchDto);
+        List<Interest> newInterests = interestService
+                .findInterests(Optional.ofNullable(patchDto.getInterests()).orElse(Collections.emptyList()));
+        findMember.changeInterests(newInterests);
 
         return memberMapper.toDto(findMember);
     }
