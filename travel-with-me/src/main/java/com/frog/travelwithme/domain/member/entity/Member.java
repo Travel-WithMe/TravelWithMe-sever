@@ -4,6 +4,7 @@ import com.frog.travelwithme.domain.common.BaseTimeEntity;
 import com.frog.travelwithme.domain.feed.entity.Feed;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.global.enums.EnumCollection.Gender;
+import com.frog.travelwithme.global.enums.EnumCollection.Nation;
 import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,7 +14,9 @@ import org.hibernate.annotations.DynamicInsert;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Member 설명: 회원 데이터 관리
@@ -44,7 +47,7 @@ public class Member extends BaseTimeEntity {
     private Gender gender;
 
     @Column(nullable = false)
-    private String nation;
+    private Nation nation;
 
     @Column(nullable = false)
     private String address;
@@ -66,7 +69,7 @@ public class Member extends BaseTimeEntity {
     private List<Feed> likedFeeds = new ArrayList<>();
 
     @Builder
-    public Member(Long id, String email, String nickname, String password, Gender gender, String nation,
+    public Member(Long id, String email, String nickname, String password, Gender gender, Nation nation,
                   String address, String introduction, String role, OAuthStatus oauthstatus, String image) {
         this.id = id;
         this.email = email;
