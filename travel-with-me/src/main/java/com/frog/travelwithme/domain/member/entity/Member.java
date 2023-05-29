@@ -116,4 +116,8 @@ public class Member extends BaseTimeEntity {
     public void changeImage(String newImage) {
         this.image = newImage;
     }
+
+    public void changeInterests(List<Interest> interests) {
+        this.interests = interests;
+    }
 }
