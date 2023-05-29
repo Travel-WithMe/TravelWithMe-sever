@@ -3,6 +3,7 @@ package com.frog.travelwithme.domain.member.mapper;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 /**
@@ -30,5 +31,7 @@ public interface MemberMapper {
 
     Member toEntity(MemberDto.Patch patchDto);
 
+    @Mapping(target = "interests", expression = "java(member.getInterests().stream()" +
+            ".map(interest -> interest.getType()).collect(java.util.stream.Collectors.toList()))")
     MemberDto.Response toDto(Member member);
 }
