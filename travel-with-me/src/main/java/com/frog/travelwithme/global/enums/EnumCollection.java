@@ -136,4 +136,17 @@ public class EnumCollection {
             this.path = path;
         }
     }
+
+    public enum Nation {
+        CH,
+        FR,
+        IT,
+        JP,
+        KO,
+        SP,
+        TH,
+        TU,
+        UK,
+        US
+    }
 }
