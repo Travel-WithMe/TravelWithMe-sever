@@ -1,6 +1,7 @@
 package com.frog.travelwithme.utils.snippet.reqeust;
 
 import com.google.common.net.HttpHeaders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.snippet.Snippet;
 
@@ -28,9 +29,10 @@ public class RequestSnippet {
                         fieldWithPath("address").type(STRING).description("회원 주소"),
                         fieldWithPath("introduction").type(STRING).description("자기 소개"),
                         fieldWithPath("gender").type(STRING).description("회원 성별 (남자/여자)"),
-                        fieldWithPath("nation").type(STRING).description("회원 국가")
-                )
-        );
+                        fieldWithPath("nation").type(STRING).description("회원 국가"),
+                        fieldWithPath("interests").type(JsonFieldType.ARRAY).description(
+                                "회원 관심사 : 하이킹 / 서핑 / 다이빙 / 스노클링 / 사파리 / 스키 / 자전거 / 액티비티 / " +
+                                "음식 체험 / 음악 감상 / 공연 감상 / 전시회 / 예술 관람 / 사진 촬영 / 지역 축제 / 계획형 / 즉흥형")));
     }
 
     public static RequestFieldsSnippet getPostRecruitmentSnippet() {
@@ -95,7 +97,10 @@ public class RequestSnippet {
                 fieldWithPath("address").type(STRING).description("회원 주소"),
                 fieldWithPath("introduction").type(STRING).description("자기 소개"),
                 fieldWithPath("nation").type(STRING).description("회원 국가"),
-                fieldWithPath("role").type(STRING).description("회원 역할"));
+                fieldWithPath("role").type(STRING).description("회원 역할"),
+                fieldWithPath("interests").type(JsonFieldType.ARRAY).description(
+                        "회원 관심사 : 하이킹 / 서핑 / 다이빙 / 스노클링 / 사파리 / 스키 / 자전거 / 액티비티 / " +
+                        "음식 체험 / 음악 감상 / 공연 감상 / 전시회 / 예술 관람 / 사진 촬영 / 지역 축제 / 계획형 / 즉흥형"));
     }
 
     public static Snippet getTokenSnippet() {
