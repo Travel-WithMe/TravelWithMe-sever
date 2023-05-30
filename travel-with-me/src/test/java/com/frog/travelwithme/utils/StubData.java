@@ -369,6 +369,7 @@ public class StubData {
                     .contents("patch" + contents)
                     .location("patch" + location)
                     .tags(List.of("patch" + tags.get(0)))
+                    .removeImageUrls(List.of())
                     .build();
         }
 

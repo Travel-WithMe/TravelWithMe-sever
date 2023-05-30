@@ -183,7 +183,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/reissue")
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.patchRequest(mvc, uri);
+        ResultActions actions = ResultActionsUtils.patchRequestAndNoCsrf(mvc, uri);
 
         // then
         actions
