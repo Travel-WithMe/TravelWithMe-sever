@@ -2,6 +2,7 @@ package com.frog.travelwithme.utils.snippet.response;
 
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
+import org.springframework.restdocs.snippet.Snippet;
 
 import java.util.List;
 
@@ -91,6 +92,56 @@ public class ResponseSnippet {
     public static ResponseFieldsSnippet getMatchingSnippet() {
         return responseFields(
                 fieldWithPath("message").type(JsonFieldType.STRING).description("매칭 신청 성공 메세지")
+        );
+    }
+
+    public static Snippet getFeedSnippet() {
+        return responseFields(
+                fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("피드 인덱스"),
+                fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("작성자 닉네임"),
+                fieldWithPath("data.profileImage").type(JsonFieldType.STRING).description("작성자 프로필 이미지 URL"),
+                fieldWithPath("data.contents").type(JsonFieldType.STRING).description("피드 내용"),
+                fieldWithPath("data.location").type(JsonFieldType.STRING).description("피드를 작성한 위치"),
+                fieldWithPath("data.likeCount").type(JsonFieldType.NUMBER).description("피드 좋아요 개수"),
+                fieldWithPath("data.commentCount").type(JsonFieldType.NUMBER).description("피드 댓글 개수"),
+                fieldWithPath("data.isWriter").type(JsonFieldType.BOOLEAN).description("사용자의 피드 작성자 여부"),
+                fieldWithPath("data.isLiked").type(JsonFieldType.BOOLEAN).description("사용자의 피드 좋아요 여부"),
+                fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("피드 생성 시간"),
+                fieldWithPath("data.tags").type(JsonFieldType.ARRAY).description("피드 태그 리스트"),
+                fieldWithPath("data.imageUrls").type(JsonFieldType.ARRAY).description("피드 이미지 URL 리스트")
+        );
+    }
+
+    public static ResponseFieldsSnippet getFeedsSnippet() {
+        return responseFields(
+                        fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("피드 인덱스"),
+                        fieldWithPath("data[].nickname").type(JsonFieldType.STRING).description("작성자 닉네임"),
+                        fieldWithPath("data[].profileImage").type(JsonFieldType.STRING).description("작성자 프로필 이미지 URL"),
+                        fieldWithPath("data[].contents").type(JsonFieldType.STRING).description("피드 내용"),
+                        fieldWithPath("data[].location").type(JsonFieldType.STRING).description("피드를 작성한 위치"),
+                        fieldWithPath("data[].likeCount").type(JsonFieldType.NUMBER).description("피드 좋아요 개수"),
+                        fieldWithPath("data[].commentCount").type(JsonFieldType.NUMBER).description("피드 댓글 개수"),
+                        fieldWithPath("data[].isWriter").type(JsonFieldType.BOOLEAN).description("사용자의 피드 작성자 여부"),
+                        fieldWithPath("data[].isLiked").type(JsonFieldType.BOOLEAN).description("사용자의 피드 좋아요 여부"),
+                        fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description("피드 생성 시간"),
+                        fieldWithPath("data[].tags").type(JsonFieldType.ARRAY).description("피드 태그 리스트"),
+                        fieldWithPath("data[].imageUrls").type(JsonFieldType.ARRAY).description("피드 이미지 URL 리스트")
+                );
+    }
+
+    public static Snippet getTagsSnippet() {
+        return responseFields(
+                fieldWithPath("data[].name").type(JsonFieldType.STRING).description("태그 이름"),
+                fieldWithPath("data[].count").type(JsonFieldType.NUMBER).description("태그가 사용된 횟수")
+        );
+    }
+
+    public static Snippet getErrorSnippet() {
+        return responseFields(
+                fieldWithPath("status").type(JsonFieldType.NUMBER).description("응답 Status"),
+                fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메세지"),
+                fieldWithPath("fieldErrors").description("Field 에러"),
+                fieldWithPath("violationErrors").description("객체 에러")
         );
     }
 }

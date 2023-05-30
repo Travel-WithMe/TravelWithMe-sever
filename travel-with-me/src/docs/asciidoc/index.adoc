@@ -7,7 +7,7 @@
 
 Chan Bin Kim <chanbin.backend@gmail.com>
 
-v1.0.0, 2023.04.24
+v1.0.0, 2023.05.30
 
 ***
 == MemberController
@@ -21,8 +21,8 @@ include::{snippets}/signup/http-request.adoc[]
 .request-parts
 include::{snippets}/signup/request-parts.adoc[]
 
-.request-fields
-include::{snippets}/signup/request-fields.adoc[]
+.request-part-data-fields
+include::{snippets}/signup/request-part-data-fields.adoc[]
 
 .http-response
 include::{snippets}/signup/http-response.adoc[]
@@ -223,3 +223,185 @@ include::{snippets}/reissue-fail-by-token-not-same/request-headers.adoc[]
 
 .http-response
 include::{snippets}/reissue-fail-by-token-not-same/http-response.adoc[]
+
+== Feed Controller
+=== Feed 작성
+.curl-request
+include::{snippets}/post-feed/curl-request.adoc[]
+
+.http-request
+include::{snippets}/post-feed/http-request.adoc[]
+
+.request-headers
+include::{snippets}/post-feed/request-headers.adoc[]
+
+.request-parts
+include::{snippets}/post-feed/request-parts.adoc[]
+
+.request-part-data-fields
+include::{snippets}/post-feed/request-part-data-fields.adoc[]
+
+.http-response
+include::{snippets}/post-feed/http-response.adoc[]
+
+.response-fields
+include::{snippets}/post-feed/response-fields.adoc[]
+
+=== Feed 수정
+.curl-request
+include::{snippets}/patch-feed/curl-request.adoc[]
+
+.http-request
+include::{snippets}/patch-feed/http-request.adoc[]
+
+.request-headers
+include::{snippets}/patch-feed/request-headers.adoc[]
+
+.request-parts
+include::{snippets}/patch-feed/request-parts.adoc[]
+
+.request-part-data-fields
+include::{snippets}/patch-feed/request-part-data-fields.adoc[]
+
+.http-response
+include::{snippets}/patch-feed/http-response.adoc[]
+
+.response-fields
+include::{snippets}/patch-feed/response-fields.adoc[]
+
+=== Feed 조회
+.curl-request
+include::{snippets}/find-feed/curl-request.adoc[]
+
+.request-path
+include::{snippets}/find-feed/path-parameters.adoc[]
+
+.http-request
+include::{snippets}/find-feed/http-request.adoc[]
+
+.request-headers
+include::{snippets}/find-feed/request-headers.adoc[]
+
+.http-response
+include::{snippets}/find-feed/http-response.adoc[]
+
+.response-fields
+include::{snippets}/find-feed/response-fields.adoc[]
+
+=== 모든 Feed 조회
+.curl-request
+include::{snippets}/find-all-feed/curl-request.adoc[]
+
+.http-request
+include::{snippets}/find-all-feed/http-request.adoc[]
+
+.request-headers
+include::{snippets}/find-all-feed/request-headers.adoc[]
+
+.http-response
+include::{snippets}/find-all-feed/http-response.adoc[]
+
+.response-fields
+include::{snippets}/find-all-feed/response-fields.adoc[]
+
+=== Feed 삭제
+.curl-request
+include::{snippets}/delete-feed/curl-request.adoc[]
+
+.http-request
+include::{snippets}/delete-feed/http-request.adoc[]
+
+.request-path
+include::{snippets}/delete-feed/path-parameters.adoc[]
+
+.request-headers
+include::{snippets}/delete-feed/request-headers.adoc[]
+
+.http-response
+include::{snippets}/delete-feed/http-response.adoc[]
+
+=== 비슷한 TAG 조회
+.curl-request
+include::{snippets}/find-tags/curl-request.adoc[]
+
+.http-request
+include::{snippets}/find-tags/http-request.adoc[]
+
+.request-param
+include::{snippets}/find-tags/request-parameters.adoc[]
+
+.request-headers
+include::{snippets}/find-tags/request-headers.adoc[]
+
+.http-response
+include::{snippets}/find-tags/http-response.adoc[]
+
+.response-fields
+include::{snippets}/find-tags/response-fields.adoc[]
+
+=== 피드 좋아요
+.curl-request
+include::{snippets}/post-like/curl-request.adoc[]
+
+.http-request
+include::{snippets}/post-like/http-request.adoc[]
+
+.request-path
+include::{snippets}/post-like/path-parameters.adoc[]
+
+.request-headers
+include::{snippets}/post-like/request-headers.adoc[]
+
+.http-response
+include::{snippets}/post-like/http-response.adoc[]
+
+=== 피드 좋아요 취소
+.curl-request
+include::{snippets}/delete-like/curl-request.adoc[]
+
+.http-request
+include::{snippets}/delete-like/http-request.adoc[]
+
+.request-path
+include::{snippets}/delete-like/path-parameters.adoc[]
+
+.request-headers
+include::{snippets}/delete-like/request-headers.adoc[]
+
+.http-response
+include::{snippets}/delete-like/http-response.adoc[]
+
+=== 피드 좋아요 실패
+.curl-request
+include::{snippets}/post-like-fail/curl-request.adoc[]
+
+.http-request
+include::{snippets}/post-like-fail/http-request.adoc[]
+
+.request-path
+include::{snippets}/post-like-fail/path-parameters.adoc[]
+
+.request-headers
+include::{snippets}/post-like-fail/request-headers.adoc[]
+
+.http-response
+include::{snippets}/post-like-fail/http-response.adoc[]
+
+.response-fields
+include::{snippets}/post-like-fail/response-fields.adoc[]
+
+=== 피드 좋아요 취소 실패
+.curl-request
+include::{snippets}/delete-like-fail/curl-request.adoc[]
+
+.http-request
+include::{snippets}/delete-like-fail/http-request.adoc[]
+
+.request-path
+include::{snippets}/delete-like-fail/path-parameters.adoc[]
+
+.request-headers
+include::{snippets}/delete-like-fail/request-headers.adoc[]
+
+.http-response
+include::{snippets}/delete-feed-fail/response-fields.adoc[]
