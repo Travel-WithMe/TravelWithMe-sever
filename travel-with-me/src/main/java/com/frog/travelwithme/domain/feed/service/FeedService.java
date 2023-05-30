@@ -83,7 +83,7 @@ public class FeedService {
     public void deleteFeed(String email, long feedId) {
         Feed saveFeed = this.findFeed(feedId);
         String writerEmail = saveFeed.getMember().getEmail();
-        checkWriter(email, writerEmail);
+        this.checkWriter(email, writerEmail);
         List<String> currentImageUrls = saveFeed.getImageUrls();
         feedRepository.deleteById(feedId);
         currentImageUrls.forEach(fileUploadService::remove);
