@@ -41,7 +41,7 @@ public class AmazonS3ResourceStorage {
         }
 
         String originalFilename = image.getOriginalFilename();
-        String storeFileName = createStoreFileName(originalFilename);
+        String storeFileName = this.createStoreFileName(originalFilename);
 
         try (InputStream inputStream = image.getInputStream()) {
             amazonS3.putObject(new PutObjectRequest(

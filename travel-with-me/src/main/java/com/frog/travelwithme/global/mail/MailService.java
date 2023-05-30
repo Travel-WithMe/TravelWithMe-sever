@@ -25,7 +25,7 @@ public class MailService {
     public void sendEmail(String toEmail,
                           String title,
                           String text) {
-        SimpleMailMessage emailForm = createEmailForm(toEmail, title, text);
+        SimpleMailMessage emailForm = this.createEmailForm(toEmail, title, text);
         try {
             emailSender.send(emailForm);
         } catch (RuntimeException e) {

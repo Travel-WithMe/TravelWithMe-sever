@@ -27,7 +27,7 @@ public class FileUploadService {
     private final AmazonS3ResourceStorage amazonS3ResourceStorage;
 
     public String upload(MultipartFile multipartFile, AwsS3Path awsS3Path) {
-        verifiedExenstion(multipartFile);
+        this.verifiedExenstion(multipartFile);
         return amazonS3ResourceStorage.uploadImage(multipartFile, awsS3Path);
     }
 
