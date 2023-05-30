@@ -22,6 +22,8 @@ import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.ResultActionsUtils;
 import com.frog.travelwithme.utils.StubData;
 import com.frog.travelwithme.utils.StubData.CustomMockMultipartFile;
+import com.frog.travelwithme.utils.snippet.reqeust.RequestSnippet;
+import com.frog.travelwithme.utils.snippet.response.ResponseSnippet;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,10 +40,13 @@ import javax.persistence.EntityManager;
 import java.net.URL;
 import java.util.List;
 
+import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
+import static com.frog.travelwithme.utils.ApiDocumentUtils.getResponsePreProcessor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
@@ -135,11 +140,13 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getImageUrls()).isNotEmpty();
         actions
                 .andExpect(status().isCreated())
-                /*.andDo(document("post-feed",
+                .andDo(document("post-feed",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
-                        RequestSnippet.getPostFeedSnippet(),
-                        ResponseSnippet.getFeedSnippet()))*/;
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getPostFeedMultipartSnippet(),
+                        RequestSnippet.getPostFeedMultipartDataFieldSnippet(),
+                        ResponseSnippet.getFeedSnippet()));
     }
 
     @Test
@@ -151,10 +158,11 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + feedId)
-                .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.getRequestWithToken(mvc, uri, accessToken, encryptedRefreshToken);
+        String uri = BASE_URL + "/{feed-id}";
+        ResultActions actions = ResultActionsUtils.getRequestWithTokenAndPathVariable(
+                mvc, uri, feedId, accessToken, encryptedRefreshToken);
 
         // then
         FeedDto.Response response = ObjectMapperUtils.actionsSingleToResponseWithData(
@@ -164,7 +172,13 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getNickname()).isNotNull();
         assertThat(response.getTags()).isNotNull();
         actions
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("find-feed",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getFeedPathVariableSnippet(),
+                        ResponseSnippet.getFeedSnippet()));
     }
 
     @Test
@@ -186,7 +200,12 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         // then
         // TODO: actionsMultiToResponseWithData 필요
         actions
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("find-all-feed",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        ResponseSnippet.getFeedsSnippet()));;
     }
 
     @Test
@@ -221,7 +240,14 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getNickname()).isNotNull();
         assertThat(response.getImageUrls()).hasSize(feed.getImageUrls().size() + files.size());
         actions
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("patch-feed",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getPostFeedMultipartSnippet(),
+                        RequestSnippet.getPatchFeedMultipartDataFieldSnippet(),
+                        ResponseSnippet.getFeedSnippet()));
     }
 
     @Test
@@ -236,17 +262,19 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         FeedDto.Response feed = feedService.findFeedById(userDetails.getEmail(), feedId);
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + feedId)
-                .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.deleteRequestWithToken(
-                mvc, uri, accessToken, encryptedRefreshToken);
+        String uri = BASE_URL + "/{feed-id}";
+        ResultActions actions = ResultActionsUtils.deleteRequestWithTokenAndPathVariable(
+                mvc, uri, feedId, accessToken, encryptedRefreshToken);
 
         // then
         assertThatThrownBy(() -> feedService.findFeedById(userDetails.getEmail(), feedId))
                 .isInstanceOf(BusinessLogicException.class)
                 .hasMessage(ExceptionCode.FEED_NOT_FOUND.getMessage());
         actions
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("delete-feed",
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getFeedPathVariableSnippet()));
     }
 
     @Test
@@ -273,7 +301,13 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         // then
         // TODO: actionsMultiToResponseWithData 필요
         actions
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("find-tags",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getTagParamSnippet(),
+                        ResponseSnippet.getTagsSnippet()));
     }
 
     @Test
@@ -287,16 +321,19 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + feedId + "/likes")
-                .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.postRequestWithToken(
-                mvc, uri, accessToken, encryptedRefreshToken);
+        String uri = BASE_URL + "/{feed-id}" + "/likes";
+        ResultActions actions = ResultActionsUtils.postRequestWithTokenAndPathvariable(
+                mvc, uri, feedId, accessToken, encryptedRefreshToken);
 
         // then
         FeedDto.Response response = feedService.findFeedById(userDetails.getEmail(), feedId);
         assertThat(response.getLikeCount()).isPositive();
         actions
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("post-like",
+                        getRequestPreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getFeedPathVariableSnippet()));
     }
 
     @Test
@@ -311,16 +348,19 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         feedService.doLike(userDetails.getEmail(), feedId);
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + feedId + "/likes")
-                .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.deleteRequestWithToken(
-                mvc, uri, accessToken, encryptedRefreshToken);
+        String uri = BASE_URL + "/{feed-id}" + "/likes";
+        ResultActions actions = ResultActionsUtils.deleteRequestWithTokenAndPathVariable(
+                mvc, uri, feedId, accessToken, encryptedRefreshToken);
 
         // then
         FeedDto.Response response = feedService.findFeedById(userDetails.getEmail(), feedId);
         assertThat(response.getLikeCount()).isZero();
         actions
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("delete-like",
+                        getRequestPreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getFeedPathVariableSnippet()));
     }
 
     @Test
@@ -335,17 +375,21 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         feedService.doLike(userDetails.getEmail(), feedId);
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + feedId + "/likes")
-                .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.postRequestWithToken(
-                mvc, uri, accessToken, encryptedRefreshToken);
+        String uri = BASE_URL + "/{feed-id}" + "/likes";
+        ResultActions actions = ResultActionsUtils.postRequestWithTokenAndPathvariable(
+                mvc, uri, feedId, accessToken, encryptedRefreshToken);
 
         // then
         ErrorResponse errorResponse = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
         assertThat(errorResponse.getMessage()).isEqualTo(ExceptionCode.ALREADY_LIKED_FEED.getMessage());
         assertThat(errorResponse.getStatus()).isEqualTo(ExceptionCode.ALREADY_LIKED_FEED.getStatus());
         actions
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is4xxClientError())
+                .andDo(document("post-like-fail",
+                        getRequestPreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getFeedPathVariableSnippet(),
+                        ResponseSnippet.getErrorSnippet()));
     }
 
     @Test
@@ -359,16 +403,20 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + feedId + "/likes")
-                .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.deleteRequestWithToken(
-                mvc, uri, accessToken, encryptedRefreshToken);
+        String uri = BASE_URL + "/{feed-id}" + "/likes";
+        ResultActions actions = ResultActionsUtils.deleteRequestWithTokenAndPathVariable(
+                mvc, uri, feedId, accessToken, encryptedRefreshToken);
 
         // then
         ErrorResponse errorResponse = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
         assertThat(errorResponse.getMessage()).isEqualTo(ExceptionCode.UNABLE_TO_CANCEL_LIKE.getMessage());
         assertThat(errorResponse.getStatus()).isEqualTo(ExceptionCode.UNABLE_TO_CANCEL_LIKE.getStatus());
         actions
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is4xxClientError())
+                .andDo(document("delete-like-fail",
+                        getRequestPreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getFeedPathVariableSnippet(),
+                        ResponseSnippet.getErrorSnippet()));
     }
 }
