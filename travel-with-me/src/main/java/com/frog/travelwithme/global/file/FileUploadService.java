@@ -40,7 +40,7 @@ public class FileUploadService {
     private void verifiedExenstion(MultipartFile multipartFile) {
         String contentType = multipartFile.getContentType();
 
-        if (isNotJpegOrPngByContentType(contentType)) {
+        if (this.isNotJpegOrPngByContentType(contentType)) {
             log.debug("FileUploadService.verifiedExenstion exception occur contentType : {}",
                     multipartFile.getContentType());
             throw new BusinessLogicException(ExceptionCode.EXTENSION_IS_NOT_VALID);
