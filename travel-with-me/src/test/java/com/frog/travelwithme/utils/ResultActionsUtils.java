@@ -77,16 +77,16 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
-    public static ResultActions postRequestWithParams(MockMvc mockMvc,
-                                                      String url,
-                                                      MultiValueMap<String, String> paprams) throws Exception {
+    public static ResultActions postRequestWithParamsWithCsrf(MockMvc mockMvc,
+                                                              String url,
+                                                              MultiValueMap<String, String> paprams) throws Exception {
         return mockMvc.perform(post(url)
                         .params(paprams)
                         .with(csrf()))
                 .andDo(print());
     }
 
-    public static ResultActions postRequestWithParamsAndNoCsrf(MockMvc mockMvc,
+    public static ResultActions postRequestWithParams(MockMvc mockMvc,
                                                       String url,
                                                       MultiValueMap<String, String> paprams) throws Exception {
         return mockMvc.perform(post(url)
@@ -111,10 +111,10 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
-    public static ResultActions postRequestWithTwoMultiPart(MockMvc mockMvc,
-                                                            String url,
-                                                            MockMultipartFile file,
-                                                            MockMultipartFile data) throws Exception {
+    public static ResultActions postRequestWithTwoMultiPartWithCsrf(MockMvc mockMvc,
+                                                                    String url,
+                                                                    MockMultipartFile file,
+                                                                    MockMultipartFile data) throws Exception {
         return mockMvc.perform(multipart(url)
                         .file(file)
                         .file(data)
@@ -123,7 +123,7 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
-    public static ResultActions postRequestWithTwoMultiPartAndNoCsrf(MockMvc mockMvc,
+    public static ResultActions postRequestWithTwoMultiPart(MockMvc mockMvc,
                                                             String url,
                                                             MockMultipartFile file,
                                                             MockMultipartFile data) throws Exception {
@@ -167,15 +167,15 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
-    public static ResultActions patchRequest(MockMvc mockMvc,
-                                             String url) throws Exception {
+    public static ResultActions patchRequestWithCsrf(MockMvc mockMvc,
+                                                     String url) throws Exception {
         return mockMvc.perform(patch(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf()))
                 .andDo(print());
     }
 
-    public static ResultActions patchRequestAndNoCsrf(MockMvc mockMvc,
+    public static ResultActions patchRequest(MockMvc mockMvc,
                                              String url) throws Exception {
         return mockMvc.perform(patch(url)
                         .contentType(MediaType.APPLICATION_JSON))
