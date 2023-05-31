@@ -78,7 +78,7 @@ class MemberControllerTest {
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
         MockMultipartFile data = StubData.CustomMockMultipartFile.getData(json);
-        ResultActions actions = ResultActionsUtils.postRequestWithTwoMultiPart(mvc, uri, file, data);
+        ResultActions actions = ResultActionsUtils.postRequestWithTwoMultiPartWithCsrf(mvc, uri, file, data);
 
         // then
         actions
@@ -320,7 +320,7 @@ class MemberControllerTest {
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/emails/verification-requests")
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.postRequestWithParams(mvc, uri, papram);
+        ResultActions actions = ResultActionsUtils.postRequestWithParamsWithCsrf(mvc, uri, papram);
 
         // then
         actions.andExpect(status().isOk());

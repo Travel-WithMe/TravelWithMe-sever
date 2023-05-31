@@ -103,7 +103,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
         MockMultipartFile data = StubData.CustomMockMultipartFile.getData(json);
-        ResultActions actions = ResultActionsUtils.postRequestWithTwoMultiPartAndNoCsrf(mvc, uri, file, data);
+        ResultActions actions = ResultActionsUtils.postRequestWithTwoMultiPart(mvc, uri, file, data);
 
         // then
         Response response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, Response.class);
@@ -224,7 +224,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/emails/verification-requests")
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.postRequestWithParamsAndNoCsrf(mvc, uri, papram);
+        ResultActions actions = ResultActionsUtils.postRequestWithParams(mvc, uri, papram);
 
         // then
         actions.andExpect(status().isOk())
@@ -342,7 +342,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         String json = ObjectMapperUtils.asJsonString(failedSignUpDto);
         MockMultipartFile data =
                 new MockMultipartFile("data", null, MediaType.APPLICATION_JSON_VALUE, json.getBytes());
-        ResultActions actions = ResultActionsUtils.postRequestWithTwoMultiPartAndNoCsrf(mvc, uri, file, data);
+        ResultActions actions = ResultActionsUtils.postRequestWithTwoMultiPart(mvc, uri, file, data);
 
         // then
         actions
