@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -43,12 +44,16 @@ public class FeedService {
     public Response postFeed(String email, FeedDto.Post postDto, List<MultipartFile> multipartFiles) {
         Member saveMember = memberService.findMember(email);
         Feed feed = feedMapper.postDtoToFeed(postDto, saveMember);
-        this.handleTags(postDto.getTags(), feed);
-        this.uploadFeedImages(multipartFiles, feed);
-        Feed saveFeed = feedRepository.save(feed);
-
-
-        return feedMapper.toResponse(saveFeed, email);
+        this.addTags(postDto.getTags(), feed);
+        List<String> addedImageUrls = this.uploadFeedImages(multipartFiles, feed);
+        try {
+            Feed saveFeed = feedRepository.save(feed);
+            return feedMapper.toResponse(saveFeed, email);
+        } catch (Exception e) {
+            addedImageUrls.forEach(fileUploadService::remove);
+            log.debug("FeedService.postFeed exception occur feed = {}", feed.toString());
+            throw new BusinessLogicException(ExceptionCode.UNABLE_TO_SAVE_FEED);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -68,9 +73,9 @@ public class FeedService {
         this.checkWriter(email, saveFeed.getMember().getEmail());
         FeedDto.InternalPatch internalPatchDto = feedMapper.toInternalDto(patchDto);
         saveFeed.updateFeedData(internalPatchDto);
+        this.addTags(internalPatchDto.getTags(), saveFeed);
         this.uploadFeedImages(multipartFiles, saveFeed);
         this.removeFeedImages(internalPatchDto.getRemoveImageUrls(), saveFeed);
-        this.handleTags(internalPatchDto.getTags(), saveFeed);
 
         return feedMapper.toResponse(saveFeed, email);
     }
@@ -78,9 +83,10 @@ public class FeedService {
     public void deleteFeed(String email, long feedId) {
         Feed saveFeed = this.findFeed(feedId);
         String writerEmail = saveFeed.getMember().getEmail();
-        checkWriter(email, writerEmail);
-        this.removeFeedImages(saveFeed.getImageUrls(), saveFeed);
+        this.checkWriter(email, writerEmail);
+        List<String> currentImageUrls = saveFeed.getImageUrls();
         feedRepository.deleteById(feedId);
+        currentImageUrls.forEach(fileUploadService::remove);
     }
 
     // TODO: Redis 캐시 사용 고려
@@ -122,20 +128,24 @@ public class FeedService {
                 });
     }
 
-    private void handleTags(List<String> tags, Feed saveFeed) {
+    private void addTags(List<String> tags, Feed saveFeed) {
         if (tags != null) {
             Set<Tag> saveTags = tagService.findOrCreateTagsByName(tags);
             saveFeed.addTags(saveTags);
         }
     }
 
-    private void uploadFeedImages(List<MultipartFile> multipartFiles, Feed saveFeed) {
+    private List<String> uploadFeedImages(List<MultipartFile> multipartFiles, Feed saveFeed) {
+        List<String> addedImageUrls = new ArrayList<>();
         if (multipartFiles != null) {
             multipartFiles.forEach(multipartFile -> {
                 String imageUrl = fileUploadService.upload(multipartFile, FEEDIMAGE);
                 saveFeed.addImageUrl(imageUrl);
+                addedImageUrls.add(imageUrl);
             });
         }
+
+        return addedImageUrls;
     }
 
     private void removeFeedImages(List<String> removeImageUrls, Feed feed) {

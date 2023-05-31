@@ -1,6 +1,8 @@
 package com.frog.travelwithme.utils;
 
+import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
 import com.frog.travelwithme.domain.buddy.entity.Matching;
+import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.common.DeletionEntity;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
@@ -8,23 +10,21 @@ import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Member;
-import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
-import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.enums.EnumCollection.Gender;
+import com.frog.travelwithme.global.enums.EnumCollection.Nation;
 import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.global.utils.TimeUtils;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -47,11 +47,12 @@ public class StubData {
         static String image = "defaultImageUrl";
         static String address = "address";
         static String introduction = "introduction";
-        static String nation = "nation";
+        static Nation nation = Nation.KO;
         static String role = "USER";
         static Gender enumGender = Gender.MALE;
-        static String stringGender = enumGender.getDescription();
-        static String patchStringGender = Gender.FEMALE.getDescription();
+        static Gender patchEnumGender = Gender.FEMALE;
+        static List<String> interests = new ArrayList<>(List.of("하이킹", "전시회", "즉흥형"));
+        static List<String> patchInterests = new ArrayList<>(List.of("서핑", "사진 촬영", "계획형"));
         static LocalDateTime createdAt = LocalDateTime.now();
         static LocalDateTime lastModifiedAt = LocalDateTime.now();
         @Getter
@@ -74,8 +75,9 @@ public class StubData {
                     .address(address)
                     .introduction(introduction)
                     .nation(nation)
-                    .gender(stringGender)
+                    .gender(enumGender)
                     .role(role)
+                    .interests(interests)
                     .build();
         }
 
@@ -86,7 +88,7 @@ public class StubData {
                     .nickname(nickname)
                     .address(address)
                     .introduction(introduction)
-                    .gender(stringGender)
+                    .gender(enumGender)
                     .nation(nation)
                     .role(role)
                     .build();
@@ -99,7 +101,7 @@ public class StubData {
                     .nickname(nickname)
                     .address(address)
                     .introduction(introduction)
-                    .gender(stringGender)
+                    .gender(enumGender)
                     .nation(nation)
                     .role(role)
                     .build();
@@ -112,14 +114,14 @@ public class StubData {
                     .nickname(nickname)
                     .address(address)
                     .introduction(introduction)
-                    .gender(stringGender)
+                    .gender(enumGender)
                     .nation(nation)
                     .role(role)
                     .build();
         }
 
-        public static SignUp getFailedSignUpDtoByGender(String failedGender) {
-            return SignUp.builder()
+        public static MockGenderFailSingUp getFailedSignUpDtoByGender(String failedGender) {
+            return MockGenderFailSingUp.builder()
                     .email(email)
                     .password(password)
                     .nickname(nickname)
@@ -128,6 +130,7 @@ public class StubData {
                     .gender(failedGender)
                     .nation(nation)
                     .role(role)
+                    .interests(interests)
                     .build();
         }
 
@@ -183,7 +186,7 @@ public class StubData {
                     .address(address)
                     .nation(nation)
                     .introduction(introduction)
-                    .gender(stringGender)
+                    .gender(enumGender)
                     .image(image)
                     .role(role)
                     .createdAt(createdAt)
@@ -196,9 +199,10 @@ public class StubData {
                     .password("patch" + password)
                     .nickname("patch" + nickname)
                     .address("patch" + address)
-                    .nation("patch" + nation)
-                    .gender(patchStringGender)
+                    .nation(Nation.JP)
+                    .gender(patchEnumGender)
                     .introduction("patch" + introduction)
+                    .interests(patchInterests)
                     .build();
         }
 
@@ -230,6 +234,22 @@ public class StubData {
                     .nickname(nickname)
                     .image(image)
                     .build();
+        }
+
+        @Getter
+        @Builder
+        @AllArgsConstructor
+        @NoArgsConstructor(access = AccessLevel.PROTECTED)
+        public static class MockGenderFailSingUp {
+            private String email;
+            private String password;
+            private String nickname;
+            private String gender;
+            private Nation nation;
+            private String address;
+            private String introduction;
+            private String role;
+            private List<String> interests;
         }
     }
 
@@ -349,6 +369,7 @@ public class StubData {
                     .contents("patch" + contents)
                     .location("patch" + location)
                     .tags(List.of("patch" + tags.get(0)))
+                    .removeImageUrls(List.of())
                     .build();
         }
 
@@ -471,17 +492,17 @@ public class StubData {
                 }
 
                 @Override
-                public byte[] getBytes() throws IOException {
+                public byte[] getBytes() {
                     return "File content".getBytes();
                 }
 
                 @Override
-                public InputStream getInputStream() throws IOException {
+                public InputStream getInputStream() {
                     return new ByteArrayInputStream("File content".getBytes());
                 }
 
                 @Override
-                public void transferTo(File dest) throws IOException, IllegalStateException {
+                public void transferTo(File dest) throws IllegalStateException {
 
                 }
             };

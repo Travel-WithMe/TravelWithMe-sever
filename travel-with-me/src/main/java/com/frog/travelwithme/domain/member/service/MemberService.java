@@ -2,6 +2,7 @@ package com.frog.travelwithme.domain.member.service;
 
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
+import com.frog.travelwithme.domain.member.entity.Interest;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.mapper.MemberMapper;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
@@ -22,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -54,17 +57,23 @@ public class MemberService {
 
     private final FileUploadService fileUploadService;
 
+    private final InterestService interestService;
+
     @Value("${spring.mail.auth-code-expiration-millis}")
     private long authCodeExpirationMillis;
 
     public MemberDto.Response signUp(MemberDto.SignUp signUpDto, MultipartFile multipartFile) {
         verifiedRole(signUpDto.getRole());
-        String imageUrl = fileUploadService.upload(multipartFile, PROFILEIMAGE);
-        Member member = memberMapper.toEntity(signUpDto, imageUrl);
+        this.checkDuplicatedEmail(signUpDto.getEmail());
+        List<Interest> interests = interestService
+                .findInterests(Optional.ofNullable(signUpDto.getInterests()).orElse(Collections.emptyList()));
+        Member member = memberMapper.toEntity(signUpDto);
         member.setOauthStatus(NORMAL);
-        this.checkDuplicatedEmail(member.getEmail());
         member.passwordEncoding(passwordEncoder);
+        member.changeInterests(interests);
+
         Member saveMember = memberRepository.save(member);
+        this.uploadAndAndChangeImage(multipartFile, saveMember);
 
         return memberMapper.toDto(saveMember);
     }
@@ -86,6 +95,9 @@ public class MemberService {
     public MemberDto.Response updateMember(MemberDto.Patch patchDto, String email) {
         Member findMember = this.findMember(email);
         findMember.updateMemberData(patchDto);
+        List<Interest> newInterests = interestService
+                .findInterests(Optional.ofNullable(patchDto.getInterests()).orElse(Collections.emptyList()));
+        findMember.changeInterests(newInterests);
 
         return memberMapper.toDto(findMember);
     }
@@ -107,11 +119,21 @@ public class MemberService {
 
     public MemberDto.Response changeProfileImage(@RequestPart MultipartFile file, String email) {
         Member findMember = this.findMember(email);
-        fileUploadService.remove(findMember.getImage());
+        String beforeImageUrl = findMember.getImage();
         String newImageUrl = fileUploadService.upload(file, PROFILEIMAGE);
         findMember.changeImage(newImageUrl);
+        fileUploadService.remove(beforeImageUrl);
 
         return memberMapper.toDto(findMember);
+    }
+
+    public MemberDto.Response removeProfileImage(String email) {
+        Member member = this.findMember(email);
+        String currentProfileImageUrl = member.getImage();
+        member.changeImage("defaultImageUrl");
+        fileUploadService.remove(currentProfileImageUrl);
+
+        return memberMapper.toDto(member);
     }
 
     @Transactional(readOnly = true)
@@ -153,6 +175,14 @@ public class MemberService {
         } catch (NoSuchAlgorithmException e) {
             log.debug("MemberService.createCode() exception occur");
             throw new BusinessLogicException(ExceptionCode.NO_SUCH_ALGORITHM);
+        }
+    }
+
+    private void uploadAndAndChangeImage(MultipartFile multipartFile,
+                                         Member saveMember) {
+        if (multipartFile != null) {
+            String imageUrl = fileUploadService.upload(multipartFile, PROFILEIMAGE);
+            saveMember.changeImage(imageUrl);
         }
     }
 

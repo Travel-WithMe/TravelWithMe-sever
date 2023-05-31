@@ -1,5 +1,7 @@
 package com.frog.travelwithme.domain.member.controller.dto;
 
+import com.frog.travelwithme.global.enums.EnumCollection.Gender;
+import com.frog.travelwithme.global.enums.EnumCollection.Nation;
 import com.frog.travelwithme.global.validation.CustomAnnotationCollection.CustomEmail;
 import com.frog.travelwithme.global.validation.CustomAnnotationCollection.Password;
 import lombok.*;
@@ -7,6 +9,7 @@ import lombok.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 작성자: 김찬빈
@@ -29,14 +32,15 @@ public class MemberDto {
         @NotBlank(message = "이름은 공백이 아니어야 합니다.")
         private String nickname;
         @NotNull(message = "성별을 선택해야 합니다.")
-        private String gender;
+        private Gender gender;
         @NotNull(message = "국가를 선택해야 합니다.")
-        private String nation;
+        private Nation nation;
         @NotNull(message = "주소를 입력해야 합니다.")
         private String address;
         private String introduction;
         @NotBlank(message = "권한은 공백이 아니어야 합니다.")
         private String role;
+        private List<String> interests;
     }
 
     @Getter
@@ -46,10 +50,11 @@ public class MemberDto {
     public static class Patch {
         private String password;
         private String nickname;
-        private String gender;
-        private String nation;
+        private Gender gender;
+        private Nation nation;
         private String address;
         private String introduction;
+        private List<String> interests;
     }
 
     @Getter
@@ -60,12 +65,13 @@ public class MemberDto {
         private Long id;
         private String email;
         private String nickname;
-        private String nation;
-        private String gender;
+        private Nation nation;
+        private Gender gender;
         private String image;
         private String address;
         private String introduction;
         private String role;
+        private List<String> interests;
         private LocalDateTime createdAt;
         private LocalDateTime lastModifiedAt;
     }

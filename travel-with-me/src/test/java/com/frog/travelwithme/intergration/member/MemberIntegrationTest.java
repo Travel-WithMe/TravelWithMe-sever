@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.PutObjectResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.Response;
+import com.frog.travelwithme.domain.member.service.InterestService;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
 import com.frog.travelwithme.global.redis.RedisService;
@@ -74,6 +75,9 @@ class MemberIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private AmazonS3 amazonS3;
+
+    @Autowired
+    private InterestService interestService;
 
     @BeforeEach
     void beforeEach() throws MalformedURLException {
@@ -329,7 +333,8 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         MockMultipartFile file = new MockMultipartFile("file",
                 "originalFilename", "text/plain", "fileContent".getBytes());
         memberService.deleteMember(EMAIL);
-        MemberDto.SignUp failedSignUpDto = StubData.MockMember.getFailedSignUpDtoByGender("중성");
+        StubData.MockMember.MockGenderFailSingUp failedSignUpDto =
+                StubData.MockMember.getFailedSignUpDtoByGender("중성");
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")

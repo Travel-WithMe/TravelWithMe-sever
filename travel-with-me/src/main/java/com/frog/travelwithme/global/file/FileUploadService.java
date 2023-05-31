@@ -27,18 +27,20 @@ public class FileUploadService {
     private final AmazonS3ResourceStorage amazonS3ResourceStorage;
 
     public String upload(MultipartFile multipartFile, AwsS3Path awsS3Path) {
-        verifiedExenstion(multipartFile);
+        this.verifiedExenstion(multipartFile);
         return amazonS3ResourceStorage.uploadImage(multipartFile, awsS3Path);
     }
 
     public void remove(String imageUrl) {
-        amazonS3ResourceStorage.removeImage(imageUrl);
+        if (!imageUrl.equals("defaultImageUrl")) {
+            amazonS3ResourceStorage.removeImage(imageUrl);
+        }
     }
 
     private void verifiedExenstion(MultipartFile multipartFile) {
         String contentType = multipartFile.getContentType();
 
-        if (isNotJpegOrPngByContentType(contentType)) {
+        if (this.isNotJpegOrPngByContentType(contentType)) {
             log.debug("FileUploadService.verifiedExenstion exception occur contentType : {}",
                     multipartFile.getContentType());
             throw new BusinessLogicException(ExceptionCode.EXTENSION_IS_NOT_VALID);

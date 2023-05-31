@@ -29,6 +29,7 @@ public enum ExceptionCode {
     MATCHING_CANCEL_NOT_ALLOWED(404, "동행매칭 취소가 불가능한 상태입니다."),
     MATCHING_APPROVE_NOT_ALLOWED(404, "동행매칭 승인이 불가능한 상태입니다."),
     MATCHING_REJECT_NOT_ALLOWED(404, "동행매칭 거절이 불가능한 상태입니다."),
+    MEMBER_INTEREST_NOT_FOUND(404, "회원 관심사를 찾을 수 없습니다."),
 
     // Feed
     FEED_NOT_FOUND(404, "피드가 존재하지 않습니다."),
@@ -36,6 +37,7 @@ public enum ExceptionCode {
     ALREADY_LIKED_FEED(409, "이미 좋아요한 피드입니다."),
     UNABLE_TO_CANCEL_LIKE(409, "좋아요를 하지 않았기 때문에 좋아요를 취소할 수 없습니다. "),
     UNABLE_TO_DELETE_FEED_IMAGE(404, "피드 이미지는 최소 한 장 이상 존재해야 합니다."),
+    UNABLE_TO_SAVE_FEED(404, "피드를 생성할 수 없습니다."),
 
     // Security, JWT
     NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),

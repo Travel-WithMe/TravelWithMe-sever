@@ -62,6 +62,14 @@ public class MemberController {
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
 
+    @DeleteMapping("/images")
+    public ResponseEntity deleteProfileImage(@AuthenticationPrincipal CustomUserDetails user) {
+        String email = user.getEmail();
+        MemberDto.Response response = memberService.removeProfileImage(email);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+    }
+
     @DeleteMapping
     public ResponseEntity deleteMember(@AuthenticationPrincipal CustomUserDetails user) {
         String email = user.getEmail();
