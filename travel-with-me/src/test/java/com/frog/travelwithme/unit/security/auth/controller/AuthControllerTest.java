@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -60,7 +59,7 @@ class AuthControllerTest {
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/reissue")
                 .build().toUri().toString(); // /auth/reissue
-        ResultActions actions = ResultActionsUtils.patchRequest(mvc, uri);
+        ResultActions actions = ResultActionsUtils.patchRequestWithCsrf(mvc, uri);
 
         // then
         actions
@@ -77,7 +76,7 @@ class AuthControllerTest {
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/logout")
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.patchRequest(mvc, uri);
+        ResultActions actions = ResultActionsUtils.patchRequestWithCsrf(mvc, uri);
 
         // then
         actions
