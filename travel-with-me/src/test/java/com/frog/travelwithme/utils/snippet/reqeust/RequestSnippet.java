@@ -9,6 +9,8 @@ import java.util.List;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.payload.JsonFieldType.NULL;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -58,6 +60,13 @@ public class RequestSnippet {
                         fieldWithPath("travelEndDate").type(STRING).description("동행모집 여행 종료날짜")
                 )
         );
+    }
+
+    public static Snippet getRecruitmentPathVariableSnippet() {
+        return pathParameters(
+                List.of(
+                        parameterWithName("recruitment-id").description("접근하려는 동행 모집글 인덱스")
+                ));
     }
 
     public static Snippet getMailVerificiationRequestSnippet() {
@@ -155,6 +164,26 @@ public class RequestSnippet {
         return requestParameters(
                 parameterWithName("tagName").description("조회하려는 태그 이름"),
                 parameterWithName("size").description("조회하려는 태그 개수").optional()
+        );
+    }
+
+    public static Snippet getPostCommentSnippet() {
+        return requestFields(
+                List.of(
+                        fieldWithPath("depth").type(NUMBER).description("댓글:1, 대댓글:2"),
+                        fieldWithPath("content").type(STRING).description("댓글,대댓글 내용"),
+                        fieldWithPath("taggedMemberId").type(NULL).description("언급(태그)된 회원 아이디")
+                )
+        );
+    }
+
+    public static Snippet getPostCommentWithTaggedSnippet() {
+        return requestFields(
+                List.of(
+                        fieldWithPath("depth").type(NUMBER).description("댓글:1, 대댓글:2"),
+                        fieldWithPath("content").type(STRING).description("댓글,대댓글 내용"),
+                        fieldWithPath("taggedMemberId").type(NUMBER).description("언급(태그)된 회원 아이디")
+                )
         );
     }
 }

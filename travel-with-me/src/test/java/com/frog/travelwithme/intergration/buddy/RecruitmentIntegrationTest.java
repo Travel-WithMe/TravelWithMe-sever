@@ -3,7 +3,7 @@ package com.frog.travelwithme.intergration.buddy;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
-import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.buddy.repository.MatchingRepository;
@@ -113,26 +113,27 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
-        RecruitmentDto.Post postDto = StubData.MockRecruitment.getPostRecruitment();
+        BuddyDto.RecruitmentPost recruitmentPostDto = StubData.MockRecruitment.getPostRecruitment();
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
+        String uri = UriComponentsBuilder.newInstance()
+                .path(BASE_URL)
                 .build().toUri().toString();
-        String json = ObjectMapperUtils.objectToJsonString(postDto);
+        String json = ObjectMapperUtils.objectToJsonString(recruitmentPostDto);
 
         ResultActions actions = ResultActionsUtils.postRequestWithContentAndToken(
                 mvc, uri, json, accessToken, encryptedRefreshToken
         );
 
         // then
-        RecruitmentDto.PostResponse response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
-                RecruitmentDto.PostResponse.class);
+        BuddyDto.RecruitmentPostResponse response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
+                BuddyDto.RecruitmentPostResponse.class);
         assertThat(response.getId()).isNotNull();
-        assertThat(response.getTitle()).isEqualTo(postDto.getTitle());
-        assertThat(response.getContent()).isEqualTo(postDto.getContent());
-        assertThat(response.getTravelNationality()).isEqualTo(postDto.getTravelNationality());
-        assertThat(response.getTravelStartDate()).isEqualTo(postDto.getTravelStartDate());
-        assertThat(response.getTravelEndDate()).isEqualTo(postDto.getTravelEndDate());
+        assertThat(response.getTitle()).isEqualTo(recruitmentPostDto.getTitle());
+        assertThat(response.getContent()).isEqualTo(recruitmentPostDto.getContent());
+        assertThat(response.getTravelNationality()).isEqualTo(recruitmentPostDto.getTravelNationality());
+        assertThat(response.getTravelStartDate()).isEqualTo(recruitmentPostDto.getTravelStartDate());
+        assertThat(response.getTravelEndDate()).isEqualTo(recruitmentPostDto.getTravelEndDate());
         assertThat(response.getViewCount()).isEqualTo(0L);
         assertThat(response.getCommentCount()).isEqualTo(0L);
         assertThat(response.getNickname()).isEqualTo("nickname");
@@ -158,7 +159,7 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
-        RecruitmentDto.Patch patchDto = StubData.MockRecruitment.getPatchRecruitment();
+        BuddyDto.RecruitmentPatch recruitmentPatchDto = StubData.MockRecruitment.getPatchRecruitment();
 
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         Member writer = memberRepository.findByEmail(EMAIL).get();
@@ -167,24 +168,25 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
         Long recruitmentId = savedRecruitment.getId();
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + recruitmentId)
+        String uri = UriComponentsBuilder.newInstance()
+                .path(BASE_URL + "/" + recruitmentId)
                 .build().toUri().toString();
-        String json = ObjectMapperUtils.objectToJsonString(patchDto);
+        String json = ObjectMapperUtils.objectToJsonString(recruitmentPatchDto);
 
         ResultActions actions = ResultActionsUtils.patchRequestWithContentAndToken(
                 mvc, uri, json, accessToken, encryptedRefreshToken
         );
 
         // then
-        RecruitmentDto.PatchResponse response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
-                RecruitmentDto.PatchResponse.class);
+        BuddyDto.RecruitmentPatchResponse response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
+                BuddyDto.RecruitmentPatchResponse.class);
 
         assertThat(response.getId()).isEqualTo(savedRecruitment.getId());
-        assertThat(response.getTitle()).isEqualTo(patchDto.getTitle());
-        assertThat(response.getContent()).isEqualTo(patchDto.getContent());
-        assertThat(response.getTravelNationality()).isEqualTo(patchDto.getTravelNationality());
-        assertThat(response.getTravelStartDate()).isEqualTo(patchDto.getTravelStartDate());
-        assertThat(response.getTravelEndDate()).isEqualTo(patchDto.getTravelEndDate());
+        assertThat(response.getTitle()).isEqualTo(recruitmentPatchDto.getTitle());
+        assertThat(response.getContent()).isEqualTo(recruitmentPatchDto.getContent());
+        assertThat(response.getTravelNationality()).isEqualTo(recruitmentPatchDto.getTravelNationality());
+        assertThat(response.getTravelStartDate()).isEqualTo(recruitmentPatchDto.getTravelStartDate());
+        assertThat(response.getTravelEndDate()).isEqualTo(recruitmentPatchDto.getTravelEndDate());
 
         actions
                 .andExpect(status().isOk())

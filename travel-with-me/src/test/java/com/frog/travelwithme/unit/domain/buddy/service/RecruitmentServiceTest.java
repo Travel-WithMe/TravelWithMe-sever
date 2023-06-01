@@ -1,6 +1,6 @@
 package com.frog.travelwithme.unit.domain.buddy.service;
 
-import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.buddy.mapper.RecruitmentMapper;
@@ -56,19 +56,19 @@ class RecruitmentServiceTest {
     void recruitmentServiceTest1() {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
-        RecruitmentDto.Post postDto = StubData.MockRecruitment.getPostRecruitment();
-        RecruitmentDto.PostResponse responseRecruitmentDto = StubData.MockRecruitment.getPostResponseRecruitment();
+        BuddyDto.RecruitmentPost recruitmentPostDto = StubData.MockRecruitment.getPostRecruitment();
+        BuddyDto.RecruitmentPostResponse responseRecruitmentDto = StubData.MockRecruitment.getPostResponseRecruitment();
         Member member = StubData.MockMember.getMember();
         recruitment.addMember(member);
 
         when(memberService.findMember(member.getEmail())).thenReturn(member);
-        when(recruitmentMapper.toEntity(postDto)).thenReturn(recruitment);
+        when(recruitmentMapper.toEntity(recruitmentPostDto)).thenReturn(recruitment);
         when(recruitmentRepository.save(recruitment)).thenReturn(recruitment);
-        when(recruitmentMapper.toPostResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);
+        when(recruitmentMapper.toPostResponseBuddyDto(recruitment)).thenReturn(responseRecruitmentDto);
 
         //when
-        RecruitmentDto.PostResponse responseRecruitment = recruitmentService.createRecruitmentByEmail(
-                postDto, member.getEmail()
+        BuddyDto.RecruitmentPostResponse responseRecruitment = recruitmentService.createRecruitmentByEmail(
+                recruitmentPostDto, member.getEmail()
         );
 
         //then
@@ -85,17 +85,17 @@ class RecruitmentServiceTest {
     void recruitmentServiceTest2() {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
-        RecruitmentDto.Patch patchDto = StubData.MockRecruitment.getPatchRecruitment();
-        RecruitmentDto.PatchResponse responseRecruitmentDto = StubData.MockRecruitment.getPatchResponseRecruitment();
+        BuddyDto.RecruitmentPatch recruitmentPatchDto = StubData.MockRecruitment.getPatchRecruitment();
+        BuddyDto.RecruitmentPatchResponse responseRecruitmentDto = StubData.MockRecruitment.getPatchResponseRecruitment();
         Member member = StubData.MockMember.getMember();
         recruitment.addMember(member);
 
         when(recruitmentRepository.findById(recruitment.getId())).thenReturn(Optional.of(recruitment));
-        when(recruitmentMapper.toPatchResponseRecruitmentDto(recruitment)).thenReturn(responseRecruitmentDto);
+        when(recruitmentMapper.toPatchResponseBuddyDto(recruitment)).thenReturn(responseRecruitmentDto);
 
         //when
-        RecruitmentDto.PatchResponse responseRecruitment = recruitmentService.updateRecruitmentByEmail(
-                patchDto, recruitment.getId(), member.getEmail()
+        BuddyDto.RecruitmentPatchResponse responseRecruitment = recruitmentService.updateRecruitmentByEmail(
+                recruitmentPatchDto, recruitment.getId(), member.getEmail()
         );
 
         //then
@@ -113,7 +113,7 @@ class RecruitmentServiceTest {
     void recruitmentServiceTest3() {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
-        RecruitmentDto.Patch patchDto = StubData.MockRecruitment.getPatchRecruitment();
+        BuddyDto.RecruitmentPatch recruitmentPatchDto = StubData.MockRecruitment.getPatchRecruitment();
         StubData.MockRecruitment.getPatchResponseRecruitment();
         Member writer = StubData.MockMember.getMemberByEmailAndNickname("dhfif718@naver.com", "LJH");
         Member user = StubData.MockMember.getMemberByEmailAndNickname("kkd718@gmail.com", "KCB");
@@ -125,7 +125,7 @@ class RecruitmentServiceTest {
         //then
         assertThatThrownBy(
                 () -> recruitmentService.updateRecruitmentByEmail(
-                        patchDto,
+                        recruitmentPatchDto,
                         recruitment.getId(),
                         user.getEmail()
                 )
@@ -172,14 +172,14 @@ class RecruitmentServiceTest {
     void recruitmentServiceTest6() {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
-        RecruitmentDto.MatchingMemberResponse matchingMemberResponse1
+        BuddyDto.MatchingMemberResponse matchingMemberResponse1
                 = StubData.MockMember.getMatchingRequestMemberResponse(1L, "dhfif718");
-        RecruitmentDto.MatchingMemberResponse matchingMemberResponse2
+        BuddyDto.MatchingMemberResponse matchingMemberResponse2
                 = StubData.MockMember.getMatchingRequestMemberResponse(2L, "kkd718");
-        RecruitmentDto.MatchingMemberResponse matchingMemberResponse3
+        BuddyDto.MatchingMemberResponse matchingMemberResponse3
                 = StubData.MockMember.getMatchingRequestMemberResponse(3L, "리젤란");
 
-        List<RecruitmentDto.MatchingMemberResponse> matchingMemberResponseList = new ArrayList<>();
+        List<BuddyDto.MatchingMemberResponse> matchingMemberResponseList = new ArrayList<>();
         matchingMemberResponseList.add(matchingMemberResponse1);
         matchingMemberResponseList.add(matchingMemberResponse2);
         matchingMemberResponseList.add(matchingMemberResponse3);
@@ -201,11 +201,11 @@ class RecruitmentServiceTest {
 
         when(recruitmentRepository.findRecruitmentByIdAndMatchingStatus(recruitmentId, MatchingStatus.REQUEST))
                 .thenReturn(Optional.of(recruitment));
-        when(recruitmentMapper.toMatchingMemberResponseRecruitmentDtoList(recruitment.getMatchingList()))
+        when(recruitmentMapper.toMatchingMemberResponseBuddyDtoList(recruitment.getMatchingList()))
                 .thenReturn(matchingMemberResponseList);
 
         //when
-         List<RecruitmentDto.MatchingMemberResponse> response
+         List<BuddyDto.MatchingMemberResponse> response
                  = recruitmentService.getMatchingRequestMemberList(recruitmentId);
 
         //then
@@ -255,14 +255,14 @@ class RecruitmentServiceTest {
     void recruitmentServiceTest9() {
         //given
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
-        RecruitmentDto.MatchingMemberResponse matchingMemberResponse1
+        BuddyDto.MatchingMemberResponse matchingMemberResponse1
                 = StubData.MockMember.getMatchingRequestMemberResponse(1L, "dhfif718");
-        RecruitmentDto.MatchingMemberResponse matchingMemberResponse2
+        BuddyDto.MatchingMemberResponse matchingMemberResponse2
                 = StubData.MockMember.getMatchingRequestMemberResponse(2L, "kkd718");
-        RecruitmentDto.MatchingMemberResponse matchingMemberResponse3
+        BuddyDto.MatchingMemberResponse matchingMemberResponse3
                 = StubData.MockMember.getMatchingRequestMemberResponse(3L, "리젤란");
 
-        List<RecruitmentDto.MatchingMemberResponse> matchingMemberResponseList = new ArrayList<>();
+        List<BuddyDto.MatchingMemberResponse> matchingMemberResponseList = new ArrayList<>();
         matchingMemberResponseList.add(matchingMemberResponse1);
         matchingMemberResponseList.add(matchingMemberResponse2);
         matchingMemberResponseList.add(matchingMemberResponse3);
@@ -284,11 +284,11 @@ class RecruitmentServiceTest {
 
         when(recruitmentRepository.findRecruitmentByIdAndMatchingStatus(recruitmentId, MatchingStatus.APPROVE))
                 .thenReturn(Optional.of(recruitment));
-        when(recruitmentMapper.toMatchingMemberResponseRecruitmentDtoList(recruitment.getMatchingList()))
+        when(recruitmentMapper.toMatchingMemberResponseBuddyDtoList(recruitment.getMatchingList()))
                 .thenReturn(matchingMemberResponseList);
 
         //when
-        List<RecruitmentDto.MatchingMemberResponse> response
+        List<BuddyDto.MatchingMemberResponse> response
                 = recruitmentService.getMatchingApprovedMemberList(recruitmentId);
 
         //then
