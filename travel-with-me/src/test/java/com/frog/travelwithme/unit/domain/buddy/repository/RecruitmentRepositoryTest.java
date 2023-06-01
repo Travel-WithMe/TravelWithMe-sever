@@ -1,6 +1,5 @@
 package com.frog.travelwithme.unit.domain.buddy.repository;
 
-import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
 import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.repository.MatchingRepository;
 import com.frog.travelwithme.domain.member.entity.Member;
@@ -8,7 +7,6 @@ import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.buddy.repository.RecruitmentRepository;
 import com.frog.travelwithme.global.config.QuerydslConfig;
-import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.utils.StubData;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -21,10 +19,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.persistence.EntityManager;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.frog.travelwithme.global.enums.EnumCollection.*;
 import static org.assertj.core.api.Assertions.*;

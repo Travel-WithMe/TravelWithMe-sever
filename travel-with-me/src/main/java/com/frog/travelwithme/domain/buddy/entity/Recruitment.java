@@ -2,7 +2,7 @@ package com.frog.travelwithme.domain.buddy.entity;
 
 import com.frog.travelwithme.domain.common.BaseTimeEntity;
 import com.frog.travelwithme.domain.common.DeletionEntity;
-import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.global.enums.EnumCollection.RecruitmentStatus;
 import com.frog.travelwithme.global.utils.TimeUtils;
@@ -94,16 +94,16 @@ public class Recruitment extends BaseTimeEntity {
         return this;
     }
 
-    public Recruitment updateBuddyRecruitment(RecruitmentDto.Patch patch) {
-        Optional.ofNullable(patch.getTitle())
+    public Recruitment updateBuddyRecruitment(BuddyDto.RecruitmentPatch recruitmentPatch) {
+        Optional.ofNullable(recruitmentPatch.getTitle())
                 .ifPresent(title -> this.title = title);
-        Optional.ofNullable(patch.getContent())
+        Optional.ofNullable(recruitmentPatch.getContent())
                 .ifPresent(content -> this.content = content);
-        Optional.ofNullable(patch.getTravelNationality())
+        Optional.ofNullable(recruitmentPatch.getTravelNationality())
                 .ifPresent(travelNationality -> this.travelNationality = travelNationality);
-        Optional.ofNullable(patch.getTravelStartDate())
+        Optional.ofNullable(recruitmentPatch.getTravelStartDate())
                 .ifPresent(travelStartDate -> this.travelStartDate = TimeUtils.stringToLocalDateTime(travelStartDate));
-        Optional.ofNullable(patch.getTravelEndDate())
+        Optional.ofNullable(recruitmentPatch.getTravelEndDate())
                 .ifPresent(travelEndDate -> this.travelEndDate = TimeUtils.stringToLocalDateTime(travelEndDate));
         return this;
     }

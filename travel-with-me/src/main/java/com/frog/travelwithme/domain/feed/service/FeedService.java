@@ -57,6 +57,11 @@ public class FeedService {
     }
 
     @Transactional(readOnly = true)
+    public Feed findFeedById(Long feedId) {
+        return this.findFeed(feedId);
+    }
+
+    @Transactional(readOnly = true)
     public Response findFeedById(String email, long feedId) {
         return feedMapper.toResponse(this.findFeed(feedId), email);
     }
