@@ -1,18 +1,22 @@
 package com.frog.travelwithme.utils;
 
-import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+
 import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
+import com.frog.travelwithme.domain.buddy.entity.RecruitmentComment;
+import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentDto;
 import com.frog.travelwithme.domain.common.DeletionEntity;
+import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Member;
+import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
+import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.enums.EnumCollection.Gender;
-import com.frog.travelwithme.global.enums.EnumCollection.Nation;
 import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDto;
@@ -25,10 +29,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.frog.travelwithme.global.enums.EnumCollection.*;
 
 /**
  * StubData 설명: 테스트를 위한 Stub data 관리
@@ -227,9 +234,9 @@ public class StubData {
             return EmailVerificationResult.from(authResult);
         }
 
-        public static RecruitmentDto.MatchingMemberResponse getMatchingRequestMemberResponse(Long id,
+        public static BuddyDto.MatchingMemberResponse getMatchingRequestMemberResponse(Long id,
                                                                                              String nickname) {
-            return RecruitmentDto.MatchingMemberResponse.builder()
+            return BuddyDto.MatchingMemberResponse.builder()
                     .id(id)
                     .nickname(nickname)
                     .image(image)
@@ -280,13 +287,13 @@ public class StubData {
                     .travelNationality(travelNationality)
                     .travelStartDate(TimeUtils.stringToLocalDateTime(travelStartDate))
                     .travelEndDate(TimeUtils.stringToLocalDateTime(travelEndDate))
-                    .recruitmentStatus(EnumCollection.RecruitmentStatus.IN_PROGRESS)
+                    .recruitmentStatus(RecruitmentStatus.IN_PROGRESS)
                     .deletionEntity(new DeletionEntity())
                     .build();
         }
 
-        public static RecruitmentDto.Post getPostRecruitment() {
-            return RecruitmentDto.Post.builder()
+        public static BuddyDto.RecruitmentPost getPostRecruitment() {
+            return BuddyDto.RecruitmentPost.builder()
                     .title(title)
                     .content(content)
                     .travelNationality(travelNationality)
@@ -295,8 +302,8 @@ public class StubData {
                     .build();
         }
 
-        public static RecruitmentDto.Patch getPatchRecruitment() {
-            return RecruitmentDto.Patch.builder()
+        public static BuddyDto.RecruitmentPatch getPatchRecruitment() {
+            return BuddyDto.RecruitmentPatch.builder()
                     .title(patchTitle)
                     .content(patchContent)
                     .travelNationality(patchTravelNationality)
@@ -305,8 +312,8 @@ public class StubData {
                     .build();
         }
 
-        public static RecruitmentDto.PostResponse getPostResponseRecruitment() {
-            return RecruitmentDto.PostResponse.builder()
+        public static BuddyDto.RecruitmentPostResponse getPostResponseRecruitment() {
+            return BuddyDto.RecruitmentPostResponse.builder()
                     .title(title)
                     .content(content)
                     .travelNationality(travelNationality)
@@ -319,8 +326,8 @@ public class StubData {
                     .build();
         }
 
-        public static RecruitmentDto.PatchResponse getPatchResponseRecruitment() {
-            return RecruitmentDto.PatchResponse.builder()
+        public static BuddyDto.RecruitmentPatchResponse getPatchResponseRecruitment() {
+            return BuddyDto.RecruitmentPatchResponse.builder()
                     .title(patchTitle)
                     .content(patchContent)
                     .travelNationality(patchTravelNationality)
@@ -334,7 +341,7 @@ public class StubData {
     public static class MockMatching {
         public static Matching getMatching() {
             return Matching.builder()
-                    .status(EnumCollection.MatchingStatus.REQUEST)
+                    .status(MatchingStatus.REQUEST)
                     .build();
         }
     }
@@ -506,6 +513,49 @@ public class StubData {
 
                 }
             };
+        }
+    }
+
+    public static class MockComment {
+        static final Long commentId = 1L;
+        static final Integer depth = 1;
+        static final Long groupId = 1L;
+        static final Long taggedMemberId = 1L;
+        static final String content = "답글 입니다.";
+
+        public static RecruitmentComment getRecruitmentComment() {
+            return RecruitmentComment.builder()
+                    .depth(depth)
+                    .groupId(groupId)
+                    .taggedMemberId(taggedMemberId)
+                    .content(content)
+                    .deletionEntity(new DeletionEntity())
+                    .build();
+        }
+
+        public static RecruitmentCommentDto getRecruitmentCommentDto() {
+            return RecruitmentCommentDto.builder()
+                    .taggedMemberId(taggedMemberId)
+                    .depth(depth)
+                    .content(content)
+                    .build();
+        }
+
+        public static CommentDto.Post getPostDtoByDepthAndTaggedMemberId(Integer depth, Long taggedMemberId) {
+            return CommentDto.Post.builder()
+                    .depth(depth)
+                    .content(content)
+                    .taggedMemberId(taggedMemberId)
+                    .build();
+        }
+
+        public static CommentDto.PostResponse getPostResponseDto() {
+            return CommentDto.PostResponse.builder()
+                    .commentId(commentId)
+                    .depth(depth)
+                    .content(content)
+                    .taggedMemberId(taggedMemberId)
+                    .build();
         }
     }
 }

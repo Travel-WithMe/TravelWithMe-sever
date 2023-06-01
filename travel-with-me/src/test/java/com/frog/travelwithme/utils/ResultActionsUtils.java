@@ -403,10 +403,10 @@ public class ResultActionsUtils {
 
     public static ResultActions getRequestWithTokenAndPathVariable(MockMvc mockMvc,
                                                                    String url,
-                                                                   long feedId,
+                                                                   long id,
                                                                    String accessToken,
                                                                    String encryptedRefreshToken) throws Exception {
-        return mockMvc.perform(RestDocumentationRequestBuilders.get(url, feedId)
+        return mockMvc.perform(RestDocumentationRequestBuilders.get(url, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
                         .header(REFRESH_HEADER, encryptedRefreshToken))
@@ -415,10 +415,10 @@ public class ResultActionsUtils {
 
     public static ResultActions deleteRequestWithTokenAndPathVariable(MockMvc mockMvc,
                                                                       String url,
-                                                                      long feedId,
+                                                                      long id,
                                                                       String accessToken,
                                                                       String encryptedRefreshToken) throws Exception {
-        return mockMvc.perform(RestDocumentationRequestBuilders.delete(url, feedId)
+        return mockMvc.perform(RestDocumentationRequestBuilders.delete(url, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
                         .header(REFRESH_HEADER, encryptedRefreshToken))
@@ -427,11 +427,26 @@ public class ResultActionsUtils {
 
     public static ResultActions postRequestWithTokenAndPathvariable(MockMvc mockMvc,
                                                                     String url,
-                                                                    long feedId,
+                                                                    long id,
                                                                     String accessToken,
                                                                     String encryptedRefreshToken) throws Exception {
-        return mockMvc.perform(RestDocumentationRequestBuilders.post(url, feedId)
+        return mockMvc.perform(RestDocumentationRequestBuilders.post(url, id)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions postRequestWithTokenAndPathVariableAndContent(MockMvc mockMvc,
+                                                                              String url,
+                                                                              long id,
+                                                                              String json,
+                                                                              String accessToken,
+                                                                              String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(RestDocumentationRequestBuilders.post(url, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
                         .header(REFRESH_HEADER, encryptedRefreshToken))

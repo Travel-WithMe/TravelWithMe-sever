@@ -1,11 +1,8 @@
 package com.frog.travelwithme.domain.buddy.repository;
 
 
-import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
-import com.frog.travelwithme.global.enums.EnumCollection;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.frog.travelwithme.global.enums.EnumCollection.*;
