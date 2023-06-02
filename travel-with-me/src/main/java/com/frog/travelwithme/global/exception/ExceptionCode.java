@@ -17,6 +17,8 @@ public enum ExceptionCode {
     UNABLE_TO_SEND_EMAIL(404, "메일을 전송할 수 없습니다."),
     NO_SUCH_ALGORITHM(400, "인증 번호 생성을 위한 알고리즘을 찾을 수 없습니다."),
     INVALID_GENDER(404, "성별이 올바르지 않습니다. 성별은 남자, 여자만 허용됩니다."),
+    FOLLOW_NOT_FOUND(404, "팔로우를 하지 않았습니다."),
+    FOLLOW_EXISTS(404, "이미 팔로우 했습니다."),
     TAGGED_MEMBER_NOT_FOUND(404, "태그된 회원을 찾을 수 없습니다."),
 
     // Recruitment & Buddy
