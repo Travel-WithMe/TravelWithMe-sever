@@ -8,6 +8,7 @@ import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.ResultActionsUtils;
 import com.frog.travelwithme.utils.StubData;
+import com.frog.travelwithme.utils.StubData.MockMember;
 import com.frog.travelwithme.utils.security.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,13 +47,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class MemberControllerTest {
     private final String BASE_URL = "/members";
 
-    private static final String EMAIL_KEY = StubData.MockMember.getEmailKey();
+    private static final String EMAIL_KEY = MockMember.getEmailKey();
 
-    private static final String EMAIL_VALUE = StubData.MockMember.getEmail();
+    private static final String EMAIL_VALUE = MockMember.getEmail();
 
-    private static final String CODE_KEY = StubData.MockMember.getCodeKey();
+    private static final String CODE_KEY = MockMember.getCodeKey();
 
-    private static final String CODE_VALUE = StubData.MockMember.getCodeValue();
+    private static final String CODE_VALUE = MockMember.getCodeValue();
 
     @Autowired
     private MockMvc mvc;
@@ -69,8 +70,8 @@ class MemberControllerTest {
     void memberControllerTest1() throws Exception {
         // given
         MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
-        MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
-        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        MemberDto.SignUp signUpDto = MockMember.getSignUpDto();
+        MemberDto.Response response = MockMember.getResponseDto();
         given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
@@ -90,8 +91,8 @@ class MemberControllerTest {
     @WithMockCustomUser(email = "email", password = "password")
     void memberControllerTest2() throws Exception {
         // given
-        MemberDto.Patch patchDto = StubData.MockMember.getPatchDto();
-        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        MemberDto.Patch patchDto = MockMember.getPatchDto();
+        MemberDto.Response response = MockMember.getResponseDto();
         given(memberService.updateMember(any(MemberDto.Patch.class), any())).willReturn(response);
 
         // when
@@ -110,11 +111,11 @@ class MemberControllerTest {
     @WithMockCustomUser
     void memberControllerTest3() throws Exception {
         // given
-        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        MemberDto.Response response = MockMember.getResponseDto();
         given(memberService.findMemberByEmail(any())).willReturn(response);
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + MockMember.getEmail())
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.getRequestWithUserDetails(mvc, uri, userDetails);
 
@@ -146,8 +147,8 @@ class MemberControllerTest {
     void memberControllerTest5() throws Exception {
         // given
         String failedEmail = "ema..il@gmail.com";
-        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByEmail(failedEmail);
-        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByEmail(failedEmail);
+        MemberDto.Response response = MockMember.getResponseDto();
         given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
@@ -167,8 +168,8 @@ class MemberControllerTest {
     void memberControllerTest6() throws Exception {
         // given
         String failedEmail = ".email@gmail.com";
-        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByEmail(failedEmail);
-        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByEmail(failedEmail);
+        MemberDto.Response response = MockMember.getResponseDto();
         given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
@@ -188,8 +189,8 @@ class MemberControllerTest {
     void memberControllerTest7() throws Exception {
         // given
         String failedEmail = "email.@gmail.com";
-        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByEmail(failedEmail);
-        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByEmail(failedEmail);
+        MemberDto.Response response = MockMember.getResponseDto();
         given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
@@ -209,8 +210,8 @@ class MemberControllerTest {
     void memberControllerTest8() throws Exception {
         // given
         String failedEmail = "emailemailemailemailemailemailemailemailemailemailemailemailemail@gmail.com";
-        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByEmail(failedEmail);
-        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByEmail(failedEmail);
+        MemberDto.Response response = MockMember.getResponseDto();
         given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
@@ -230,8 +231,8 @@ class MemberControllerTest {
     void memberControllerTest9() throws Exception {
         // given
         String failedPassword = "password1!";
-        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByPassword(failedPassword);
-        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByPassword(failedPassword);
+        MemberDto.Response response = MockMember.getResponseDto();
         given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
@@ -251,8 +252,8 @@ class MemberControllerTest {
     void memberControllerTest10() throws Exception {
         // given
         String failedPassword = "PASSWORD1!";
-        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByPassword(failedPassword);
-        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByPassword(failedPassword);
+        MemberDto.Response response = MockMember.getResponseDto();
         given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
@@ -272,8 +273,8 @@ class MemberControllerTest {
     void memberControllerTest11() throws Exception {
         // given
         String failedPassword = "Password!";
-        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByPassword(failedPassword);
-        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByPassword(failedPassword);
+        MemberDto.Response response = MockMember.getResponseDto();
         given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
@@ -293,8 +294,8 @@ class MemberControllerTest {
     void memberControllerTest12() throws Exception {
         // given
         String failedPassword = "Password1";
-        MemberDto.SignUp signUpDto = StubData.MockMember.getFailedSignUpDtoByPassword(failedPassword);
-        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByPassword(failedPassword);
+        MemberDto.Response response = MockMember.getResponseDto();
         given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
 
         // when
@@ -336,7 +337,7 @@ class MemberControllerTest {
         emailPapram.add(EMAIL_KEY, EMAIL_VALUE);
         codePapram.add(CODE_KEY, CODE_VALUE);
         EmailVerificationResult response =
-                StubData.MockMember.getEmailVerificationResult(true);
+                MockMember.getEmailVerificationResult(true);
         given(memberService.verifiedCode(Mockito.any(), Mockito.any())).willReturn(response);
 
         // when
@@ -354,13 +355,45 @@ class MemberControllerTest {
     void memberControllerTest15() throws Exception {
         // given
         MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
-        MemberDto.Response response = StubData.MockMember.getResponseDto();
+        MemberDto.Response response = MockMember.getResponseDto();
         given(memberService.changeProfileImage(any(MultipartFile.class), any())).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/images")
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.patchRequestWithUserDetailsAndMultiPart(mvc, uri, userDetails, file);
+
+        // then
+        actions.andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("회원 팔로우")
+    @WithMockCustomUser
+    void memberControllerTest16() throws Exception {
+        // given
+        doNothing().when(memberService).follow(any(), any());
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/follow/" + MockMember.getEmail())
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.postRequestWithUserDetails(mvc, uri, userDetails);
+
+        // then
+        actions.andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("회원 언팔로우")
+    @WithMockCustomUser
+    void memberControllerTest17() throws Exception {
+        // given
+        doNothing().when(memberService).unfollow(any(), any());
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/unfollow/" + MockMember.getEmail())
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.deleteRequestWithUserDetails(mvc, uri, userDetails);
 
         // then
         actions.andExpect(status().isOk());
