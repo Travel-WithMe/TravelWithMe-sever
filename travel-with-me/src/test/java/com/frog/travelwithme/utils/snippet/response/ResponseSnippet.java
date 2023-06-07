@@ -26,8 +26,11 @@ public class ResponseSnippet {
                         fieldWithPath("data.gender").type(JsonFieldType.STRING).description("회원 성별 (남자/여자)"),
                         fieldWithPath("data.interests").type(JsonFieldType.ARRAY).description("회원 관심사"),
                         fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("회원 가입일"),
-                        fieldWithPath("data.lastModifiedAt").type(JsonFieldType.STRING).description("회원 정보 수정일")
-                )
+                        fieldWithPath("data.lastModifiedAt").type(JsonFieldType.STRING).description("회원 정보 수정일"),
+                        fieldWithPath("data.isFollow").type(JsonFieldType.BOOLEAN).description("해당 회원 팔로우 여부"),
+                        fieldWithPath("data.followerCount").type(JsonFieldType.NUMBER).description("회원의 팔로워 수"),
+                        fieldWithPath("data.followingCount").type(JsonFieldType.NUMBER).description("회원의 팔로잉 수")
+                        )
         );
     }
 

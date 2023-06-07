@@ -186,4 +186,18 @@ public class RequestSnippet {
                 )
         );
     }
+
+    public static Snippet getFollowingPathVariableSnippet() {
+        return pathParameters(
+                List.of(
+                        parameterWithName("following-id").description("팔로잉할 회원의 인덱스")
+                ));
+    }
+
+    public static Snippet getEmailPathVariableSnippet() {
+        return pathParameters(
+                List.of(
+                        parameterWithName("email").description("조회할 회원의 이메일")
+                ));
+    }
 }
