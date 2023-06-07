@@ -164,16 +164,16 @@ public class MemberService {
         return EmailVerificationResult.from(authResult);
     }
 
-    public void follow(String followerEmail, Long follweeId) {
+    public void follow(String followerEmail, String followeeEmail) {
         Member follower = this.findMember(followerEmail);
-        Member following = this.findMember(follweeId);
-        followService.follow(follower, following);
+        Member followee = this.findMember(followeeEmail);
+        followService.follow(follower, followee);
     }
 
-    public void unfollow(String followerEmail, Long follweeId) {
+    public void unfollow(String followerEmail, String followeeEmail) {
         Member follower = this.findMember(followerEmail);
-        Member following = this.findMember(follweeId);
-        followService.unfollow(follower, following);
+        Member followee = this.findMember(followeeEmail);
+        followService.unfollow(follower, followee);
     }
 
     private void checkDuplicatedEmail(String email) {
