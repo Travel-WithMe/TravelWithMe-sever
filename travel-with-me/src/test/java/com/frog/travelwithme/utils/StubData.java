@@ -12,6 +12,7 @@ import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
+import com.frog.travelwithme.domain.member.entity.Follow;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
@@ -240,6 +241,13 @@ public class StubData {
                     .id(id)
                     .nickname(nickname)
                     .image(image)
+                    .build();
+        }
+
+        public static Follow getFollow(Member follower, Member followee) {
+            return Follow.builder()
+                    .follower(follower)
+                    .following(followee)
                     .build();
         }
 
