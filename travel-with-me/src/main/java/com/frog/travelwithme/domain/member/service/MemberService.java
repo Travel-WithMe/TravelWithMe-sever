@@ -59,6 +59,8 @@ public class MemberService {
 
     private final InterestService interestService;
 
+    private final FollowService followService;
+
     @Value("${spring.mail.auth-code-expiration-millis}")
     private long authCodeExpirationMillis;
 
@@ -123,7 +125,6 @@ public class MemberService {
         String newImageUrl = fileUploadService.upload(file, PROFILEIMAGE);
         findMember.changeImage(newImageUrl);
         fileUploadService.remove(beforeImageUrl);
-
         return memberMapper.toDto(findMember);
     }
 
@@ -155,6 +156,26 @@ public class MemberService {
                 authCode, Duration.ofMillis(this.authCodeExpirationMillis));
     }
 
+    public EmailVerificationResult verifiedCode(String email, String authCode) {
+        this.checkDuplicatedEmail(email);
+        String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
+        boolean authResult = redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode);
+
+        return EmailVerificationResult.from(authResult);
+    }
+
+    public void follow(String followerEmail, Long follweeId) {
+        Member follower = this.findMember(followerEmail);
+        Member following = this.findMember(follweeId);
+        followService.follow(follower, following);
+    }
+
+    public void unfollow(String followerEmail, Long follweeId) {
+        Member follower = this.findMember(followerEmail);
+        Member following = this.findMember(follweeId);
+        followService.unfollow(follower, following);
+    }
+
     private void checkDuplicatedEmail(String email) {
         Optional<Member> member = memberRepository.findByEmail(email);
         if (member.isPresent()) {
@@ -184,13 +205,5 @@ public class MemberService {
             String imageUrl = fileUploadService.upload(multipartFile, PROFILEIMAGE);
             saveMember.changeImage(imageUrl);
         }
-    }
-
-    public EmailVerificationResult verifiedCode(String email, String authCode) {
-        this.checkDuplicatedEmail(email);
-        String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
-        boolean authResult = redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode);
-
-        return EmailVerificationResult.from(authResult);
     }
 }

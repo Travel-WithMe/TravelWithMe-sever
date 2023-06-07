@@ -140,17 +140,4 @@ public class Member extends BaseTimeEntity {
             this.followings.remove(follow);
         }
     }
-
-    public void addFollower(Follow follow) {
-        if (this.followers == null) {
-            this.followers = new ArrayList<>();
-        }
-        this.followers.add(follow);
-    }
-
-    public void removeFollower(Follow follow) {
-        if (!Collections.isEmpty(this.followers)) {
-            this.followers.remove(follow);
-        }
-    }
 }

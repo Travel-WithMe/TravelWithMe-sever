@@ -33,5 +33,7 @@ public interface MemberMapper {
 
     @Mapping(target = "interests", expression = "java(member.getInterests().stream()" +
             ".map(interest -> interest.getType()).collect(java.util.stream.Collectors.toList()))")
+    @Mapping(target = "followerCount", expression = "java(Long.valueOf(member.getFollowers().size()))")
+    @Mapping(target = "followingCount", expression = "java(Long.valueOf(member.getFollowings().size()))")
     MemberDto.Response toDto(Member member);
 }
