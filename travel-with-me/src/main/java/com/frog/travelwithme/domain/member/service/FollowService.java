@@ -32,9 +32,7 @@ public class FollowService {
                 .follower(follower)
                 .following(following)
                 .build();
-        Follow saveFollow = followRepository.save(follow);
-        follower.addFollowing(saveFollow);
-        following.addFollower(saveFollow);
+        followRepository.save(follow);
     }
 
     public void unfollow(Member follower, Member following) {
