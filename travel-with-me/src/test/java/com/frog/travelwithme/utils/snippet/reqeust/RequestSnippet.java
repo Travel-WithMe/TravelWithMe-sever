@@ -190,7 +190,7 @@ public class RequestSnippet {
     public static Snippet getFollowingPathVariableSnippet() {
         return pathParameters(
                 List.of(
-                        parameterWithName("following-id").description("팔로잉할 회원의 인덱스")
+                        parameterWithName("followee-email").description("팔로잉할 회원의 이메일")
                 ));
     }
 

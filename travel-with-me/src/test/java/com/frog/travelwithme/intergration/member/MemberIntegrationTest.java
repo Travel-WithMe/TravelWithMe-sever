@@ -372,8 +372,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
     void memberIntegrationTest10() throws Exception {
         // given
         Member member = MockMember.getMemberByEmailAndNickname("mock@gmail.com", "mock1");
-        Member saveMember = memberRepository.save(member);
-        Long followingId = saveMember.getId();
+        Member followee = memberRepository.save(member);
         CustomUserDetails userDetails = MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
         String accessToken = tokenDto.getAccessToken();
@@ -381,9 +380,9 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
         // when
-        String uri = BASE_URL + "/follow/{following-id}";
+        String uri = BASE_URL + "/follow/{followee-email}";
         ResultActions actions = ResultActionsUtils.postRequestWithTokenAndPathVariable(
-                mvc, uri, followingId, accessToken, encryptedRefreshToken);
+                mvc, uri, followee.getEmail(), accessToken, encryptedRefreshToken);
 
         // then
         String response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, String.class);
@@ -402,7 +401,6 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         Member follower = memberRepository.findByEmail(MockMember.getEmail()).get();
         Member member = MockMember.getMemberByEmailAndNickname("mock@gmail.com", "mock1");
         Member followee = memberRepository.save(member);
-        Long followingId = followee.getId();
         Follow follow = MockMember.getFollow(follower, followee);
         followRepository.save(follow);
         CustomUserDetails userDetails = MockMember.getUserDetails();
@@ -412,9 +410,9 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
         // when
-        String uri = BASE_URL + "/unfollow/{following-id}";
+        String uri = BASE_URL + "/unfollow/{followee-email}";
         ResultActions actions = ResultActionsUtils.deleteRequestWithTokenAndPathVariable(
-                mvc, uri, followingId, accessToken, encryptedRefreshToken);
+                mvc, uri, followee.getEmail(), accessToken, encryptedRefreshToken);
 
         // then
         String response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, String.class);

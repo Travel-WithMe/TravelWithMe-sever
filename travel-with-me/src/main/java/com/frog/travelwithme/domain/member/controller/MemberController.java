@@ -95,20 +95,20 @@ public class MemberController {
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
 
-    @PostMapping("/follow/{following-id}")
-    public ResponseEntity follow(@PathVariable("following-id") Long followingId,
+    @PostMapping("/follow/{followee-email}")
+    public ResponseEntity follow(@PathVariable("followee-email") String followeeEmail,
                                  @AuthenticationPrincipal CustomUserDetails user) {
         String followerEmail = user.getEmail();
-        memberService.follow(followerEmail, followingId);
+        memberService.follow(followerEmail, followeeEmail);
 
         return new ResponseEntity<>(new SingleResponseDto<>(SUCCESS_MEMBER_FOLLOW.getDescription()), HttpStatus.OK);
     }
 
-    @DeleteMapping("/unfollow/{following-id}")
-    public ResponseEntity unfollow(@PathVariable("following-id") Long followingId,
+    @DeleteMapping("/unfollow/{followee-email}")
+    public ResponseEntity unfollow(@PathVariable("followee-email") String followeeEmail,
                                    @AuthenticationPrincipal CustomUserDetails user) {
         String followerEmail = user.getEmail();
-        memberService.unfollow(followerEmail, followingId);
+        memberService.unfollow(followerEmail, followeeEmail);
 
         return new ResponseEntity<>(new SingleResponseDto<>(SUCCESS_MEMBER_UNFOLLOW.getDescription()), HttpStatus.OK);
     }
