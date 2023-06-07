@@ -16,6 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
+import static com.frog.travelwithme.global.enums.EnumCollection.ResponseBody.SUCCESS_MEMBER_FOLLOW;
+import static com.frog.travelwithme.global.enums.EnumCollection.ResponseBody.SUCCESS_MEMBER_UNFOLLOW;
+
 /**
  * 작성자: 김찬빈
  * 버전 정보: 1.0.0
@@ -36,9 +39,8 @@ public class MemberController {
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity getMember(@AuthenticationPrincipal CustomUserDetails user) {
-        String email = user.getEmail();
+    @GetMapping("/{email}")
+    public ResponseEntity getMember(@PathVariable("email") @Valid @CustomEmail String email) {
         MemberDto.Response response = memberService.findMemberByEmail(email);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
@@ -91,5 +93,23 @@ public class MemberController {
         EmailVerificationResult response = memberService.verifiedCode(email, authCode);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+    }
+
+    @PostMapping("/follow/{following-id}")
+    public ResponseEntity follow(@PathVariable("following-id") Long followingId,
+                                 @AuthenticationPrincipal CustomUserDetails user) {
+        String followerEmail = user.getEmail();
+        memberService.follow(followerEmail, followingId);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(SUCCESS_MEMBER_FOLLOW.getDescription()), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/unfollow/{following-id}")
+    public ResponseEntity unfollow(@PathVariable("following-id") Long followingId,
+                                   @AuthenticationPrincipal CustomUserDetails user) {
+        String followerEmail = user.getEmail();
+        memberService.unfollow(followerEmail, followingId);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(SUCCESS_MEMBER_UNFOLLOW.getDescription()), HttpStatus.OK);
     }
 }
