@@ -27,7 +27,7 @@ public class MatchingCustomRepositoryImpl implements MatchingCustomRepository {
 
 
     @Override
-    public Optional<Matching> findMatchingByIdJoinRecruitment(Long id) {
+    public Optional<Matching> findMatchingById(Long id) {
         return Optional.ofNullable(queryFactory
                 .from(matching)
                 .select(matching)

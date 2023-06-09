@@ -1,5 +1,8 @@
 package com.frog.travelwithme.intergration.buddy;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.buddy.repository.MatchingRepository;
@@ -27,14 +30,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Optional;
 
 import static com.frog.travelwithme.global.enums.EnumCollection.*;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getResponsePreProcessor;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,12 +72,20 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private MemberService memberService;
 
+    @Autowired
+    private AmazonS3 amazonS3;
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach() throws MalformedURLException {
+        // Mock S3 시나리오 설정
+        given(amazonS3.putObject(any(PutObjectRequest.class))).willReturn(new PutObjectResult());
+        given(amazonS3.getUrl(any(), any())).willReturn(
+                new URL(StubData.CustomMultipartFile.getIMAGE_URL()));
+
         // e_ma-il@gmail.com 회원 추가
         MemberDto.SignUp memberOne = StubData.MockMember.getSignUpDto();
-        memberService.signUp(memberOne);
+        MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
+        memberService.signUp(memberOne, file);
         EMAIL = memberOne.getEmail();
 
         // dhfif718@gmail.com 회원 추가
@@ -77,12 +93,12 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
                 "dhfif718@gmail.com",
                 "이재혁"
         );
-        memberService.signUp(memberTwo);
+        memberService.signUp(memberTwo, file);
         EMAIL_OTHER = memberTwo.getEmail();
     }
 
     @Test
-    @DisplayName("동행 매칭신청 신규)")
+    @DisplayName("동행 매칭신청 (신규)")
     void matchingIntegrationTest1() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
@@ -107,7 +123,10 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
 
         // then
         String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
+        Optional<Recruitment> findRecruitment = recruitmentRepository.findById(recruitmentId);
+
         assertThat(response).isEqualTo(ResponseBody.NEW_REQUEST_MATCHING.getDescription());
+        assertThat(findRecruitment.get().getMatchingList().get(0).getStatus()).isEqualTo(MatchingStatus.REQUEST);
         actions
                 .andExpect(status().isOk())
                 .andDo(document("post-matching-request-new",
@@ -118,7 +137,7 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("동행 매칭신청 재신청")
+    @DisplayName("동행 매칭신청 (재신청)")
     void matchingIntegrationTest2() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
@@ -149,7 +168,10 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
 
         // then
         String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
+        Optional<Recruitment> findRecruitment = recruitmentRepository.findById(recruitmentId);
+
         assertThat(response).isEqualTo(ResponseBody.RETRY_REQUEST_MATCHING.getDescription());
+        assertThat(findRecruitment.get().getMatchingList().get(0).getStatus()).isEqualTo(MatchingStatus.REQUEST);
         actions
                 .andExpect(status().isOk())
                 .andDo(document("post-matching-request-retry",
@@ -451,7 +473,7 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
         String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
         assertThat(response).isEqualTo(ResponseBody.APPROVE_MATCHING.getDescription());
 
-        Optional<Matching> findMatching = matchingRepository.findMatchingByIdJoinRecruitment(matchingId);
+        Optional<Matching> findMatching = matchingRepository.findMatchingById(matchingId);
         assertThat(findMatching.get().getStatus()).isEqualTo(MatchingStatus.APPROVE);
         actions
                 .andDo(document("post-matching-approve",
@@ -631,7 +653,7 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
 
         // then
         String response = ObjectMapperUtils.actionsSingleToString(actions, MessageResponseDto.class);
-        Optional<Matching> findMatching = matchingRepository.findMatchingByIdJoinRecruitment(matchingId);
+        Optional<Matching> findMatching = matchingRepository.findMatchingById(matchingId);
 
         assertThat(response).isEqualTo(ResponseBody.REJECT_MATCHING.getDescription());
         assertThat(findMatching.get().getStatus()).isEqualTo(MatchingStatus.REJECT);

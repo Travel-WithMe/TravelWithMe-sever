@@ -17,22 +17,32 @@ public enum ExceptionCode {
     UNABLE_TO_SEND_EMAIL(404, "메일을 전송할 수 없습니다."),
     NO_SUCH_ALGORITHM(400, "인증 번호 생성을 위한 알고리즘을 찾을 수 없습니다."),
     INVALID_GENDER(404, "성별이 올바르지 않습니다. 성별은 남자, 여자만 허용됩니다."),
+    TAGGED_MEMBER_NOT_FOUND(404, "태그된 회원을 찾을 수 없습니다."),
 
     // Recruitment & Buddy
     RECRUITMENT_NOT_FOUND(404, "해당 동행모집글을 찾을 수 없습니다."),
     RECRUITMENT_WRITER_NOT_MATCH(404, "해당 동행모집글을 작성한 유저가 아닙니다."),
     RECRUITMENT_EXPIRED(404, "동행모집이 종료된 게시글 입니다."),
+    RECRUITMENT_MATCHING_REQUEST_MEMBER_NOT_FOUND(404, "찾을 수 없는 동행모집글이거나 매칭신청 중인 회원이 없습니다."),
     MATCHING_NOT_FOUND(404, "해당 동행 매칭신청 내역을 찾을 수 없습니다."),
     MATCHING_RECRUITMENT_IS_DIFFERENT(404, "동행매칭 요청의 모집글과 모집글이 상이한 요청을하였습니다."),
     MATCHING_REQUEST_NOT_ALLOWED(404, "동행매칭 요청이 불가능한 상태입니다."),
     MATCHING_CANCEL_NOT_ALLOWED(404, "동행매칭 취소가 불가능한 상태입니다."),
     MATCHING_APPROVE_NOT_ALLOWED(404, "동행매칭 승인이 불가능한 상태입니다."),
     MATCHING_REJECT_NOT_ALLOWED(404, "동행매칭 거절이 불가능한 상태입니다."),
+    MEMBER_INTEREST_NOT_FOUND(404, "회원 관심사를 찾을 수 없습니다."),
 
     // Feed
     FEED_NOT_FOUND(404, "피드가 존재하지 않습니다."),
     FEED_WRITER_NOT_MATCH(404, "해당 피드를 작성한 유저가 아닙니다."),
     ALREADY_LIKED_FEED(409, "이미 좋아요한 피드입니다."),
+    UNABLE_TO_CANCEL_LIKE(409, "좋아요를 하지 않았기 때문에 좋아요를 취소할 수 없습니다. "),
+    UNABLE_TO_DELETE_FEED_IMAGE(404, "피드 이미지는 최소 한 장 이상 존재해야 합니다."),
+    UNABLE_TO_SAVE_FEED(404, "피드를 생성할 수 없습니다."),
+
+    // Comment
+    COMMENT_NOT_FOUND(404, "댓글이 존재하지 않습니다."),
+    COMMENT_CREATE_IMPOSSIBLE(404, "댓글을 생성할 수 없습니다."),
 
     // Security, JWT
     NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),
@@ -59,7 +69,13 @@ public enum ExceptionCode {
     STRING_IS_NOT_LOCAL_DATE_FORMAT(404,"문자열 데이터 형식이 LocalDate 형식이 아닙니다."),
     STRING_IS_NOT_LOCAL_DATE_TIME_FORMAT(404,"문자열 데이터 형식이 LocalDateTime 형식이 아닙니다."),
     UNABLE_TO_CONVERT_LIST_TO_STRING(404, "리스트를 문자열로 변환할 수 없습니다."),
-    UNABLE_TO_CONVERT_STRING_TO_LIST(404, "문자열을 리스트로 변환할 수 없습니다.");
+    UNABLE_TO_CONVERT_STRING_TO_LIST(404, "문자열을 리스트로 변환할 수 없습니다."),
+
+    // File
+    FILE_DOES_NOT_EXIST(404, "파일이 존재하지 않습니다."),
+    FAIL_TO_UPLOAD_FILE(404, "파일을 업로드할 수 없습니다."),
+    EXTENSION_IS_NOT_VALID(404, "파일의 확장자는 jpeg 또는 png만 업로드 가능합니다."),
+    FAILED_TO_DELETE_FILE(404, "파일을 삭제할 수 없습니다.");
 
     @Getter
     private final int status;

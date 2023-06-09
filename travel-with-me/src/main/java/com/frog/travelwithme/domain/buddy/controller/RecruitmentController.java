@@ -1,6 +1,6 @@
 package com.frog.travelwithme.domain.buddy.controller;
 
-import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddy.service.RecruitmentService;
 import com.frog.travelwithme.global.dto.SingleResponseDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 /**
  * 작성자: 이재혁
@@ -31,11 +32,11 @@ public class RecruitmentController {
     private final RecruitmentService recruitmentService;
 
     @PostMapping
-    public ResponseEntity postRecruitment(@Valid @RequestBody RecruitmentDto.Post postDto,
+    public ResponseEntity postRecruitment(@Valid @RequestBody BuddyDto.RecruitmentPost postDto,
                                           @AuthenticationPrincipal CustomUserDetails user) {
 
         String email = user.getEmail();
-        RecruitmentDto.PostResponse response = recruitmentService.createRecruitmentByEmail(
+        BuddyDto.RecruitmentPostResponse response = recruitmentService.createRecruitmentByEmail(
                 postDto, email
         );
 
@@ -44,11 +45,11 @@ public class RecruitmentController {
 
     @PatchMapping("/{recruitment-id}")
     public ResponseEntity patchRecruitment(@Positive @PathVariable("recruitment-id") Long recruitmentId,
-                                           @RequestBody RecruitmentDto.Patch patchDto,
+                                           @RequestBody BuddyDto.RecruitmentPatch patchDto,
                                            @AuthenticationPrincipal CustomUserDetails user) {
 
         String email = user.getEmail();
-        RecruitmentDto.PatchResponse response = recruitmentService.updateRecruitmentByEmail(
+        BuddyDto.RecruitmentPatchResponse response = recruitmentService.updateRecruitmentByEmail(
                 patchDto, recruitmentId, email
         );
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
@@ -73,5 +74,21 @@ public class RecruitmentController {
 //
 //        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
 //    }
+
+    @GetMapping("/{recruitment-id}/matching-request-member-list")
+    public ResponseEntity getMatchingRequestMemberList(@Positive @PathVariable("recruitment-id") Long recruitmentsId) {
+
+        List<BuddyDto.MatchingMemberResponse> response =
+                recruitmentService.getMatchingRequestMemberList(recruitmentsId);
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+    }
+
+    @GetMapping("/{recruitment-id}/matching-approved-member-list")
+    public ResponseEntity getMatchingApprovedMemberList(@Positive @PathVariable("recruitment-id") Long recruitmentsId) {
+
+        List<BuddyDto.MatchingMemberResponse> response =
+                recruitmentService.getMatchingApprovedMemberList(recruitmentsId);
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+    }
 
 }

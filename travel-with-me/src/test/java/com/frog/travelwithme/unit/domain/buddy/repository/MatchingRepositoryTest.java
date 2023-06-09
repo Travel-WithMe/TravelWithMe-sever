@@ -1,4 +1,4 @@
-package com.frog.travelwithme.unit.domain.buddy.repository;
+package com.frog.travelwithme.unit.domain.recruitment.repository;
 
 import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
@@ -227,7 +227,7 @@ class MatchingRepositoryTest {
         log.info("1차 캐시 clear");
 
         // when
-        Matching findMatching = matchingRepository.findMatchingByIdJoinRecruitment(saveMatching.getId()).get();
+        Matching findMatching = matchingRepository.findMatchingById(saveMatching.getId()).get();
         Recruitment findRecruitment = findMatching.getRecruitment();
 
         // then

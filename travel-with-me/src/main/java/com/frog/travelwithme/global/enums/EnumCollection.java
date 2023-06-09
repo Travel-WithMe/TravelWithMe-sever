@@ -1,8 +1,7 @@
 package com.frog.travelwithme.global.enums;
 
-import com.frog.travelwithme.global.exception.BusinessLogicException;
-import com.frog.travelwithme.global.exception.ExceptionCode;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -121,35 +120,33 @@ public class EnumCollection {
         }
     }
 
-    @AllArgsConstructor
-    public enum Gender implements EnumType {
-        MALE("남자"),
-        FEMALE("여자");
+    public enum Gender {
+        MALE,
+        FEMALE
+    }
 
-        private final String description;
+    public enum AwsS3Path {
+        PROFILEIMAGE("/profileimage"),
+        FEEDIMAGE("/feedimage");
 
-        public static Gender from(String sub) {
-            if (sub == null) {
-                return null;
-            }
-            for (Gender gender : Gender.values()) {
-                if (gender.getDescription().equals(sub)) {
-                    return gender;
-                }
-            }
-            log.debug("EnumCollection.Gender.from() exception occur sub: {}", sub);
-            throw new BusinessLogicException(ExceptionCode.INVALID_GENDER);
-        }
+        @Getter
+        private final String path;
 
-        @Override
-        public String getName() {
-            return this.name();
-        }
-
-        @Override
-        public String getDescription() {
-            return this.description;
+        AwsS3Path(String path) {
+            this.path = path;
         }
     }
 
+    public enum Nation {
+        CH,
+        FR,
+        IT,
+        JP,
+        KO,
+        SP,
+        TH,
+        TU,
+        UK,
+        US
+    }
 }

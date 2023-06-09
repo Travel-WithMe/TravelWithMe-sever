@@ -3,7 +3,7 @@ package com.frog.travelwithme.domain.buddy.service;
 
 
 import com.frog.travelwithme.domain.buddy.mapper.RecruitmentMapper;
-import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.buddy.repository.RecruitmentRepository;
 import com.frog.travelwithme.domain.member.entity.Member;
@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static com.frog.travelwithme.global.enums.EnumCollection.*;
 
@@ -35,22 +37,22 @@ public class RecruitmentService {
 
     private final RecruitmentMapper recruitmentMapper;
 
-    public RecruitmentDto.PostResponse createRecruitmentByEmail(RecruitmentDto.Post postDto,
-                                                                String email) {
+    public BuddyDto.RecruitmentPostResponse createRecruitmentByEmail(BuddyDto.RecruitmentPost recruitmentPostDto,
+                                                                     String email) {
 
         Member findMember = memberService.findMember(email);
-        return this.createRecruitment(postDto, findMember);
+        return this.createRecruitment(recruitmentPostDto, findMember);
     }
 
-    public RecruitmentDto.PatchResponse updateRecruitmentByEmail(RecruitmentDto.Patch patchDto,
-                                                                 Long recruitmentId,
-                                                                 String email) {
-        Recruitment findRecruitment = this.findRecruitmentAndCheckEqualWriterAndUser(recruitmentId, email);
-        return this.updateRecruitment(patchDto, findRecruitment);
+    public BuddyDto.RecruitmentPatchResponse updateRecruitmentByEmail(BuddyDto.RecruitmentPatch recruitmentPatchDto,
+                                                                      Long recruitmentId,
+                                                                      String email) {
+        Recruitment findRecruitment = this.findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(recruitmentId, email);
+        return this.updateRecruitment(recruitmentPatchDto, findRecruitment);
     }
 
     public void deleteRecruitmentByEmail(Long recruitmentId, String email) {
-        Recruitment findRecruitment = this.findRecruitmentAndCheckEqualWriterAndUser(recruitmentId, email);
+        Recruitment findRecruitment = this.findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(recruitmentId, email);
         this.deleteRecruitment(findRecruitment);
     }
 
@@ -64,6 +66,18 @@ public class RecruitmentService {
 //        return null;
 //    }
 
+    public List<BuddyDto.MatchingMemberResponse> getMatchingRequestMemberList(Long recruitmentId) {
+        Recruitment recruitment =
+                this.findRecruitmentByIdAndMatchingStatusAndCheckExpired(recruitmentId, MatchingStatus.REQUEST);
+        return recruitmentMapper.toMatchingMemberResponseBuddyDtoList(recruitment.getMatchingList());
+    }
+
+    public List<BuddyDto.MatchingMemberResponse> getMatchingApprovedMemberList(Long recruitmentId) {
+        Recruitment recruitment =
+                this.findRecruitmentByIdAndMatchingStatusAndCheckExpired(recruitmentId, MatchingStatus.APPROVE);
+        return recruitmentMapper.toMatchingMemberResponseBuddyDtoList(recruitment.getMatchingList());
+    }
+
     @Transactional(readOnly = true)
     public Recruitment findRecruitmentById(Long id) {
         return recruitmentRepository.findById(id).orElseThrow(() -> {
@@ -73,11 +87,20 @@ public class RecruitmentService {
     }
 
     @Transactional(readOnly = true)
-    public Recruitment findRecruitmentByIdJoinMember(Long id) {
-        return recruitmentRepository.findRecruitmentById(id).orElseThrow(() -> {
-            log.debug("RecruitmentService.findRecruitmentByIdJoinMember exception occur id: {}", id);
-            throw new BusinessLogicException(ExceptionCode.RECRUITMENT_NOT_FOUND);
-        });
+    public Recruitment findRecruitmentByIdAndMatchingStatusAndCheckExpired(Long id, MatchingStatus status) {
+        Recruitment recruitment = this.findRecruitmentByIdAndMatchingStatus(id, status);
+        this.checkExpiredRecruitment(recruitment);
+        return recruitment;
+    }
+
+    @Transactional(readOnly = true)
+    public Recruitment findRecruitmentByIdAndMatchingStatus(Long id, MatchingStatus status) {
+        return recruitmentRepository.findRecruitmentByIdAndMatchingStatus(id, status)
+                .orElseThrow(() -> {
+                    log.debug("RecruitmentService.findRecruitmentByIdAndMatchingStatus exception occur " +
+                            "id: {}, MatchingStatus: {}", id, status);
+                    throw new BusinessLogicException(ExceptionCode.RECRUITMENT_MATCHING_REQUEST_MEMBER_NOT_FOUND);
+                });
     }
 
     @Transactional(readOnly = true)
@@ -88,9 +111,10 @@ public class RecruitmentService {
     }
 
     @Transactional(readOnly = true)
-    public Recruitment findRecruitmentAndCheckEqualWriterAndUser(Long recruitmentId, String email) {
+    public Recruitment findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(Long recruitmentId, String email) {
         Recruitment recruitment = this.findRecruitmentById(recruitmentId);
         this.checkEqualWriterAndUser(recruitment, email);
+        this.checkExpiredRecruitment(recruitment);
         return recruitment;
     }
 
@@ -112,16 +136,18 @@ public class RecruitmentService {
         }
     }
 
-    private RecruitmentDto.PostResponse createRecruitment(RecruitmentDto.Post postDto, Member member) {
+    private BuddyDto.RecruitmentPostResponse createRecruitment(BuddyDto.RecruitmentPost recruitmentPostDto,
+                                                               Member member) {
 
-        Recruitment mappedRecruitment = recruitmentMapper.toEntity(postDto).addMember(member);
-        return recruitmentMapper.toPostResponseRecruitmentDto(recruitmentRepository.save(mappedRecruitment));
+        Recruitment mappedRecruitment = recruitmentMapper.toEntity(recruitmentPostDto).addMember(member);
+        return recruitmentMapper.toPostResponseBuddyDto(recruitmentRepository.save(mappedRecruitment));
     }
 
-    private RecruitmentDto.PatchResponse updateRecruitment(RecruitmentDto.Patch patchDto, Recruitment recruitment) {
+    private BuddyDto.RecruitmentPatchResponse updateRecruitment(BuddyDto.RecruitmentPatch recruitmentPatchDto,
+                                                                Recruitment recruitment) {
 
-        Recruitment updatedRecruitment = recruitment.updateBuddyRecruitment(patchDto);
-        return recruitmentMapper.toPatchResponseRecruitmentDto(updatedRecruitment);
+        Recruitment updatedRecruitment = recruitment.updateBuddyRecruitment(recruitmentPatchDto);
+        return recruitmentMapper.toPatchResponseBuddyDto(updatedRecruitment);
     }
 
     private void deleteRecruitment(Recruitment recruitment) {

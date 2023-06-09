@@ -1,7 +1,5 @@
 package com.frog.travelwithme.domain.buddy.repository;
 
-import com.frog.travelwithme.domain.member.entity.QMember;
-import com.frog.travelwithme.domain.buddy.entity.QRecruitment;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+import static com.frog.travelwithme.domain.buddy.entity.QMatching.*;
 import static com.frog.travelwithme.domain.member.entity.QMember.*;
 import static com.frog.travelwithme.domain.buddy.entity.QRecruitment.*;
+import static com.frog.travelwithme.global.enums.EnumCollection.*;
 
 /**
  * 작성자: 이재혁
@@ -24,14 +24,18 @@ public class RecruitmentCustomRepositoryImpl implements RecruitmentCustomReposit
 
     private final JPAQueryFactory queryFactory;
 
-
     @Override
-    public Optional<Recruitment> findRecruitmentById(Long id) {
+    public Optional<Recruitment> findRecruitmentByIdAndMatchingStatus(Long id, MatchingStatus status) {
+
         return Optional.ofNullable(queryFactory
-                .from(recruitment)
                 .select(recruitment)
-                .leftJoin(recruitment.member, member).fetchJoin()
-                .where(recruitment.id.eq(id))
+                .from(recruitment)
+                .leftJoin(recruitment.matchingList, matching).fetchJoin()
+                .leftJoin(matching.member, member).fetchJoin()
+                .where(
+                        recruitment.id.eq(id),
+                        matching.status.eq(status)
+                )
                 .fetchOne());
     }
 }

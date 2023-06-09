@@ -5,6 +5,7 @@ import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.member.entity.Member;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 public interface MatchingCustomRepository {
 
-    Optional<Matching> findMatchingByIdJoinRecruitment(Long id);
+    Optional<Matching> findMatchingById(Long id);
 
     Optional<Matching> findMatchingByMemberAndRecruitment(Member member, Recruitment recruitment);
 

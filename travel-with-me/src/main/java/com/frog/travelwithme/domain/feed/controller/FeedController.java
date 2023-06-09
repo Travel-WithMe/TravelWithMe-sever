@@ -25,7 +25,7 @@ import java.util.List;
  * 작성일자: 2023/04/17
  **/
 @RestController
-@RequestMapping("/feed")
+@RequestMapping("/feeds")
 @RequiredArgsConstructor
 public class FeedController {
 
@@ -33,11 +33,10 @@ public class FeedController {
     private final TagService tagService;
 
     @PostMapping
-    public ResponseEntity postFeed(@RequestPart(value = "file") List<MultipartFile> multipartFiles,
-                                   @Valid @RequestBody FeedDto.Post postDto,
+    public ResponseEntity postFeed(@RequestPart(value = "files") List<MultipartFile> multipartFiles,
+                                   @Valid @RequestPart(value = "data") FeedDto.Post postDto,
                                    @AuthenticationPrincipal CustomUserDetails user) {
-        // TODO: MultiPartFile 로직 추가
-        FeedDto.Response response = feedService.postFeed(user.getEmail(), postDto);
+        FeedDto.Response response = feedService.postFeed(user.getEmail(), postDto, multipartFiles);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
     }
@@ -61,11 +60,10 @@ public class FeedController {
 
     @PatchMapping("/{feed-id}")
     public ResponseEntity patchFeed(@PathVariable("feed-id") Long feedId,
-                                    @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles,
-                                    @Valid @RequestBody FeedDto.Patch patchDto,
+                                    @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles,
+                                    @Valid @RequestPart(value = "data") FeedDto.Patch patchDto,
                                     @AuthenticationPrincipal CustomUserDetails user) {
-        // TODO: MultiPartFile 로직 추가
-        FeedDto.Response response = feedService.updateFeed(user.getEmail(), feedId, patchDto);
+        FeedDto.Response response = feedService.updateFeed(user.getEmail(), feedId, patchDto, multipartFiles);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }

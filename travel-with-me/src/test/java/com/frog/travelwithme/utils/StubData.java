@@ -1,14 +1,19 @@
 package com.frog.travelwithme.utils;
 
+
 import com.frog.travelwithme.domain.buddy.entity.Matching;
+import com.frog.travelwithme.domain.buddy.entity.Recruitment;
+import com.frog.travelwithme.domain.buddy.entity.RecruitmentComment;
+import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentDto;
 import com.frog.travelwithme.domain.common.DeletionEntity;
+import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Member;
-import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.enums.EnumCollection.Gender;
@@ -17,11 +22,20 @@ import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.global.utils.TimeUtils;
-import lombok.Getter;
+import lombok.*;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.frog.travelwithme.global.enums.EnumCollection.*;
 
 /**
  * StubData 설명: 테스트를 위한 Stub data 관리
@@ -40,11 +54,12 @@ public class StubData {
         static String image = "defaultImageUrl";
         static String address = "address";
         static String introduction = "introduction";
-        static String nation = "nation";
+        static Nation nation = Nation.KO;
         static String role = "USER";
         static Gender enumGender = Gender.MALE;
-        static String stringGender = enumGender.getDescription();
-        static String patchStringGender = Gender.FEMALE.getDescription();
+        static Gender patchEnumGender = Gender.FEMALE;
+        static List<String> interests = new ArrayList<>(List.of("하이킹", "전시회", "즉흥형"));
+        static List<String> patchInterests = new ArrayList<>(List.of("서핑", "사진 촬영", "계획형"));
         static LocalDateTime createdAt = LocalDateTime.now();
         static LocalDateTime lastModifiedAt = LocalDateTime.now();
         @Getter
@@ -67,8 +82,9 @@ public class StubData {
                     .address(address)
                     .introduction(introduction)
                     .nation(nation)
-                    .gender(stringGender)
+                    .gender(enumGender)
                     .role(role)
+                    .interests(interests)
                     .build();
         }
 
@@ -79,7 +95,7 @@ public class StubData {
                     .nickname(nickname)
                     .address(address)
                     .introduction(introduction)
-                    .gender(stringGender)
+                    .gender(enumGender)
                     .nation(nation)
                     .role(role)
                     .build();
@@ -92,7 +108,7 @@ public class StubData {
                     .nickname(nickname)
                     .address(address)
                     .introduction(introduction)
-                    .gender(stringGender)
+                    .gender(enumGender)
                     .nation(nation)
                     .role(role)
                     .build();
@@ -105,14 +121,14 @@ public class StubData {
                     .nickname(nickname)
                     .address(address)
                     .introduction(introduction)
-                    .gender(stringGender)
+                    .gender(enumGender)
                     .nation(nation)
                     .role(role)
                     .build();
         }
 
-        public static SignUp getFailedSignUpDtoByGender(String failedGender) {
-            return SignUp.builder()
+        public static MockGenderFailSingUp getFailedSignUpDtoByGender(String failedGender) {
+            return MockGenderFailSingUp.builder()
                     .email(email)
                     .password(password)
                     .nickname(nickname)
@@ -121,6 +137,7 @@ public class StubData {
                     .gender(failedGender)
                     .nation(nation)
                     .role(role)
+                    .interests(interests)
                     .build();
         }
 
@@ -140,7 +157,7 @@ public class StubData {
 
         public static Member getMemberByEmailAndNickname(String email, String nickname) {
             return Member.builder()
-                    .id(id)
+//                    .id(id)
                     .email(email)
                     .password(password)
                     .nickname(nickname)
@@ -149,6 +166,7 @@ public class StubData {
                     .introduction(introduction)
                     .nation(nation)
                     .role(role)
+                    .oauthstatus(OAuthStatus.NORMAL)
                     .build();
         }
 
@@ -175,7 +193,7 @@ public class StubData {
                     .address(address)
                     .nation(nation)
                     .introduction(introduction)
-                    .gender(stringGender)
+                    .gender(enumGender)
                     .image(image)
                     .role(role)
                     .createdAt(createdAt)
@@ -188,9 +206,10 @@ public class StubData {
                     .password("patch" + password)
                     .nickname("patch" + nickname)
                     .address("patch" + address)
-                    .nation("patch" + nation)
-                    .gender(patchStringGender)
+                    .nation(Nation.JP)
+                    .gender(patchEnumGender)
                     .introduction("patch" + introduction)
+                    .interests(patchInterests)
                     .build();
         }
 
@@ -213,6 +232,31 @@ public class StubData {
 
         public static EmailVerificationResult getEmailVerificationResult(boolean authResult) {
             return EmailVerificationResult.from(authResult);
+        }
+
+        public static BuddyDto.MatchingMemberResponse getMatchingRequestMemberResponse(Long id,
+                                                                                             String nickname) {
+            return BuddyDto.MatchingMemberResponse.builder()
+                    .id(id)
+                    .nickname(nickname)
+                    .image(image)
+                    .build();
+        }
+
+        @Getter
+        @Builder
+        @AllArgsConstructor
+        @NoArgsConstructor(access = AccessLevel.PROTECTED)
+        public static class MockGenderFailSingUp {
+            private String email;
+            private String password;
+            private String nickname;
+            private String gender;
+            private Nation nation;
+            private String address;
+            private String introduction;
+            private String role;
+            private List<String> interests;
         }
     }
 
@@ -238,19 +282,18 @@ public class StubData {
 
         public static Recruitment getRecruitment() {
             return Recruitment.builder()
-                    .id(id)
                     .title(title)
                     .content(content)
                     .travelNationality(travelNationality)
                     .travelStartDate(TimeUtils.stringToLocalDateTime(travelStartDate))
                     .travelEndDate(TimeUtils.stringToLocalDateTime(travelEndDate))
-                    .recruitmentStatus(EnumCollection.RecruitmentStatus.IN_PROGRESS)
+                    .recruitmentStatus(RecruitmentStatus.IN_PROGRESS)
                     .deletionEntity(new DeletionEntity())
                     .build();
         }
 
-        public static RecruitmentDto.Post getPostRecruitment() {
-            return RecruitmentDto.Post.builder()
+        public static BuddyDto.RecruitmentPost getPostRecruitment() {
+            return BuddyDto.RecruitmentPost.builder()
                     .title(title)
                     .content(content)
                     .travelNationality(travelNationality)
@@ -259,8 +302,8 @@ public class StubData {
                     .build();
         }
 
-        public static RecruitmentDto.Patch getPatchRecruitment() {
-            return RecruitmentDto.Patch.builder()
+        public static BuddyDto.RecruitmentPatch getPatchRecruitment() {
+            return BuddyDto.RecruitmentPatch.builder()
                     .title(patchTitle)
                     .content(patchContent)
                     .travelNationality(patchTravelNationality)
@@ -269,8 +312,8 @@ public class StubData {
                     .build();
         }
 
-        public static RecruitmentDto.PostResponse getPostResponseRecruitment() {
-            return RecruitmentDto.PostResponse.builder()
+        public static BuddyDto.RecruitmentPostResponse getPostResponseRecruitment() {
+            return BuddyDto.RecruitmentPostResponse.builder()
                     .title(title)
                     .content(content)
                     .travelNationality(travelNationality)
@@ -283,8 +326,8 @@ public class StubData {
                     .build();
         }
 
-        public static RecruitmentDto.PatchResponse getPatchResponseRecruitment() {
-            return RecruitmentDto.PatchResponse.builder()
+        public static BuddyDto.RecruitmentPatchResponse getPatchResponseRecruitment() {
+            return BuddyDto.RecruitmentPatchResponse.builder()
                     .title(patchTitle)
                     .content(patchContent)
                     .travelNationality(patchTravelNationality)
@@ -298,7 +341,7 @@ public class StubData {
     public static class MockMatching {
         public static Matching getMatching() {
             return Matching.builder()
-                    .status(EnumCollection.MatchingStatus.REQUEST)
+                    .status(MatchingStatus.REQUEST)
                     .build();
         }
     }
@@ -333,6 +376,7 @@ public class StubData {
                     .contents("patch" + contents)
                     .location("patch" + location)
                     .tags(List.of("patch" + tags.get(0)))
+                    .removeImageUrls(List.of())
                     .build();
         }
 
@@ -380,6 +424,137 @@ public class StubData {
             return TagDto.Response.builder()
                     .name(tagName + addName)
                     .count(tagCount)
+                    .build();
+        }
+    }
+
+    public static class CustomMockMultipartFile {
+
+        public static MockMultipartFile getFile() {
+            return new MockMultipartFile("file", "originalFilename.png",
+                    MediaType.IMAGE_JPEG_VALUE, "fileContent".getBytes());
+        }
+
+        public static List<MockMultipartFile> getFiles() {
+            MockMultipartFile file = new MockMultipartFile("files", "originalFilename.png",
+                    MediaType.IMAGE_JPEG_VALUE, "fileContent".getBytes());
+            return new ArrayList<>(List.of(file, file));
+        }
+
+        public static MockMultipartFile getData(String json) {
+            return new MockMultipartFile("data", null,
+                    MediaType.APPLICATION_JSON_VALUE, json.getBytes());
+        }
+
+        public static MockMultipartFile getFailFile() {
+            return new MockMultipartFile("file", "originalFilename.gif",
+                    MediaType.IMAGE_GIF_VALUE, "fileContent".getBytes());
+        }
+    }
+
+    public static class CustomMultipartFile {
+
+        @Getter
+        static final String IMAGE_URL =
+                "https://s3.ap-northeast-2.amazonaws.com/travel-with-me-fileupload/image/example.png";
+
+        @Getter
+        static final String FILE = "file";
+        @Getter
+        static final String FILES = "files";
+
+        public static MultipartFile getMultipartFile() {
+            return getFile(FILE);
+        }
+
+        public static List<MultipartFile> getMultipartFiles() {
+            return new ArrayList<>(List.of(getFile(FILES), getFile(FILES)));
+        }
+
+        private static MultipartFile getFile(String multipartFileName) {
+            return new MultipartFile() {
+                @Override
+                public String getName() {
+                    return multipartFileName;
+                }
+
+                @Override
+                public String getOriginalFilename() {
+                    return "filename.png";
+                }
+
+                @Override
+                public String getContentType() {
+                    return MediaType.IMAGE_PNG_VALUE;
+                }
+
+                @Override
+                public boolean isEmpty() {
+                    return false;
+                }
+
+                @Override
+                public long getSize() {
+                    return "File content".getBytes().length;
+                }
+
+                @Override
+                public byte[] getBytes() {
+                    return "File content".getBytes();
+                }
+
+                @Override
+                public InputStream getInputStream() {
+                    return new ByteArrayInputStream("File content".getBytes());
+                }
+
+                @Override
+                public void transferTo(File dest) throws IllegalStateException {
+
+                }
+            };
+        }
+    }
+
+    public static class MockComment {
+        static final Long commentId = 1L;
+        static final Integer depth = 1;
+        static final Long groupId = 1L;
+        static final Long taggedMemberId = 1L;
+        static final String content = "답글 입니다.";
+
+        public static RecruitmentComment getRecruitmentComment() {
+            return RecruitmentComment.builder()
+                    .depth(depth)
+                    .groupId(groupId)
+                    .taggedMemberId(taggedMemberId)
+                    .content(content)
+                    .deletionEntity(new DeletionEntity())
+                    .build();
+        }
+
+        public static RecruitmentCommentDto getRecruitmentCommentDto() {
+            return RecruitmentCommentDto.builder()
+                    .taggedMemberId(taggedMemberId)
+                    .depth(depth)
+                    .content(content)
+                    .build();
+        }
+
+        public static CommentDto.Post getPostDtoByDepthAndTaggedMemberId(Integer depth, Long taggedMemberId) {
+            return CommentDto.Post.builder()
+                    .depth(depth)
+                    .content(content)
+                    .taggedMemberId(taggedMemberId)
+                    .build();
+        }
+
+        public static CommentDto.PostResponse getPostResponseDto() {
+            return CommentDto.PostResponse.builder()
+                    .commentId(commentId)
+                    .depth(depth)
+                    .content(content)
+                    .taggedMemberId(taggedMemberId)
                     .build();
         }
     }

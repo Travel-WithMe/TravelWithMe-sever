@@ -1,8 +1,12 @@
 package com.frog.travelwithme.intergration.member;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.Response;
+import com.frog.travelwithme.domain.member.service.InterestService;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
 import com.frog.travelwithme.global.redis.RedisService;
@@ -21,15 +25,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getResponsePreProcessor;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -62,18 +73,28 @@ class MemberIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private RedisService redisService;
 
+    @Autowired
+    private AmazonS3 amazonS3;
+
+    @Autowired
+    private InterestService interestService;
+
     @BeforeEach
-    void beforeEach() {
+    void beforeEach() throws MalformedURLException {
+        given(amazonS3.putObject(any(PutObjectRequest.class))).willReturn(new PutObjectResult());
+        given(amazonS3.getUrl(any(), any())).willReturn(
+                new URL(StubData.CustomMultipartFile.getIMAGE_URL()));
+
+        MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
-        memberService.signUp(signUpDto);
+        memberService.signUp(signUpDto, file);
     }
 
     @Test
     @DisplayName("회원가입")
     void memberIntegrationTest1() throws Exception {
         // given
-        MockMultipartFile file = new MockMultipartFile("file",
-                "originalFilename", "text/plain", "fileContent".getBytes());
+        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
         memberService.deleteMember(EMAIL);
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
 
@@ -81,7 +102,8 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContentandMultiPart(mvc, uri, json, file);
+        MockMultipartFile data = StubData.CustomMockMultipartFile.getData(json);
+        ResultActions actions = ResultActionsUtils.postRequestWithTwoMultiPart(mvc, uri, file, data);
 
         // then
         Response response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, Response.class);
@@ -91,13 +113,14 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         assertThat(signUpDto.getIntroduction()).isEqualTo(response.getIntroduction());
         assertThat(signUpDto.getNation()).isEqualTo(response.getNation());
         assertThat(signUpDto.getRole()).isEqualTo(response.getRole());
+        assertThat(response.getImage()).isNotNull();
         actions
                 .andExpect(status().isCreated())
                 .andDo(document("signup",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getSignUpMultipartSnippet(),
-                        RequestSnippet.getSignUpSnippet(),
+                        RequestSnippet.getSignUpMultipartDataFieldSnippet(),
                         ResponseSnippet.getMemberSnippet()));
     }
 
@@ -176,6 +199,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
+
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
@@ -187,7 +211,6 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 .andDo(document("delete-member",
                         getRequestPreProcessor(),
                         RequestSnippet.getTokenSnippet()));
-        memberService.signUp(signUpDto);
     }
 
     @Test
@@ -277,8 +300,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
     @WithMockCustomUser
     void memberControllerTest8() throws Exception {
         // given
-        MockMultipartFile file = new MockMultipartFile("file",
-                "originalFilename", "text/plain", "fileContent".getBytes());
+        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
         String accessToken = tokenDto.getAccessToken();
@@ -294,14 +316,13 @@ class MemberIntegrationTest extends BaseIntegrationTest {
 
         // then
         Response response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, Response.class);
-        assertThat(response.getImage()).isNotEqualTo(originMemberDto.getImage());
         actions
                 .andExpect(status().isOk())
                 .andDo(document("patch-profile-image",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
-                        RequestSnippet.getSignUpMultipartSnippet(),
+                        RequestSnippet.getProfileImageMultipartSnippet(),
                         ResponseSnippet.getMemberSnippet()));
     }
 
@@ -312,21 +333,23 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         MockMultipartFile file = new MockMultipartFile("file",
                 "originalFilename", "text/plain", "fileContent".getBytes());
         memberService.deleteMember(EMAIL);
-        MemberDto.SignUp failedSignUpDto = StubData.MockMember.getFailedSignUpDtoByGender("중성");
+        StubData.MockMember.MockGenderFailSingUp failedSignUpDto =
+                StubData.MockMember.getFailedSignUpDtoByGender("중성");
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(failedSignUpDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContentandMultiPart(mvc, uri, json, file);
+        MockMultipartFile data =
+                new MockMultipartFile("data", null, MediaType.APPLICATION_JSON_VALUE, json.getBytes());
+        ResultActions actions = ResultActionsUtils.postRequestWithTwoMultiPart(mvc, uri, file, data);
 
         // then
         actions
                 .andExpect(status().is4xxClientError())
                 .andDo(document("signup-fail1",
                         getRequestPreProcessor(),
-                        getResponsePreProcessor(),
                         RequestSnippet.getSignUpMultipartSnippet(),
-                        RequestSnippet.getSignUpSnippet()));
+                        RequestSnippet.getSignUpMultipartDataFieldSnippet()));
     }
 }

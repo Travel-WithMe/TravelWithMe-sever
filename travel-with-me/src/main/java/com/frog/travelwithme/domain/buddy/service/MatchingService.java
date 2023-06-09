@@ -50,15 +50,15 @@ public class MatchingService {
     }
 
     public ResponseBody approveMatchingByEmail(Long recruitmentId, String email, Long matchingId) {
-        Recruitment recruitment = recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitmentId, email);
-        recruitmentService.checkExpiredRecruitment(recruitment);
+        Recruitment recruitment =
+                recruitmentService.findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(recruitmentId, email);
         Matching findMatching = this.findMatchingByIdAndCheckEqualRecruitment(matchingId, recruitment);
         return this.approveMatching(findMatching);
     }
 
     public ResponseBody rejectMatchingByEmail(Long recruitmentId, String email, Long matchingId) {
-        Recruitment recruitment = recruitmentService.findRecruitmentAndCheckEqualWriterAndUser(recruitmentId, email);
-        recruitmentService.checkExpiredRecruitment(recruitment);
+        Recruitment recruitment =
+                recruitmentService.findRecruitmentAndCheckEqualWriterAndUserAndCheckExpired(recruitmentId, email);
         Matching findMatching = this.findMatchingByIdAndCheckEqualRecruitment(matchingId, recruitment);
         return this.rejectMatching(findMatching);
     }
@@ -70,7 +70,7 @@ public class MatchingService {
         } else {
             Matching matching = findMatching.get();
             this.checkPossibleToRequestMatching(matching);
-            this.updateMatchingByStatus(matching, MatchingStatus.CANCEL);
+            this.updateMatchingByStatus(matching, MatchingStatus.REQUEST);
             return ResponseBody.RETRY_REQUEST_MATCHING;
         }
     }
@@ -151,8 +151,8 @@ public class MatchingService {
     private Matching findMatchingByIdAndCheckEqualRecruitment(Long id, Recruitment recruitment) {
         Matching matching = this.findMatchingById(id);
         if(!matching.getRecruitment().equals(recruitment)) {
-            log.debug("MatchingService.findMatchingByIdAndCheckEqualRecruitment exception occur id: {}, recruitment: {}",
-                    id, recruitment);
+            log.debug("MatchingService.findMatchingByIdAndCheckEqualRecruitment exception occur " +
+                    "id: {}, recruitment: {}", id, recruitment);
             throw new BusinessLogicException(ExceptionCode.MATCHING_RECRUITMENT_IS_DIFFERENT);
         }
         return matching;

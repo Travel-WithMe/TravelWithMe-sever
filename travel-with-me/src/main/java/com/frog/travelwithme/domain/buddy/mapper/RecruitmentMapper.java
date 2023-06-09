@@ -1,13 +1,16 @@
 package com.frog.travelwithme.domain.buddy.mapper;
 
+import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.common.DeletionEntity;
-import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
 import com.frog.travelwithme.global.utils.TimeUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.frog.travelwithme.global.enums.EnumCollection.RecruitmentStatus;
 
@@ -18,19 +21,19 @@ import static com.frog.travelwithme.global.enums.EnumCollection.RecruitmentStatu
  **/
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RecruitmentMapper {
-    default Recruitment toEntity(RecruitmentDto.Post postDto) {
+    default Recruitment toEntity(BuddyDto.RecruitmentPost recruitmentPostDto) {
 
-        if(postDto == null) {
+        if(recruitmentPostDto == null) {
             return null;
         }
-        String travelStartDate = postDto.getTravelStartDate();
-        String travelEndDate = postDto.getTravelEndDate();
+        String travelStartDate = recruitmentPostDto.getTravelStartDate();
+        String travelEndDate = recruitmentPostDto.getTravelEndDate();
         DeletionEntity deletionEntity = new DeletionEntity();
 
         return Recruitment.builder()
-                .title(postDto.getTitle())
-                .content(postDto.getContent())
-                .travelNationality(postDto.getTravelNationality())
+                .title(recruitmentPostDto.getTitle())
+                .content(recruitmentPostDto.getContent())
+                .travelNationality(recruitmentPostDto.getTravelNationality())
                 .travelStartDate(TimeUtils.stringToLocalDateTime(travelStartDate))
                 .travelEndDate(TimeUtils.stringToLocalDateTime(travelEndDate))
                 .recruitmentStatus(RecruitmentStatus.IN_PROGRESS)
@@ -38,7 +41,7 @@ public interface RecruitmentMapper {
                 .build();
     }
 
-    default RecruitmentDto.PostResponse toPostResponseRecruitmentDto(Recruitment recruitment){
+    default BuddyDto.RecruitmentPostResponse toPostResponseBuddyDto(Recruitment recruitment){
         if(recruitment == null) {
             return null;
         }
@@ -46,7 +49,7 @@ public interface RecruitmentMapper {
         LocalDateTime travelStartDate = recruitment.getTravelStartDate();
         LocalDateTime travelEndDate = recruitment.getTravelEndDate();
 
-        return RecruitmentDto.PostResponse.builder()
+        return BuddyDto.RecruitmentPostResponse.builder()
                 .id(recruitment.getId())
                 .title(recruitment.getTitle())
                 .content(recruitment.getContent())
@@ -60,7 +63,7 @@ public interface RecruitmentMapper {
                 .build();
     };
 
-    default RecruitmentDto.PatchResponse toPatchResponseRecruitmentDto(Recruitment recruitment){
+    default BuddyDto.RecruitmentPatchResponse toPatchResponseBuddyDto(Recruitment recruitment){
         if(recruitment == null) {
             return null;
         }
@@ -68,7 +71,7 @@ public interface RecruitmentMapper {
         LocalDateTime travelStartDate = recruitment.getTravelStartDate();
         LocalDateTime travelEndDate = recruitment.getTravelEndDate();
 
-        return RecruitmentDto.PatchResponse.builder()
+        return BuddyDto.RecruitmentPatchResponse.builder()
                 .id(recruitment.getId())
                 .title(recruitment.getTitle())
                 .content(recruitment.getContent())
@@ -78,7 +81,7 @@ public interface RecruitmentMapper {
                 .build();
     };
 
-    default RecruitmentDto.GetResponse toGetResponseRecruitmentDto(Recruitment recruitment) {
+    default BuddyDto.RecruitmentGetResponse toGetResponseRecruitmentBuddyDto(Recruitment recruitment) {
         if (recruitment == null) {
             return null;
         }
@@ -86,7 +89,7 @@ public interface RecruitmentMapper {
         LocalDateTime travelStartDate = recruitment.getTravelStartDate();
         LocalDateTime travelEndDate = recruitment.getTravelEndDate();
 
-        return RecruitmentDto.GetResponse.builder()
+        return BuddyDto.RecruitmentGetResponse.builder()
                 .id(recruitment.getId())
                 .title(recruitment.getTitle())
                 .content(recruitment.getContent())
@@ -99,4 +102,30 @@ public interface RecruitmentMapper {
                 .memberImage(recruitment.getMember().getImage())
                 .build();
     }
+
+    default BuddyDto.MatchingMemberResponse toMatchingMemberResponseBuddyDto(Matching matching) {
+        if(matching == null) {
+            return null;
+        }
+
+        return BuddyDto.MatchingMemberResponse.builder()
+                .id(matching.getMember().getId())
+                .nickname(matching.getMember().getNickname())
+                .image(matching.getMember().getImage())
+                .build();
+    }
+
+    default List<BuddyDto.MatchingMemberResponse> toMatchingMemberResponseBuddyDtoList(List<Matching> matchingList) {
+        if(matchingList == null) {
+            return null;
+        }
+
+        List<BuddyDto.MatchingMemberResponse> matchingMemberResponseList = new ArrayList<>();
+
+        for (Matching matching : matchingList) {
+            matchingMemberResponseList.add(this.toMatchingMemberResponseBuddyDto(matching));
+        }
+        return matchingMemberResponseList;
+    }
+
 }

@@ -9,6 +9,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Feed 설명: 피드 관리
@@ -18,6 +19,7 @@ import java.util.*;
  **/
 @Entity
 @Getter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Feed extends BaseTimeEntity {
@@ -55,12 +57,11 @@ public class Feed extends BaseTimeEntity {
     private List<Member> likedMembers = new ArrayList<>();
 
     @Builder
-    public Feed(String contents, String location, Member member) {
-        // TODO: File 로직 추가 후 구현
-        this.imageUrls.add("defaultImageUrl");
+    public Feed(String contents, String location, Member member, List<String> imageUrls) {
         this.contents = contents;
         this.location = location;
         this.member = member;
+        this.imageUrls = imageUrls;
     }
 
     public void updateFeedData(FeedDto.InternalPatch internalPatchDto) {
@@ -79,12 +80,36 @@ public class Feed extends BaseTimeEntity {
         this.likeCount += 1;
     }
 
-    public void removeLike(Member member) {
-        this.likedMembers.remove(member);
+    public void removeLike(String email) {
+        this.likedMembers.stream()
+                .map(Member::getEmail)
+                .collect(Collectors.toList())
+                .remove(email);
         this.likeCount -= 1;
     }
 
-    public boolean isLikedByMember(Member member) {
-        return this.likedMembers.contains(member);
+    public boolean isLikedByMember(String email) {
+        if (this.likedMembers.isEmpty()) {
+            return false;
+        }
+        return this.likedMembers.stream()
+                .map(Member::getEmail)
+                .collect(Collectors.toList())
+                .contains(email);
+    }
+
+    public void addImageUrl(String imageUrl) {
+        if (this.imageUrls == null) {
+            this.imageUrls = new ArrayList<>();
+        }
+        this.imageUrls.add(imageUrl);
+    }
+
+    public void removeImageUrl(String imageUrl) {
+        this.imageUrls.remove(imageUrl);
+    }
+
+    public boolean isImageUrlsSizeOne() {
+        return this.imageUrls.size() == 1;
     }
 }

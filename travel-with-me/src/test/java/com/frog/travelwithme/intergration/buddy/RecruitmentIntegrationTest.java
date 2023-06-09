@@ -1,13 +1,20 @@
 package com.frog.travelwithme.intergration.buddy;
 
-import com.frog.travelwithme.domain.buddy.controller.dto.RecruitmentDto;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
+import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
+import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
+import com.frog.travelwithme.domain.buddy.repository.MatchingRepository;
 import com.frog.travelwithme.domain.buddy.repository.RecruitmentRepository;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
+import com.frog.travelwithme.global.exception.ErrorResponse;
+import com.frog.travelwithme.global.exception.ExceptionCode;
 import com.frog.travelwithme.global.security.auth.controller.dto.TokenDto;
 import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
@@ -17,6 +24,7 @@ import com.frog.travelwithme.utils.ResultActionsUtils;
 import com.frog.travelwithme.utils.StubData;
 import com.frog.travelwithme.utils.StubData.MockMember;
 import com.frog.travelwithme.utils.snippet.reqeust.RequestSnippet;
+import com.frog.travelwithme.utils.snippet.response.ErrorResponseSnippet;
 import com.frog.travelwithme.utils.snippet.response.ResponseSnippet;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,11 +32,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URL;
 
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getResponsePreProcessor;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,7 +50,8 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
 
     private final String BASE_URL = "/recruitments";
     private String EMAIL;
-    private String EMAIL_OTHER;
+    private String EMAIL_OTHER_ONE;
+    private String EMAIL_OTHER_TWO;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
@@ -49,17 +63,28 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
     private RecruitmentRepository recruitmentRepository;
 
     @Autowired
+    private MatchingRepository matchingRepository;
+
+    @Autowired
     private MemberRepository memberRepository;
 
     @Autowired
     private MemberService memberService;
 
+    @Autowired
+    private AmazonS3 amazonS3;
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach() throws Exception {
+        // Mock S3 시나리오 설정
+        given(amazonS3.putObject(any(PutObjectRequest.class))).willReturn(new PutObjectResult());
+        given(amazonS3.getUrl(any(), any())).willReturn(
+                new URL(StubData.CustomMultipartFile.getIMAGE_URL()));
+
         // e_ma-il@gmail.com 회원 추가
         MemberDto.SignUp memberOne = MockMember.getSignUpDto();
-        memberService.signUp(memberOne);
+        MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
+        memberService.signUp(memberOne, file);
         EMAIL = memberOne.getEmail();
 
         // dhfif718@gmail.com 회원 추가
@@ -67,12 +92,20 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
                 "dhfif718@gmail.com",
                 "이재혁"
         );
-        memberService.signUp(memberTwo);
-        EMAIL_OTHER = memberTwo.getEmail();
+        memberService.signUp(memberTwo,file);
+        EMAIL_OTHER_ONE = memberTwo.getEmail();
+
+        // kkd718@naver.com 회원 추가
+        MemberDto.SignUp memberThree = MockMember.getSignUpDtoByEmailAndNickname(
+                "kkd718@naver.com",
+                "리젤란"
+        );
+        memberService.signUp(memberThree, file);
+        EMAIL_OTHER_TWO = memberThree.getEmail();
     }
 
     @Test
-    @DisplayName("동행 작성 테스트")
+    @DisplayName("동행 모집글 작성 테스트")
     void recruitmentIntegrationTest1() throws Exception {
         // given
         CustomUserDetails userDetails = MockMember.getUserDetails();
@@ -80,30 +113,30 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
-        RecruitmentDto.Post postDto = StubData.MockRecruitment.getPostRecruitment();
+        BuddyDto.RecruitmentPost recruitmentPostDto = StubData.MockRecruitment.getPostRecruitment();
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
+        String uri = UriComponentsBuilder.newInstance()
+                .path(BASE_URL)
                 .build().toUri().toString();
-        String json = ObjectMapperUtils.objectToJsonString(postDto);
+        String json = ObjectMapperUtils.objectToJsonString(recruitmentPostDto);
 
         ResultActions actions = ResultActionsUtils.postRequestWithContentAndToken(
                 mvc, uri, json, accessToken, encryptedRefreshToken
         );
 
         // then
-        RecruitmentDto.PostResponse response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
-                RecruitmentDto.PostResponse.class);
+        BuddyDto.RecruitmentPostResponse response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
+                BuddyDto.RecruitmentPostResponse.class);
         assertThat(response.getId()).isNotNull();
-        assertThat(response.getTitle()).isEqualTo(postDto.getTitle());
-        assertThat(response.getContent()).isEqualTo(postDto.getContent());
-        assertThat(response.getTravelNationality()).isEqualTo(postDto.getTravelNationality());
-        assertThat(response.getTravelStartDate()).isEqualTo(postDto.getTravelStartDate());
-        assertThat(response.getTravelEndDate()).isEqualTo(postDto.getTravelEndDate());
+        assertThat(response.getTitle()).isEqualTo(recruitmentPostDto.getTitle());
+        assertThat(response.getContent()).isEqualTo(recruitmentPostDto.getContent());
+        assertThat(response.getTravelNationality()).isEqualTo(recruitmentPostDto.getTravelNationality());
+        assertThat(response.getTravelStartDate()).isEqualTo(recruitmentPostDto.getTravelStartDate());
+        assertThat(response.getTravelEndDate()).isEqualTo(recruitmentPostDto.getTravelEndDate());
         assertThat(response.getViewCount()).isEqualTo(0L);
         assertThat(response.getCommentCount()).isEqualTo(0L);
         assertThat(response.getNickname()).isEqualTo("nickname");
-        assertThat(response.getMemberImage()).isEqualTo(MockMember.getImage());
 
 
         actions
@@ -117,7 +150,7 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("동행 수정 테스트")
+    @DisplayName("동행 모집글 수정 테스트")
     void recruitmentIntegrationTest2() throws Exception {
         // given
         CustomUserDetails userDetails = MockMember.getUserDetails();
@@ -126,32 +159,34 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
-        RecruitmentDto.Patch patchDto = StubData.MockRecruitment.getPatchRecruitment();
+        BuddyDto.RecruitmentPatch recruitmentPatchDto = StubData.MockRecruitment.getPatchRecruitment();
 
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         Member writer = memberRepository.findByEmail(EMAIL).get();
         recruitment.addMember(writer);
-        Recruitment saveBuddy = recruitmentRepository.save(recruitment);
+        Recruitment savedRecruitment = recruitmentRepository.save(recruitment);
+        Long recruitmentId = savedRecruitment.getId();
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + saveBuddy.getId())
+        String uri = UriComponentsBuilder.newInstance()
+                .path(BASE_URL + "/" + recruitmentId)
                 .build().toUri().toString();
-        String json = ObjectMapperUtils.objectToJsonString(patchDto);
+        String json = ObjectMapperUtils.objectToJsonString(recruitmentPatchDto);
 
         ResultActions actions = ResultActionsUtils.patchRequestWithContentAndToken(
                 mvc, uri, json, accessToken, encryptedRefreshToken
         );
 
         // then
-        RecruitmentDto.PatchResponse response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
-                RecruitmentDto.PatchResponse.class);
+        BuddyDto.RecruitmentPatchResponse response = ObjectMapperUtils.actionsSingleToResponseWithData(actions,
+                BuddyDto.RecruitmentPatchResponse.class);
 
-        assertThat(response.getId()).isEqualTo(saveBuddy.getId());
-        assertThat(response.getTitle()).isEqualTo(patchDto.getTitle());
-        assertThat(response.getContent()).isEqualTo(patchDto.getContent());
-        assertThat(response.getTravelNationality()).isEqualTo(patchDto.getTravelNationality());
-        assertThat(response.getTravelStartDate()).isEqualTo(patchDto.getTravelStartDate());
-        assertThat(response.getTravelEndDate()).isEqualTo(patchDto.getTravelEndDate());
+        assertThat(response.getId()).isEqualTo(savedRecruitment.getId());
+        assertThat(response.getTitle()).isEqualTo(recruitmentPatchDto.getTitle());
+        assertThat(response.getContent()).isEqualTo(recruitmentPatchDto.getContent());
+        assertThat(response.getTravelNationality()).isEqualTo(recruitmentPatchDto.getTravelNationality());
+        assertThat(response.getTravelStartDate()).isEqualTo(recruitmentPatchDto.getTravelStartDate());
+        assertThat(response.getTravelEndDate()).isEqualTo(recruitmentPatchDto.getTravelEndDate());
 
         actions
                 .andExpect(status().isOk())
@@ -164,7 +199,7 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("동행 삭제 테스트")
+    @DisplayName("동행 모집글 삭제 테스트")
     void recruitmentIntegrationTest3() throws Exception {
         // given
         CustomUserDetails userDetails = MockMember.getUserDetails();
@@ -176,11 +211,12 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         Member writer = memberRepository.findByEmail(EMAIL).get();
         recruitment.addMember(writer);
-        Recruitment saveBuddy = recruitmentRepository.save(recruitment);
+        Recruitment savedRecruitment = recruitmentRepository.save(recruitment);
+        Long recruitmentId = savedRecruitment.getId();
 
         // when
         String uri = UriComponentsBuilder.newInstance()
-                .path(BASE_URL + "/" + saveBuddy.getId())
+                .path(BASE_URL + "/" + recruitmentId)
                 .build().toUri().toString();
 
         ResultActions actions = ResultActionsUtils.deleteRequestWithToken(
@@ -194,6 +230,259 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
                 .andDo(document("delete-recruitment",
                         getRequestPreProcessor(),
                         getResponsePreProcessor()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭신청 회원 리스트 조회")
+    void recruitmentIntegrationTest4() throws Exception {
+        // given
+        Member writer = memberRepository.findByEmail(EMAIL).get();
+        Member user1 = memberRepository.findByEmail(EMAIL_OTHER_ONE).get();
+        Member user2 = memberRepository.findByEmail(EMAIL_OTHER_TWO).get();
+
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(writer);
+        Recruitment savedRecruitment = recruitmentRepository.save(recruitment);
+        Long recruitmentId = savedRecruitment.getId();
+
+        Matching matching1 = StubData.MockMatching.getMatching();
+        matching1.addMember(user1);
+        matching1.addRecruitment(savedRecruitment);
+        Matching matching2 = StubData.MockMatching.getMatching();
+        matching2.addMember(user2);
+        matching2.addRecruitment(savedRecruitment);
+
+        savedRecruitment.addMatching(matching1);
+        savedRecruitment.addMatching(matching2);
+
+        matchingRepository.save(matching1);
+        matchingRepository.save(matching2);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance()
+                .path(BASE_URL + "/" + recruitmentId + "/" + "matching-request-member-list")
+                .build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.getRequest(
+                mvc, uri
+        );
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("get-matching-request-member-list-recruitment",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ResponseSnippet.getMatchingMemberListSnippet()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭신청 회원 리스트 조회 (모집이 종료된 게시글)")
+    void recruitmentIntegrationTest5() throws Exception {
+        // given
+        Member writer = memberRepository.findByEmail(EMAIL).get();
+        Member user1 = memberRepository.findByEmail(EMAIL_OTHER_ONE).get();
+        Member user2 = memberRepository.findByEmail(EMAIL_OTHER_TWO).get();
+
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(writer);
+        Recruitment savedRecruitment = recruitmentRepository.save(recruitment);
+        Long recruitmentId = savedRecruitment.getId();
+
+        Matching matching1 = StubData.MockMatching.getMatching();
+        matching1.addMember(user1);
+        matching1.addRecruitment(savedRecruitment);
+        Matching matching2 = StubData.MockMatching.getMatching();
+        matching2.addMember(user2);
+        matching2.addRecruitment(savedRecruitment);
+
+        savedRecruitment.addMatching(matching1);
+        savedRecruitment.addMatching(matching2);
+        savedRecruitment.end();
+
+        matchingRepository.save(matching1);
+        matchingRepository.save(matching2);
+
+
+        // when
+        String uri = UriComponentsBuilder.newInstance()
+                .path(BASE_URL + "/" + recruitmentId + "/" + "matching-request-member-list")
+                .build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.getRequest(
+                mvc, uri
+        );
+
+        // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getStatus());
+        assertThat(response.getMessage()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getMessage());
+        actions
+                .andDo(document("get-matching-request-member-list-recruitment-exception-1",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭신청 회원 리스트 조회 (동행 모집글이 없음)")
+    void recruitmentIntegrationTest6() throws Exception {
+        // given
+        Long recruitmentId = 1L;
+
+        // when
+        String uri = UriComponentsBuilder.newInstance()
+                .path(BASE_URL + "/" + recruitmentId + "/" + "matching-request-member-list")
+                .build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.getRequest(
+                mvc, uri
+        );
+
+        // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus())
+                .isEqualTo(ExceptionCode.RECRUITMENT_MATCHING_REQUEST_MEMBER_NOT_FOUND.getStatus());
+        assertThat(response.getMessage())
+                .isEqualTo(ExceptionCode.RECRUITMENT_MATCHING_REQUEST_MEMBER_NOT_FOUND.getMessage());
+        actions
+                .andDo(document("get-matching-request-member-list-recruitment-exception-2",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭승인 회원 리스트 조회")
+    void recruitmentIntegrationTest7() throws Exception {
+        // given
+        Member writer = memberRepository.findByEmail(EMAIL).get();
+        Member user1 = memberRepository.findByEmail(EMAIL_OTHER_ONE).get();
+        Member user2 = memberRepository.findByEmail(EMAIL_OTHER_TWO).get();
+
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(writer);
+        Recruitment savedRecruitment = recruitmentRepository.save(recruitment);
+        Long recruitmentId = savedRecruitment.getId();
+
+        Matching matching1 = StubData.MockMatching.getMatching();
+        matching1.addMember(user1);
+        matching1.addRecruitment(savedRecruitment);
+        matching1.approve();
+        Matching matching2 = StubData.MockMatching.getMatching();
+        matching2.addMember(user2);
+        matching2.addRecruitment(savedRecruitment);
+        matching2.approve();
+
+        savedRecruitment.addMatching(matching1);
+        savedRecruitment.addMatching(matching2);
+
+        matchingRepository.save(matching1);
+        matchingRepository.save(matching2);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance()
+                .path(BASE_URL + "/" + recruitmentId + "/" + "matching-approved-member-list")
+                .build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.getRequest(
+                mvc, uri
+        );
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("get-matching-approved-member-list-recruitment",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ResponseSnippet.getMatchingMemberListSnippet()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭승인 회원 리스트 조회 (모집이 종료된 게시글)")
+    void recruitmentIntegrationTest8() throws Exception {
+        // given
+        Member writer = memberRepository.findByEmail(EMAIL).get();
+        Member user1 = memberRepository.findByEmail(EMAIL_OTHER_ONE).get();
+        Member user2 = memberRepository.findByEmail(EMAIL_OTHER_TWO).get();
+
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitment.addMember(writer);
+        Recruitment savedRecruitment = recruitmentRepository.save(recruitment);
+        Long recruitmentId = savedRecruitment.getId();
+
+        Matching matching1 = StubData.MockMatching.getMatching();
+        matching1.addMember(user1);
+        matching1.addRecruitment(savedRecruitment);
+        matching1.approve();
+        Matching matching2 = StubData.MockMatching.getMatching();
+        matching2.addMember(user2);
+        matching2.addRecruitment(savedRecruitment);
+        matching2.approve();
+
+        savedRecruitment.addMatching(matching1);
+        savedRecruitment.addMatching(matching2);
+        savedRecruitment.end();
+
+        matchingRepository.save(matching1);
+        matchingRepository.save(matching2);
+
+        // when
+        String uri = UriComponentsBuilder.newInstance()
+                .path(BASE_URL + "/" + recruitmentId + "/" + "matching-approved-member-list")
+                .build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.getRequest(
+                mvc, uri
+        );
+
+        // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getStatus());
+        assertThat(response.getMessage()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getMessage());
+        actions
+                .andDo(document("get-matching-approved-member-list-recruitment-exception-1",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 모집글 매칭승인 회원 리스트 조회 (동행 모집글이 없음)")
+    void recruitmentIntegrationTest9() throws Exception {
+        // given
+        Long recruitmentId = 1L;
+
+        // when
+        String uri = UriComponentsBuilder.newInstance()
+                .path(BASE_URL + "/" + recruitmentId + "/" + "matching-approved-member-list")
+                .build().toUri().toString();
+
+        ResultActions actions = ResultActionsUtils.getRequest(
+                mvc, uri
+        );
+
+        // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus())
+                .isEqualTo(ExceptionCode.RECRUITMENT_MATCHING_REQUEST_MEMBER_NOT_FOUND.getStatus());
+        assertThat(response.getMessage())
+                .isEqualTo(ExceptionCode.RECRUITMENT_MATCHING_REQUEST_MEMBER_NOT_FOUND.getMessage());
+        actions
+                .andDo(document("get-matching-approved-member-list-recruitment-exception-2",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
                 ));
     }
 }

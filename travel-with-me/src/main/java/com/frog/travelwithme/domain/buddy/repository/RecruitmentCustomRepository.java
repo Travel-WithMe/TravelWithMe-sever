@@ -5,6 +5,8 @@ import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 
 import java.util.Optional;
 
+import static com.frog.travelwithme.global.enums.EnumCollection.*;
+
 /**
  * 작성자: 이재혁
  * 버전 정보: 1.0.0
@@ -12,7 +14,5 @@ import java.util.Optional;
  **/
 
 public interface RecruitmentCustomRepository {
-
-    Optional<Recruitment> findRecruitmentById(Long id);
-
+    Optional<Recruitment> findRecruitmentByIdAndMatchingStatus(Long id, MatchingStatus status);
 }
