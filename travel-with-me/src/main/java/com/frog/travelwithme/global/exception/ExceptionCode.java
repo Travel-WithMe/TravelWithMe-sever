@@ -17,6 +17,7 @@ public enum ExceptionCode {
     UNABLE_TO_SEND_EMAIL(404, "메일을 전송할 수 없습니다."),
     NO_SUCH_ALGORITHM(400, "인증 번호 생성을 위한 알고리즘을 찾을 수 없습니다."),
     INVALID_GENDER(404, "성별이 올바르지 않습니다. 성별은 남자, 여자만 허용됩니다."),
+    TAGGED_MEMBER_NOT_FOUND(404, "태그된 회원을 찾을 수 없습니다."),
 
     // Recruitment & Buddy
     RECRUITMENT_NOT_FOUND(404, "해당 동행모집글을 찾을 수 없습니다."),
@@ -38,6 +39,10 @@ public enum ExceptionCode {
     UNABLE_TO_CANCEL_LIKE(409, "좋아요를 하지 않았기 때문에 좋아요를 취소할 수 없습니다. "),
     UNABLE_TO_DELETE_FEED_IMAGE(404, "피드 이미지는 최소 한 장 이상 존재해야 합니다."),
     UNABLE_TO_SAVE_FEED(404, "피드를 생성할 수 없습니다."),
+
+    // Comment
+    COMMENT_NOT_FOUND(404, "댓글이 존재하지 않습니다."),
+    COMMENT_CREATE_IMPOSSIBLE(404, "댓글을 생성할 수 없습니다."),
 
     // Security, JWT
     NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),
