@@ -1,5 +1,6 @@
 package com.frog.travelwithme.domain.feed.service;
 
+import com.frog.travelwithme.domain.common.like.service.LikeService;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto.Response;
 import com.frog.travelwithme.domain.feed.entity.Feed;
@@ -33,7 +34,7 @@ import static com.frog.travelwithme.global.enums.EnumCollection.AwsS3Path.FEEDIM
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class FeedService {
+public class FeedService implements LikeService {
 
     private final FeedRepository feedRepository;
     private final MemberService memberService;
@@ -95,6 +96,7 @@ public class FeedService {
     }
 
     // TODO: Redis 캐시 사용 고려
+    @Override
     public ResponseBody doLike(String email, long feedId) {
         Feed feed = this.findFeed(feedId);
         if (!feed.isLikedByMember(email)) {
@@ -107,6 +109,7 @@ public class FeedService {
     }
 
     // TODO: Redis 캐시 사용 고려
+    @Override
     public ResponseBody cancelLike(String email, long feedId) {
         Feed feed = this.findFeed(feedId);
         if (feed.isLikedByMember(email)) {
@@ -117,6 +120,7 @@ public class FeedService {
         }
         return ResponseBody.SUCCESS_CANCEL_FEED_LIKE;
     }
+
     private void checkWriter(String email, String writerEmail) {
         if (!email.equals(writerEmail)) {
             log.debug("FeedService.checkWriter exception occur email : {}, writerEmail : {}",
