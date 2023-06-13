@@ -44,7 +44,7 @@ public enum ExceptionCode {
 
     // Comment
     COMMENT_NOT_FOUND(404, "댓글이 존재하지 않습니다."),
-    COMMENT_CREATE_IMPOSSIBLE(404, "댓글을 생성할 수 없습니다."),
+    COMMENT_WRITER_NOT_MATCH(404, "해당 댓글을 작성한 유저가 아닙니다."),
 
     // Security, JWT
     NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),

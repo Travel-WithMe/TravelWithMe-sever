@@ -89,4 +89,34 @@ class RecruitmentCommentControllerTest {
         assertThat(response.getTaggedMemberId()).isEqualTo(postResponseDto.getTaggedMemberId());
         assertThat(response.getContent()).isEqualTo(postResponseDto.getContent());
     }
+
+    @Test
+    @DisplayName("동행 모집글 댓글,대댓글 수정")
+    @WithMockCustomUser
+    void recruitmentCommentControllerTest2() throws Exception {
+        // given
+
+        CommentDto.Patch patchDto =
+                StubData.MockComment.getPatchDtoByContentAndTaggedMemberId("변경확인", 1L);
+        CommentDto.PatchResponse patchResponseDto = StubData.MockComment.getPatchResponseDto();
+
+        given(recruitmentCommentService.updateCommentByEmail(any(),any(),any())).willReturn(patchResponseDto);
+
+        // when
+        String uri = BASE_URL + SUB_URL + "/1";
+
+        String json = ObjectMapperUtils.objectToJsonString(patchDto);
+        ResultActions actions = ResultActionsUtils.patchRequestWithContentAndUserDetails(mvc, uri, json, userDetails);
+
+        // then
+        CommentDto.PatchResponse response =
+                ObjectMapperUtils.actionsSingleToResponseWithData(actions, CommentDto.PatchResponse.class);
+
+        actions
+                .andExpect(status().isOk());
+        assertThat(response.getCommentId()).isEqualTo(patchResponseDto.getCommentId());
+        assertThat(response.getDepth()).isEqualTo(patchResponseDto.getDepth());
+        assertThat(response.getTaggedMemberId()).isEqualTo(patchResponseDto.getTaggedMemberId());
+        assertThat(response.getContent()).isEqualTo(patchResponseDto.getContent());
+    }
 }

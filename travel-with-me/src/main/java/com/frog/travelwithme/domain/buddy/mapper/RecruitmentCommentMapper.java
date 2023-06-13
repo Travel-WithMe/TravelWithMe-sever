@@ -1,9 +1,10 @@
 package com.frog.travelwithme.domain.buddy.mapper;
 
 import com.frog.travelwithme.domain.buddy.entity.RecruitmentComment;
+import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentUpdateDto;
 import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.domain.common.DeletionEntity;
-import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentDto;
+import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentCreateDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -18,25 +19,24 @@ import java.util.Optional;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RecruitmentCommentMapper {
 
-    default RecruitmentComment toEntity(RecruitmentCommentDto recruitmentCommentDto) {
+    default RecruitmentComment toEntity(RecruitmentCommentCreateDto recruitmentCommentCreateDto) {
 
-        if (recruitmentCommentDto == null) {
+        if (recruitmentCommentCreateDto == null) {
             return null;
         }
 
         Long taggedMemberId = null;
 
-        if (Optional.ofNullable(recruitmentCommentDto.getTaggedMemberId()).isPresent()) {
-            taggedMemberId = recruitmentCommentDto.getTaggedMemberId();
+        if (Optional.ofNullable(recruitmentCommentCreateDto.getTaggedMemberId()).isPresent()) {
+            taggedMemberId = recruitmentCommentCreateDto.getTaggedMemberId();
         }
 
         DeletionEntity deletionEntity = new DeletionEntity();
 
         return RecruitmentComment.builder()
                 .taggedMemberId(taggedMemberId)
-                .depth(recruitmentCommentDto.getDepth())
-                .content(recruitmentCommentDto.getContent())
-                .deletionEntity(deletionEntity)
+                .depth(recruitmentCommentCreateDto.getDepth())
+                .content(recruitmentCommentCreateDto.getContent())
                 .build();
     };
 
@@ -60,7 +60,7 @@ public interface RecruitmentCommentMapper {
                 .build();
     };
 
-    default RecruitmentCommentDto createRecruitmentCommentDto(CommentDto.Post postDto) {
+    default RecruitmentCommentCreateDto postDtoToRecruitmentCommentCreateDto(CommentDto.Post postDto) {
 
         if (postDto == null) {
             return null;
@@ -72,11 +72,49 @@ public interface RecruitmentCommentMapper {
             taggedMemberId = postDto.getTaggedMemberId();
         }
 
-        return RecruitmentCommentDto.builder()
+        return RecruitmentCommentCreateDto.builder()
                 .depth(postDto.getDepth())
                 .content(postDto.getContent())
                 .taggedMemberId(taggedMemberId)
                 .build();
     }
+
+    default RecruitmentCommentUpdateDto patchDtoToRecruitmentCommentUpdateDto(CommentDto.Patch patchDto) {
+
+        if (patchDto == null) {
+            return null;
+        }
+
+        Long taggedMemberId = null;
+
+        if (Optional.ofNullable(patchDto.getTaggedMemberId()).isPresent()) {
+            taggedMemberId = patchDto.getTaggedMemberId();
+        }
+
+        return RecruitmentCommentUpdateDto.builder()
+                .content(patchDto.getContent())
+                .taggedMemberId(taggedMemberId)
+                .build();
+    }
+
+    default CommentDto.PatchResponse toPatchResponseCommentDto(RecruitmentComment comment) {
+
+        if (comment == null) {
+            return null;
+        }
+
+        Long taggedMemberId = null;
+
+        if (Optional.ofNullable(comment.getTaggedMemberId()).isPresent()) {
+            taggedMemberId = comment.getTaggedMemberId();
+        }
+
+        return CommentDto.PatchResponse.builder()
+                .commentId(comment.getId())
+                .depth(comment.getDepth())
+                .content(comment.getContent())
+                .taggedMemberId(taggedMemberId)
+                .build();
+    };
 
 }

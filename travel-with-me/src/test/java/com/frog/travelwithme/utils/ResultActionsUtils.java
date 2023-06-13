@@ -182,11 +182,11 @@ public class ResultActionsUtils {
 
     public static ResultActions postRequestWithTokenAndPathVariableAndContent(MockMvc mockMvc,
                                                                               String url,
-                                                                              Object pathVaraible,
+                                                                              Object pathVariable,
                                                                               String json,
                                                                               String accessToken,
                                                                               String encryptedRefreshToken) throws Exception {
-        return mockMvc.perform(RestDocumentationRequestBuilders.post(url, pathVaraible)
+        return mockMvc.perform(RestDocumentationRequestBuilders.post(url, pathVariable)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -347,6 +347,21 @@ public class ResultActionsUtils {
             requestBuilder.file(file);
         }
         return mockMvc.perform(requestBuilder)
+                .andDo(print());
+    }
+
+    public static ResultActions patchRequestWithTokenAndPathVariableAndContent(MockMvc mockMvc,
+                                                                               String url,
+                                                                               Object pathVariable,
+                                                                               String json,
+                                                                               String accessToken,
+                                                                               String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(RestDocumentationRequestBuilders.patch(url, pathVariable)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
                 .andDo(print());
     }
 

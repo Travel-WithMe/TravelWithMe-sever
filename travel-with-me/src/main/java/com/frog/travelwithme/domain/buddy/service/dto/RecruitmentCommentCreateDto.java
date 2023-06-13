@@ -8,11 +8,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 작성자: 이재혁
+ * 버전 정보: 1.0.0
+ * 작성일자: 2023/05/24
+ **/
+
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RecruitmentCommentDto {
+public class RecruitmentCommentCreateDto {
 
     private Recruitment recruitment;
     private Member member;
@@ -20,12 +26,12 @@ public class RecruitmentCommentDto {
     private Integer depth;
     private String content;
 
-    public RecruitmentCommentDto addRecruitment(Recruitment recruitment) {
+    public RecruitmentCommentCreateDto addRecruitment(Recruitment recruitment) {
         this.recruitment = recruitment;
         return this;
     }
 
-    public RecruitmentCommentDto addMember(Member member) {
+    public RecruitmentCommentCreateDto addMember(Member member) {
         this.member = member;
         return this;
     }

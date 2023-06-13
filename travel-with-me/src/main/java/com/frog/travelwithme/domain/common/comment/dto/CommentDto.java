@@ -30,6 +30,17 @@ public class CommentDto {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class Patch {
+
+        private String content;
+
+        private Long taggedMemberId;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class PostResponse {
         private Long commentId;
         private Integer depth;
@@ -37,4 +48,14 @@ public class CommentDto {
         private Long taggedMemberId;
     }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class PatchResponse {
+        private Long commentId;
+        private Integer depth;
+        private String content;
+        private Long taggedMemberId;
+    }
 }

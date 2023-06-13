@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
+import com.frog.travelwithme.domain.buddy.entity.RecruitmentComment;
+import com.frog.travelwithme.domain.buddy.repository.RecruitmentCommentRepository;
 import com.frog.travelwithme.domain.buddy.service.RecruitmentService;
 import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
@@ -64,6 +66,9 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private RecruitmentCommentRepository recruitmentCommentRepository;
 
     @Autowired
     private MemberService memberService;
@@ -278,12 +283,14 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
                 .andExpect(status().is4xxClientError())
                 .andDo(document("post-recruitment-comment-exception-1",
                         getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getRecruitmentPathVariableSnippet(),
                         ErrorResponseSnippet.getFieldErrorSnippetsLong()
                 ));
     }
 
     @Test
-    @DisplayName("동행 모집글 댓글,대댓글 작성 (모집이 종료된 게시글)")
+    @DisplayName("동행 모집글 댓글 수정 (회원태그 사용)")
     void RecruitmentCommentIntegrationTest5() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
@@ -292,38 +299,100 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
+        Member writer = memberService.findMember(EMAIL);
         Member member = memberService.findMember(EMAIL_OTHER_ONE);
         Long memberId = member.getId();
-        Long recruitmentId = RECRUITMENT_ID;
-        Recruitment recruitment = recruitmentService.findRecruitmentById(recruitmentId);
-        recruitment.end(); // 모집종료
-        CommentDto.Post postDto = StubData.MockComment.getPostDtoByDepthAndTaggedMemberId(1, memberId);
+        RecruitmentComment recruitmentComment = StubData.MockComment.getRecruitmentComment();
+        recruitmentComment.addMember(writer);
+        RecruitmentComment savedRecruitmentComment = recruitmentCommentRepository.save(recruitmentComment);
+        Long commentId = savedRecruitmentComment.getId();
+        CommentDto.Patch patchDto =
+                StubData.MockComment.getPatchDtoByContentAndTaggedMemberId("변경완료", memberId);
 
         // when
-        String uri = BASE_URL + "/{recruitment-id}" + SUB_URL;
-        String json = ObjectMapperUtils.objectToJsonString(postDto);
+        String uri = BASE_URL + SUB_URL + "/{comment-id}" ;
+        String json = ObjectMapperUtils.objectToJsonString(patchDto);
 
         ResultActions actions =
-                ResultActionsUtils.postRequestWithTokenAndPathVariableAndContent(
-                        mvc, uri, recruitmentId, json, accessToken, encryptedRefreshToken
+                ResultActionsUtils.patchRequestWithTokenAndPathVariableAndContent(
+                        mvc, uri, commentId, json, accessToken, encryptedRefreshToken
                 );
 
         // then
-        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+        CommentDto.PatchResponse response =
+                ObjectMapperUtils.actionsSingleToResponseWithData(actions, CommentDto.PatchResponse.class);
+        RecruitmentComment findRecruitmentComment = recruitmentCommentRepository.findById(commentId).get();
 
-        assertThat(response.getStatus()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getStatus());
-        assertThat(response.getMessage()).isEqualTo(ExceptionCode.RECRUITMENT_EXPIRED.getMessage());
+        assertThat(response.getCommentId()).isEqualTo(commentId);
+        assertThat(response.getContent()).isEqualTo(findRecruitmentComment.getContent());
+        assertThat(response.getTaggedMemberId()).isEqualTo(findRecruitmentComment.getTaggedMemberId());
+
         actions
-                .andExpect(status().is4xxClientError())
-                .andDo(document("post-recruitment-comment-exception-2",
+                .andExpect(status().isOk())
+                .andDo(document("patch-recruitment-comment",
+                        getRequestPreProcessor(),
                         getResponsePreProcessor(),
-                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getCommentPathVariableSnippet(),
+                        RequestSnippet.getPatchCommentWithTaggedSnippet(),
+                        ResponseSnippet.getPatchCommentWithTaggedSnippet()
                 ));
     }
 
     @Test
-    @DisplayName("동행 모집글 댓글,대댓글 작성 (동행 모집글이 없음)")
+    @DisplayName("동행 모집글 댓글 수정 (회원태그 미사용)")
     void RecruitmentCommentIntegrationTest6() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Member writer = memberService.findMember(EMAIL);
+        Member member = memberService.findMember(EMAIL_OTHER_ONE);
+        Long memberId = member.getId();
+        RecruitmentComment recruitmentComment = StubData.MockComment.getRecruitmentCommentByNoTaggedMemberId();
+        recruitmentComment.addMember(writer);
+        RecruitmentComment savedRecruitmentComment = recruitmentCommentRepository.save(recruitmentComment);
+        Long commentId = savedRecruitmentComment.getId();
+        CommentDto.Patch patchDto =
+                StubData.MockComment.getPatchDtoByContentAndTaggedMemberId("변경완료", null);
+
+        // when
+        String uri = BASE_URL + SUB_URL + "/{comment-id}" ;
+        String json = ObjectMapperUtils.objectToJsonString(patchDto);
+
+        ResultActions actions =
+                ResultActionsUtils.patchRequestWithTokenAndPathVariableAndContent(
+                        mvc, uri, commentId, json, accessToken, encryptedRefreshToken
+                );
+
+        // then
+        CommentDto.PatchResponse response =
+                ObjectMapperUtils.actionsSingleToResponseWithData(actions, CommentDto.PatchResponse.class);
+        RecruitmentComment findRecruitmentComment = recruitmentCommentRepository.findById(commentId).get();
+
+        assertThat(response.getCommentId()).isEqualTo(commentId);
+        assertThat(response.getContent()).isEqualTo(findRecruitmentComment.getContent());
+        assertThat(response.getTaggedMemberId()).isEqualTo(findRecruitmentComment.getTaggedMemberId());
+        assertThat(response.getTaggedMemberId()).isNull();
+
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("patch-recruitment-comment-no-tagged",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getCommentPathVariableSnippet(),
+                        RequestSnippet.getPatchCommentSnippet(),
+                        ResponseSnippet.getPatchCommentSnippet()
+                ));
+    }
+
+    @Test
+    @DisplayName("동행 모집글 댓글 수정 (댓글이 존재하지 않는경우)")
+    void RecruitmentCommentIntegrationTest7() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
@@ -333,30 +402,77 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
 
         Member member = memberService.findMember(EMAIL_OTHER_ONE);
         Long memberId = member.getId();
-        Recruitment recruitment = recruitmentService.findRecruitmentById(RECRUITMENT_ID);
-        Long recruitmentId = recruitment.getId() + 1L; // 존재할 수 없는 ID
-        CommentDto.Post postDto = StubData.MockComment.getPostDtoByDepthAndTaggedMemberId(1, memberId);
+        CommentDto.Patch patchDto =
+                StubData.MockComment.getPatchDtoByContentAndTaggedMemberId("변경완료", memberId);
 
         // when
-        String uri = BASE_URL + "/{recruitment-id}" + SUB_URL;
-        String json = ObjectMapperUtils.objectToJsonString(postDto);
+        String uri = BASE_URL + SUB_URL + "/{comment-id}" ;
+        String json = ObjectMapperUtils.objectToJsonString(patchDto);
 
         ResultActions actions =
-                ResultActionsUtils.postRequestWithTokenAndPathVariableAndContent(
-                        mvc, uri, recruitmentId, json, accessToken, encryptedRefreshToken
+                ResultActionsUtils.patchRequestWithTokenAndPathVariableAndContent(
+                        mvc, uri, 1L, json, accessToken, encryptedRefreshToken
                 );
 
         // then
         ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
 
-        assertThat(response.getStatus()).isEqualTo(ExceptionCode.RECRUITMENT_NOT_FOUND.getStatus());
-        assertThat(response.getMessage()).isEqualTo(ExceptionCode.RECRUITMENT_NOT_FOUND.getMessage());
+        assertThat(response.getStatus()).isEqualTo(ExceptionCode.COMMENT_NOT_FOUND.getStatus());
+        assertThat(response.getMessage()).isEqualTo(ExceptionCode.COMMENT_NOT_FOUND.getMessage());
+
         actions
                 .andExpect(status().is4xxClientError())
-                .andDo(document("post-recruitment-comment-exception-2",
+                .andDo(document("patch-recruitment-comment-exception-1",
+                        getRequestPreProcessor(),
                         getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getCommentPathVariableSnippet(),
                         ErrorResponseSnippet.getFieldErrorSnippetsLong()
                 ));
     }
 
+    @Test
+    @DisplayName("동행 모집글 댓글 수정 (댓글이 작성자가 일치하지 않는 경우)")
+    void RecruitmentCommentIntegrationTest8() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Member member = memberService.findMember(EMAIL_OTHER_ONE);
+        Long memberId = member.getId();
+        RecruitmentComment recruitmentComment = StubData.MockComment.getRecruitmentComment();
+        recruitmentComment.addMember(member);
+        RecruitmentComment savedRecruitmentComment = recruitmentCommentRepository.save(recruitmentComment);
+        Long commentId = savedRecruitmentComment.getId();
+        CommentDto.Patch patchDto =
+                StubData.MockComment.getPatchDtoByContentAndTaggedMemberId("변경완료", memberId);
+
+        // when
+        String uri = BASE_URL + SUB_URL + "/{comment-id}" ;
+        String json = ObjectMapperUtils.objectToJsonString(patchDto);
+
+        ResultActions actions =
+                ResultActionsUtils.patchRequestWithTokenAndPathVariableAndContent(
+                        mvc, uri, commentId, json, accessToken, encryptedRefreshToken
+                );
+
+        // then
+        ErrorResponse response = ObjectMapperUtils.actionsSingleToResponse(actions, ErrorResponse.class);
+
+        assertThat(response.getStatus()).isEqualTo(ExceptionCode.COMMENT_WRITER_NOT_MATCH.getStatus());
+        assertThat(response.getMessage()).isEqualTo(ExceptionCode.COMMENT_WRITER_NOT_MATCH.getMessage());
+
+        actions
+                .andExpect(status().is4xxClientError())
+                .andDo(document("patch-recruitment-comment-exception-2",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getCommentPathVariableSnippet(),
+                        ErrorResponseSnippet.getFieldErrorSnippetsLong()
+                ));
+    }
 }

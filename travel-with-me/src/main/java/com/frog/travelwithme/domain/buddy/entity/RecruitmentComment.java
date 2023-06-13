@@ -1,7 +1,7 @@
 package com.frog.travelwithme.domain.buddy.entity;
 
+import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentUpdateDto;
 import com.frog.travelwithme.domain.common.comment.entity.Comment;
-import com.frog.travelwithme.domain.common.DeletionEntity;
 import com.frog.travelwithme.domain.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -9,16 +9,21 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+/**
+ * 작성자: 이재혁
+ * 버전 정보: 1.0.0
+ * 작성일자: 2023/05/24
+ **/
 
 @Getter
 @Entity
@@ -26,8 +31,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RecruitmentComment extends Comment {
 
-    @Embedded
-    private DeletionEntity deletionEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recruitment_id")
@@ -44,10 +47,8 @@ public class RecruitmentComment extends Comment {
     private List<Member> likedMembers = new ArrayList<>();
 
     @Builder
-    public RecruitmentComment(Long id, Integer depth, Long groupId, Long taggedMemberId,
-                              String content, DeletionEntity deletionEntity) {
+    public RecruitmentComment(Long id, Integer depth, Long groupId, Long taggedMemberId, String content) {
         super(id, depth, groupId, taggedMemberId, content);
-        this.deletionEntity = deletionEntity;
     }
 
     public RecruitmentComment addMember(Member member) {
@@ -66,9 +67,12 @@ public class RecruitmentComment extends Comment {
         return this;
     }
 
-    public void updateDeletionEntity() {
-        this.deletionEntity.setIsDeleted(true);
-        this.deletionEntity.setDeletedAt(LocalDateTime.now());
+    public RecruitmentComment updateRecruitmentComment(RecruitmentCommentUpdateDto recruitmentCommentUpdateDto) {
+        Optional.ofNullable(recruitmentCommentUpdateDto.getContent())
+                .ifPresent(content -> super.changeContent(content));
+        Optional.ofNullable(recruitmentCommentUpdateDto.getTaggedMemberId())
+                .ifPresent(taggedMemberId -> super.changeTaggedMemberId(taggedMemberId));
+        return this;
     }
 
 }
