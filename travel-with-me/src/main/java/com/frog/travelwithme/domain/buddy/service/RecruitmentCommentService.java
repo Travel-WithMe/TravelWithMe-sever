@@ -4,10 +4,11 @@ import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.buddy.entity.RecruitmentComment;
 import com.frog.travelwithme.domain.buddy.mapper.RecruitmentCommentMapper;
 import com.frog.travelwithme.domain.buddy.repository.RecruitmentCommentRepository;
+import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentUpdateDto;
 import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.domain.common.comment.service.CommentService;
 import com.frog.travelwithme.domain.common.comment.dto.CommentTypeDto;
-import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentDto;
+import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentCreateDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
@@ -29,7 +30,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class RecruitmentCommentService implements CommentService {
+public class RecruitmentCommentService extends CommentService {
 
     private final RecruitmentCommentRepository recruitmentCommentRepository;
 
@@ -39,38 +40,53 @@ public class RecruitmentCommentService implements CommentService {
 
     private final RecruitmentService recruitmentService;
 
-
     public CommentDto.PostResponse createCommentByEmail(CommentDto.Post postDto,
                                                         Long recruitmentId,
                                                         String email) {
         this.checkExistTaggedMemberId(postDto);
         Member findMember = memberService.findMember(email);
         Recruitment findRecruitment = recruitmentService.findRecruitmentByIdAndCheckExpired(recruitmentId);
-        RecruitmentCommentDto recruitmentCommentDto = recruitmentCommentMapper.createRecruitmentCommentDto(postDto)
-                .addRecruitment(findRecruitment)
-                .addMember(findMember);
-        return this.createComment(this.createCommentTypeDto(recruitmentCommentDto));
+        RecruitmentCommentCreateDto recruitmentCommentCreateDto =
+                recruitmentCommentMapper.postDtoToRecruitmentCommentCreateDto(postDto)
+                        .addRecruitment(findRecruitment)
+                        .addMember(findMember);
+        return this.createComment(super.createCommentTypeDto(recruitmentCommentCreateDto));
+    }
+
+    public CommentDto.PatchResponse updateCommentByEmail(CommentDto.Patch patchDto,
+                                                         Long commentId,
+                                                         String email) {
+        RecruitmentComment findRecruitmentComment = this.findRecruitmentCommentById(commentId);
+        this.checkEqualWriterAndUser(findRecruitmentComment, email);
+        RecruitmentCommentUpdateDto recruitmentCommentUpdateDto =
+                recruitmentCommentMapper.patchDtoToRecruitmentCommentUpdateDto(patchDto)
+                        .addRecruitmentComment(findRecruitmentComment);
+        return this.updateComment(super.createCommentTypeDto(recruitmentCommentUpdateDto));
     }
 
     @Override
     public <T> CommentDto.PostResponse createComment(CommentTypeDto<T> commentTypeDto) {
-        RecruitmentCommentDto recruitmentCommentDto = (RecruitmentCommentDto) commentTypeDto.getType();
-        RecruitmentComment comment = recruitmentCommentMapper.toEntity(recruitmentCommentDto)
-                .addRecruitment(recruitmentCommentDto.getRecruitment())
-                .addMember(recruitmentCommentDto.getMember());
+        RecruitmentCommentCreateDto recruitmentCommentCreateDto = (RecruitmentCommentCreateDto) commentTypeDto.getType();
+        RecruitmentComment comment = recruitmentCommentMapper.toEntity(recruitmentCommentCreateDto)
+                .addRecruitment(recruitmentCommentCreateDto.getRecruitment())
+                .addMember(recruitmentCommentCreateDto.getMember());
         RecruitmentComment savedComment = recruitmentCommentRepository.save(comment);
         return recruitmentCommentMapper.toPostResponseCommentDto(savedComment);
     }
 
     @Override
-    public <T> CommentTypeDto<T> createCommentTypeDto(T commentDto) {
-        try {
-            CommentTypeDto<RecruitmentCommentDto> commentTypeDto = new CommentTypeDto<>();
-            return (CommentTypeDto<T>) commentTypeDto.addType((RecruitmentCommentDto) commentDto);
-        } catch (ClassCastException e) {
-            log.debug("RecruitmentCommentService.createCommentTypeDto exception occur ClassCastException");
-            throw new BusinessLogicException(ExceptionCode.COMMENT_CREATE_IMPOSSIBLE);
-        }
+    public <T> CommentDto.PatchResponse updateComment(CommentTypeDto<T> commentTypeDto) {
+        RecruitmentCommentUpdateDto recruitmentCommentUpdateDto = (RecruitmentCommentUpdateDto) commentTypeDto.getType();
+        RecruitmentComment recruitmentComment = recruitmentCommentUpdateDto.getRecruitmentComment()
+                .updateRecruitmentComment(recruitmentCommentUpdateDto);
+        return recruitmentCommentMapper.toPatchResponseCommentDto(recruitmentComment);
+    }
+
+    @Transactional(readOnly = true)
+    public RecruitmentComment findRecruitmentCommentById(Long id) {
+        return recruitmentCommentRepository.findById(id).orElseThrow(
+                () -> new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND)
+        );
     }
 
     public void checkExistTaggedMemberId(CommentDto.Post postDto) {
@@ -84,4 +100,12 @@ public class RecruitmentCommentService implements CommentService {
         }
     }
 
+    public void checkEqualWriterAndUser(RecruitmentComment recruitmentComment, String email) {
+        Member writer = recruitmentComment.getMember();
+        if (!writer.getEmail().equals(email)) {
+            log.debug("RecruitmentCommentService.checkEqualWriterAndUser exception occur " +
+                    "recruitmentComment: {}, email: {}", recruitmentComment, email);
+            throw new BusinessLogicException(ExceptionCode.COMMENT_WRITER_NOT_MATCH);
+        }
+    }
 }

@@ -166,4 +166,22 @@ public class ResponseSnippet {
         );
     }
 
+    public static Snippet getPatchCommentSnippet() {
+        return responseFields(
+                fieldWithPath("data.commentId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 ID"),
+                fieldWithPath("data.depth").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 여부 (댓글:1, 대댓글:2)"),
+                fieldWithPath("data.content").type(JsonFieldType.STRING).description("작성된 댓글,대댓글 내용"),
+                fieldWithPath("data.taggedMemberId").type(JsonFieldType.NULL).description("작성된 댓글,대댓글의 언급(태그)된 회원 ID")
+        );
+    }
+
+    public static Snippet getPatchCommentWithTaggedSnippet() {
+        return responseFields(
+                fieldWithPath("data.commentId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 ID"),
+                fieldWithPath("data.depth").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 여부 (댓글:1, 대댓글:2)"),
+                fieldWithPath("data.content").type(JsonFieldType.STRING).description("작성된 댓글,대댓글 내용"),
+                fieldWithPath("data.taggedMemberId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글의 언급(태그)된 회원 ID")
+        );
+    }
+
 }

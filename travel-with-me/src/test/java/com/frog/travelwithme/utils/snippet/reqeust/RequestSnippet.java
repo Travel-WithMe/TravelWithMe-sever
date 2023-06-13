@@ -67,6 +67,13 @@ public class RequestSnippet {
                 ));
     }
 
+    public static Snippet getCommentPathVariableSnippet() {
+        return pathParameters(
+                List.of(
+                        parameterWithName("comment-id").description("접근하려는 댓글 인덱스")
+                ));
+    }
+
     public static Snippet getMailVerificiationRequestSnippet() {
         return requestParameters(
                 List.of(
@@ -175,6 +182,24 @@ public class RequestSnippet {
         return requestFields(
                 List.of(
                         fieldWithPath("depth").type(NUMBER).description("댓글:1, 대댓글:2"),
+                        fieldWithPath("content").type(STRING).description("댓글,대댓글 내용"),
+                        fieldWithPath("taggedMemberId").type(NUMBER).description("언급(태그)된 회원 아이디")
+                )
+        );
+    }
+
+    public static Snippet getPatchCommentSnippet() {
+        return requestFields(
+                List.of(
+                        fieldWithPath("content").type(STRING).description("댓글,대댓글 내용"),
+                        fieldWithPath("taggedMemberId").type(NULL).description("언급(태그)된 회원 아이디")
+                )
+        );
+    }
+
+    public static Snippet getPatchCommentWithTaggedSnippet() {
+        return requestFields(
+                List.of(
                         fieldWithPath("content").type(STRING).description("댓글,대댓글 내용"),
                         fieldWithPath("taggedMemberId").type(NUMBER).description("언급(태그)된 회원 아이디")
                 )

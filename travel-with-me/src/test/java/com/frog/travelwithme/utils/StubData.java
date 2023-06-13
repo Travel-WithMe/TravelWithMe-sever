@@ -5,7 +5,8 @@ import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.buddy.entity.RecruitmentComment;
-import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentDto;
+import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentCreateDto;
+import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentUpdateDto;
 import com.frog.travelwithme.domain.common.DeletionEntity;
 import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
@@ -15,6 +16,9 @@ import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerific
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Follow;
 import com.frog.travelwithme.domain.member.entity.Member;
+import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
+import com.frog.travelwithme.global.enums.EnumCollection.Gender;
+import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
@@ -525,17 +529,31 @@ public class StubData {
             return RecruitmentComment.builder()
                     .depth(depth)
                     .groupId(groupId)
-                    .taggedMemberId(taggedMemberId)
                     .content(content)
-                    .deletionEntity(new DeletionEntity())
+                    .taggedMemberId(taggedMemberId)
                     .build();
         }
 
-        public static RecruitmentCommentDto getRecruitmentCommentDto() {
-            return RecruitmentCommentDto.builder()
-                    .taggedMemberId(taggedMemberId)
+        public static RecruitmentComment getRecruitmentCommentByNoTaggedMemberId() {
+            return RecruitmentComment.builder()
                     .depth(depth)
+                    .groupId(groupId)
                     .content(content)
+                    .build();
+        }
+
+        public static RecruitmentCommentCreateDto getRecruitmentCommentCreateDto() {
+            return RecruitmentCommentCreateDto.builder()
+                    .taggedMemberId(taggedMemberId)
+                    .content(content)
+                    .depth(depth)
+                    .build();
+        }
+
+        public static RecruitmentCommentUpdateDto getRecruitmentCommentUpdateDto() {
+            return RecruitmentCommentUpdateDto.builder()
+                    .content(content)
+                    .taggedMemberId(taggedMemberId)
                     .build();
         }
 
@@ -549,6 +567,22 @@ public class StubData {
 
         public static CommentDto.PostResponse getPostResponseDto() {
             return CommentDto.PostResponse.builder()
+                    .commentId(commentId)
+                    .depth(depth)
+                    .content(content)
+                    .taggedMemberId(taggedMemberId)
+                    .build();
+        }
+
+        public static CommentDto.Patch getPatchDtoByContentAndTaggedMemberId(String content, Long taggedMemberId) {
+            return CommentDto.Patch.builder()
+                    .content(content)
+                    .taggedMemberId(taggedMemberId)
+                    .build();
+        }
+
+        public static CommentDto.PatchResponse getPatchResponseDto() {
+            return CommentDto.PatchResponse.builder()
                     .commentId(commentId)
                     .depth(depth)
                     .content(content)
