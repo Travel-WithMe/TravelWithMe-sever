@@ -6,7 +6,6 @@ import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.global.enums.EnumCollection.Gender;
 import com.frog.travelwithme.global.enums.EnumCollection.Nation;
 import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
-import io.jsonwebtoken.lang.Collections;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -126,18 +125,5 @@ public class Member extends BaseTimeEntity {
 
     public void changeInterests(List<Interest> interests) {
         this.interests = interests;
-    }
-
-    public void addFollowing(Follow follow) {
-        if (this.followings == null) {
-            this.followings = new ArrayList<>();
-        }
-        this.followings.add(follow);
-    }
-
-    public void removeFollowing(Follow follow) {
-        if (!Collections.isEmpty(this.followings)) {
-            this.followings.remove(follow);
-        }
     }
 }
