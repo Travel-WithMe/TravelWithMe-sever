@@ -8,6 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
@@ -47,8 +48,12 @@ public interface MemberMapper {
 
     @Named("isFollow")
     default boolean isFollow(List<Follow> follows) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal.equals("anonymousUser") || follows.isEmpty()) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || follows.isEmpty()) {
+            return false;
+        }
+        Object principal = authentication.getPrincipal();
+        if (principal.equals("anonymousUser")) {
             return false;
         }
         CustomUserDetails user = (CustomUserDetails) principal;
