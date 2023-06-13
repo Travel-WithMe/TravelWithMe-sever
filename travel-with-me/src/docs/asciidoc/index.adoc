@@ -18,11 +18,8 @@ include::{snippets}/signup/curl-request.adoc[]
 .http-request
 include::{snippets}/signup/http-request.adoc[]
 
-.request-parts
-include::{snippets}/signup/request-parts.adoc[]
-
-.request-part-data-fields
-include::{snippets}/signup/request-part-data-fields.adoc[]
+.request-fields
+include::{snippets}/signup/request-fields.adoc[]
 
 .http-response
 include::{snippets}/signup/http-response.adoc[]
@@ -141,6 +138,90 @@ include::{snippets}/email-verification-fail/http-response.adoc[]
 
 .response-fileds
 include::{snippets}/email-verification-fail/response-fields.adoc[]
+
+=== 이메일 중복 체크(성공)
+.curl-request
+include::{snippets}/check-duplicated-email-success/curl-request.adoc[]
+
+.http-request
+include::{snippets}/check-duplicated-email-success/http-request.adoc[]
+
+.request-param
+include::{snippets}/check-duplicated-email-success/request-parameters.adoc[]
+
+.http-response
+include::{snippets}/check-duplicated-email-success/http-response.adoc[]
+
+=== 이메일 중복 체크(실패)
+.curl-request
+include::{snippets}/check-duplicated-email-fail/curl-request.adoc[]
+
+.http-request
+include::{snippets}/check-duplicated-email-fail/http-request.adoc[]
+
+.request-param
+include::{snippets}/check-duplicated-email-fail/request-parameters.adoc[]
+
+.http-response
+include::{snippets}/check-duplicated-email-fail/http-response.adoc[]
+
+=== 닉네임 중복 체크(성공)
+.curl-request
+include::{snippets}/check-duplicated-nickname-success/curl-request.adoc[]
+
+.http-request
+include::{snippets}/check-duplicated-nickname-success/http-request.adoc[]
+
+.request-param
+include::{snippets}/check-duplicated-nickname-success/request-parameters.adoc[]
+
+.http-response
+include::{snippets}/check-duplicated-nickname-success/http-response.adoc[]
+
+=== 닉네임 중복 체크(실패)
+.curl-request
+include::{snippets}/check-duplicated-nickname-fail/curl-request.adoc[]
+
+.http-request
+include::{snippets}/check-duplicated-nickname-fail/http-request.adoc[]
+
+.request-param
+include::{snippets}/check-duplicated-nickname-fail/request-parameters.adoc[]
+
+.http-response
+include::{snippets}/check-duplicated-nickname-fail/http-response.adoc[]
+
+=== 회원 팔로우
+.curl-request
+include::{snippets}/member-follow/curl-request.adoc[]
+
+.http-request
+include::{snippets}/member-follow/http-request.adoc[]
+
+.path-param
+include::{snippets}/member-follow/path-parameters.adoc[]
+
+.request-header
+include::{snippets}/member-follow/request-headers.adoc[]
+
+.http-response
+include::{snippets}/member-follow/http-response.adoc[]
+
+=== 회원 언팔로우
+.curl-request
+include::{snippets}/member-unfollow/curl-request.adoc[]
+
+.http-request
+include::{snippets}/member-unfollow/http-request.adoc[]
+
+.path-param
+include::{snippets}/member-unfollow/path-parameters.adoc[]
+
+.request-header
+include::{snippets}/member-unfollow/request-headers.adoc[]
+
+.http-response
+include::{snippets}/member-unfollow/http-response.adoc[]
 
 == AuthController
 === 로그인 성공
@@ -404,4 +485,4 @@ include::{snippets}/delete-like-fail/path-parameters.adoc[]
 include::{snippets}/delete-like-fail/request-headers.adoc[]
 
 .http-response
-include::{snippets}/delete-feed-fail/response-fields.adoc[]
+include::{snippets}/delete-like-fail/http-response.adoc[]
