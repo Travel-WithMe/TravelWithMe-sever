@@ -1,10 +1,17 @@
 package com.frog.travelwithme.domain.member.mapper;
 
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
+import com.frog.travelwithme.domain.member.entity.Follow;
 import com.frog.travelwithme.domain.member.entity.Member;
+import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 작성자: 김찬빈
@@ -33,7 +40,21 @@ public interface MemberMapper {
 
     @Mapping(target = "interests", expression = "java(member.getInterests().stream()" +
             ".map(interest -> interest.getType()).collect(java.util.stream.Collectors.toList()))")
-    @Mapping(target = "followerCount", expression = "java(Long.valueOf(member.getFollowers().size()))")
-    @Mapping(target = "followingCount", expression = "java(Long.valueOf(member.getFollowings().size()))")
+    @Mapping(target = "followerCount", expression = "java(Long.valueOf(member.getFollowings().size()))")
+    @Mapping(target = "followingCount", expression = "java(Long.valueOf(member.getFollowers().size()))")
+    @Mapping(target = "follow", source = "member.followings", qualifiedByName = "isFollow")
     MemberDto.Response toDto(Member member);
+
+    @Named("isFollow")
+    default boolean isFollow(List<Follow> follows) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal.equals("anonymousUser") || follows.isEmpty()) {
+            return false;
+        }
+        CustomUserDetails user = (CustomUserDetails) principal;
+        List<String> followerEmails = follows.stream()
+                .map(follow -> follow.getFollower().getEmail()).collect(Collectors.toList());
+
+        return followerEmails.contains(user.getEmail());
+    }
 }
