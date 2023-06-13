@@ -33,7 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URL;
 import java.util.List;
@@ -85,12 +84,11 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
         given(amazonS3.getUrl(any(), any())).willReturn(
                 new URL(StubData.CustomMultipartFile.getIMAGE_URL()));
 
-        MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
         List<MultipartFile> files = StubData.CustomMultipartFile.getMultipartFiles();
 
         // e_ma-il@gmail.com 회원 추가
         MemberDto.SignUp writer = StubData.MockMember.getSignUpDto();
-        memberService.signUp(writer, file);
+        memberService.signUp(writer);
         EMAIL = writer.getEmail();
 
         // dhfif718@gmail.com 회원 추가
@@ -98,7 +96,7 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
                 "dhfif718@gmail.com",
                 "이재혁"
         );
-        memberService.signUp(memberOne,file);
+        memberService.signUp(memberOne);
         EMAIL_OTHER_ONE = memberOne.getEmail();
 
         // kkd718@naver.com 회원 추가
@@ -106,7 +104,7 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
                 "kkd718@naver.com",
                 "리젤란"
         );
-        memberService.signUp(memberTwo, file);
+        memberService.signUp(memberTwo);
         EMAIL_OTHER_TWO = memberTwo.getEmail();
 
         // 동행 모집글 추가 = 작성자(e_ma-il@gmail.com)

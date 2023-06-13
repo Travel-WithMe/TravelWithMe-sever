@@ -30,14 +30,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 
-import static com.frog.travelwithme.global.enums.EnumCollection.*;
+import static com.frog.travelwithme.global.enums.EnumCollection.MatchingStatus;
+import static com.frog.travelwithme.global.enums.EnumCollection.ResponseBody;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getResponsePreProcessor;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -84,8 +84,7 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
 
         // e_ma-il@gmail.com 회원 추가
         MemberDto.SignUp memberOne = StubData.MockMember.getSignUpDto();
-        MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
-        memberService.signUp(memberOne, file);
+        memberService.signUp(memberOne);
         EMAIL = memberOne.getEmail();
 
         // dhfif718@gmail.com 회원 추가
@@ -93,7 +92,7 @@ class MatchingIntegrationTest extends BaseIntegrationTest {
                 "dhfif718@gmail.com",
                 "이재혁"
         );
-        memberService.signUp(memberTwo, file);
+        memberService.signUp(memberTwo);
         EMAIL_OTHER = memberTwo.getEmail();
     }
 

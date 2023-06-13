@@ -93,9 +93,8 @@ class FeedIntegrationTest extends BaseIntegrationTest {
                 new URL(StubData.CustomMultipartFile.getIMAGE_URL()));
 
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
-        MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
         List<MultipartFile> files = StubData.CustomMultipartFile.getMultipartFiles();
-        memberService.signUp(signUpDto, file);
+        memberService.signUp(signUpDto);
         Tag tagOne = Tag.builder().name(TAG_NAME + "1").build();
         tagRepository.save(tagOne);
         Tag tagTwo = Tag.builder().name(TAG_NAME + "2").build();

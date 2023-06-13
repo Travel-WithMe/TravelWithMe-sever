@@ -84,7 +84,7 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
         // e_ma-il@gmail.com 회원 추가
         MemberDto.SignUp memberOne = MockMember.getSignUpDto();
         MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
-        memberService.signUp(memberOne, file);
+        memberService.signUp(memberOne);
         EMAIL = memberOne.getEmail();
 
         // dhfif718@gmail.com 회원 추가
@@ -92,7 +92,7 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
                 "dhfif718@gmail.com",
                 "이재혁"
         );
-        memberService.signUp(memberTwo,file);
+        memberService.signUp(memberTwo);
         EMAIL_OTHER_ONE = memberTwo.getEmail();
 
         // kkd718@naver.com 회원 추가
@@ -100,7 +100,7 @@ class RecruitmentIntegrationTest extends BaseIntegrationTest {
                 "kkd718@naver.com",
                 "리젤란"
         );
-        memberService.signUp(memberThree, file);
+        memberService.signUp(memberThree);
         EMAIL_OTHER_TWO = memberThree.getEmail();
     }
 
