@@ -111,4 +111,18 @@ public class MemberController {
 
         return new ResponseEntity<>(new SingleResponseDto<>(SUCCESS_MEMBER_UNFOLLOW.getDescription()), HttpStatus.OK);
     }
+
+    @PostMapping("/check-duplicated-emails")
+    public ResponseEntity checkDuplicatedEmail(@RequestParam("email") String email) {
+        memberService.checkDuplicatedEmail(email);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/check-duplicated-nicknames")
+    public ResponseEntity checkDuplicatedNickname(@RequestParam("nickname") String nickname) {
+        memberService.checkDuplicatedNickname(nickname);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

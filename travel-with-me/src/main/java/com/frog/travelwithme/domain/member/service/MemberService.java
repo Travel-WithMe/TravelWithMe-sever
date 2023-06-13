@@ -173,10 +173,18 @@ public class MemberService {
         followService.unfollow(follower, followee);
     }
 
-    private void checkDuplicatedEmail(String email) {
+    public void checkDuplicatedEmail(String email) {
         Optional<Member> member = memberRepository.findByEmail(email);
         if (member.isPresent()) {
             log.debug("MemberServiceImpl.checkDuplicatedEmail exception occur email: {}", email);
+            throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
+        }
+    }
+
+    public void checkDuplicatedNickname(String nickname) {
+        Optional<Member> member = memberRepository.findByNickname(nickname);
+        if (member.isPresent()) {
+            log.debug("MemberServiceImpl.checkDuplicatedEmail exception occur email: {}", nickname);
             throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
         }
     }

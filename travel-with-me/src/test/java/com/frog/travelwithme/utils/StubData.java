@@ -45,6 +45,7 @@ public class StubData {
         @Getter
         static String email = "e_ma-il@gmail.com";
         static String password = "Password1234!";
+        @Getter
         static String nickname = "nickname";
         @Getter
         static String image = "defaultImageUrl";

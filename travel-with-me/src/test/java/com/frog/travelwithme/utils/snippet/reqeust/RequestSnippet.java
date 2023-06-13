@@ -9,9 +9,7 @@ import java.util.List;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.payload.JsonFieldType.NULL;
-import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
-import static org.springframework.restdocs.payload.JsonFieldType.STRING;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 
@@ -195,5 +193,17 @@ public class RequestSnippet {
                 List.of(
                         parameterWithName("email").description("조회할 회원의 이메일")
                 ));
+    }
+
+    public static Snippet getCheckDuplicatedEmailParamSnippet() {
+        return requestParameters(
+                parameterWithName("email").description("중복 체크하려는 이메일")
+        );
+    }
+
+    public static Snippet getCheckDuplicatedNicknameParamSnippet() {
+        return requestParameters(
+                parameterWithName("nickname").description("중복 체크하려는 닉네임")
+        );
     }
 }
