@@ -411,4 +411,42 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getFollowingPathVariableSnippet()));
     }
+
+    @Test
+    @DisplayName("회원 이메일 중복여부 확인")
+    void memberIntegrationTest12() throws Exception {
+        // given
+        MultiValueMap<String, String> papram = new LinkedMultiValueMap<>();
+        papram.add("email", StubData.MockMember.getEmail());
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/check-duplicated-emails")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.postRequestWithParams(mvc, uri, papram);
+
+        // then
+        actions
+                .andExpect(status().is4xxClientError())
+                .andDo(document("check-duplicated-email",
+                        RequestSnippet.getCheckDuplicatedEmailParamSnippet()));
+    }
+
+    @Test
+    @DisplayName("회원 닉네임 중복여부 확인")
+    void memberIntegrationTest13() throws Exception {
+        // given
+        MultiValueMap<String, String> papram = new LinkedMultiValueMap<>();
+        papram.add("nickname", StubData.MockMember.getNickname());
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/check-duplicated-nicknames")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.postRequestWithParams(mvc, uri, papram);
+
+        // then
+        actions
+                .andExpect(status().is4xxClientError())
+                .andDo(document("check-duplicated-nickname",
+                        RequestSnippet.getCheckDuplicatedNicknameParamSnippet()));
+    }
 }
