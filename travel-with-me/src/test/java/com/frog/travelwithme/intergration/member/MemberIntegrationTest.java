@@ -413,7 +413,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("회원 이메일 중복여부 확인")
+    @DisplayName("회원 이메일 중복될 경우 예외 발생")
     void memberIntegrationTest12() throws Exception {
         // given
         MultiValueMap<String, String> papram = new LinkedMultiValueMap<>();
@@ -427,12 +427,12 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         // then
         actions
                 .andExpect(status().is4xxClientError())
-                .andDo(document("check-duplicated-email",
+                .andDo(document("check-duplicated-email-fail",
                         RequestSnippet.getCheckDuplicatedEmailParamSnippet()));
     }
 
     @Test
-    @DisplayName("회원 닉네임 중복여부 확인")
+    @DisplayName("회원 닉네임 중복될 경우 예외 발생")
     void memberIntegrationTest13() throws Exception {
         // given
         MultiValueMap<String, String> papram = new LinkedMultiValueMap<>();
@@ -446,7 +446,45 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         // then
         actions
                 .andExpect(status().is4xxClientError())
-                .andDo(document("check-duplicated-nickname",
+                .andDo(document("check-duplicated-nickname-fail",
+                        RequestSnippet.getCheckDuplicatedNicknameParamSnippet()));
+    }
+
+    @Test
+    @DisplayName("회원 이메일 중복되지 않았을 경우 200 Status 반환")
+    void memberIntegrationTest14() throws Exception {
+        // given
+        MultiValueMap<String, String> papram = new LinkedMultiValueMap<>();
+        papram.add("email", "");
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/check-duplicated-emails")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.postRequestWithParams(mvc, uri, papram);
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("check-duplicated-email-success",
+                        RequestSnippet.getCheckDuplicatedEmailParamSnippet()));
+    }
+
+    @Test
+    @DisplayName("회원 닉네임 중복되지 않았을 경우 200 Status 반환")
+    void memberIntegrationTest15() throws Exception {
+        // given
+        MultiValueMap<String, String> papram = new LinkedMultiValueMap<>();
+        papram.add("nickname", "");
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/check-duplicated-nicknames")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.postRequestWithParams(mvc, uri, papram);
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("check-duplicated-nickname-success",
                         RequestSnippet.getCheckDuplicatedNicknameParamSnippet()));
     }
 }
