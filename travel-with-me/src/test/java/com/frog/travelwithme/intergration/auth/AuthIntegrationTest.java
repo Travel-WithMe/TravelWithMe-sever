@@ -90,7 +90,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/login")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(loginSuccessDto);
-        ResultActions actions = ResultActionsUtils.getRequestWithContent(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
 
         // then
         LoginResponse responseDto = ObjectMapperUtils.actionsSingleToResponseWithData(actions, LoginResponse.class);
@@ -116,7 +116,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/login")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(loginFailDto);
-        ResultActions actions = ResultActionsUtils.getRequestWithContent(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
 
         // then
         actions
