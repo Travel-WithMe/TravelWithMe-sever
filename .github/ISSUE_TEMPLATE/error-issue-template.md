@@ -14,8 +14,6 @@ assignees: ''
 
 <br/>
 
----
-
 ## Issue Checklist
 아래 체크리스트를 확인해주세요.
 - [ ] Issue Title을 다음 예시와 같이 작성했습니다. (e.g. [BE - ISSUE] 회원가입 오류 발생 )
