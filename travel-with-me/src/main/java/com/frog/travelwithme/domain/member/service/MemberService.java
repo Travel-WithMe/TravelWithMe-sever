@@ -105,7 +105,7 @@ public class MemberService {
     public Member findMember(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.debug("MemberServiceImpl.findMemberAndCheckMemberExists exception occur id: {}", id);
+                    log.debug("MemberService.findMemberAndCheckMemberExists exception occur id: {}", id);
                     throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
                 });
     }
@@ -138,7 +138,7 @@ public class MemberService {
     public Member findMember(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> {
-                    log.debug("MemberServiceImpl.findMemberAndCheckMemberExists exception occur email: {}", email);
+                    log.debug("MemberService.findMemberAndCheckMemberExists exception occur email: {}", email);
                     return new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
                 });
     }
@@ -176,7 +176,7 @@ public class MemberService {
     public void checkDuplicatedEmail(String email) {
         Optional<Member> member = memberRepository.findByEmail(email);
         if (member.isPresent()) {
-            log.debug("MemberServiceImpl.checkDuplicatedEmail exception occur email: {}", email);
+            log.debug("MemberService.checkDuplicatedEmail exception occur email: {}", email);
             throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
         }
     }
@@ -184,7 +184,7 @@ public class MemberService {
     public void checkDuplicatedNickname(String nickname) {
         Optional<Member> member = memberRepository.findByNickname(nickname);
         if (member.isPresent()) {
-            log.debug("MemberServiceImpl.checkDuplicatedEmail exception occur email: {}", nickname);
+            log.debug("MemberService.checkDuplicatedEmail exception occur email: {}", nickname);
             throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
         }
     }
