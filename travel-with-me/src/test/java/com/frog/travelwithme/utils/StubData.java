@@ -1,6 +1,7 @@
 package com.frog.travelwithme.utils;
 
 
+import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.buddy.entity.RecruitmentComment;
@@ -14,11 +15,6 @@ import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerific
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Follow;
 import com.frog.travelwithme.domain.member.entity.Member;
-import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
-import com.frog.travelwithme.domain.buddy.entity.Recruitment;
-import com.frog.travelwithme.global.enums.EnumCollection;
-import com.frog.travelwithme.global.enums.EnumCollection.Gender;
-import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
@@ -30,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -81,7 +76,6 @@ public class StubData {
                     .password(password)
                     .nickname(nickname)
                     .address(address)
-                    .introduction(introduction)
                     .nation(nation)
                     .gender(enumGender)
                     .role(role)
@@ -95,7 +89,6 @@ public class StubData {
                     .password(password)
                     .nickname(nickname)
                     .address(address)
-                    .introduction(introduction)
                     .gender(enumGender)
                     .nation(nation)
                     .role(role)
@@ -108,7 +101,6 @@ public class StubData {
                     .password(password)
                     .nickname(nickname)
                     .address(address)
-                    .introduction(introduction)
                     .gender(enumGender)
                     .nation(nation)
                     .role(role)
@@ -121,7 +113,6 @@ public class StubData {
                     .password(failedPassword)
                     .nickname(nickname)
                     .address(address)
-                    .introduction(introduction)
                     .gender(enumGender)
                     .nation(nation)
                     .role(role)
@@ -134,7 +125,6 @@ public class StubData {
                     .password(password)
                     .nickname(nickname)
                     .address(address)
-                    .introduction(introduction)
                     .gender(failedGender)
                     .nation(nation)
                     .role(role)
@@ -262,7 +252,6 @@ public class StubData {
             private String gender;
             private Nation nation;
             private String address;
-            private String introduction;
             private String role;
             private List<String> interests;
         }

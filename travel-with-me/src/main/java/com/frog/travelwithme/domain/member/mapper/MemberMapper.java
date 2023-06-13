@@ -30,8 +30,8 @@ public interface MemberMapper {
                 .gender(signUpDto.getGender())
                 .nation(signUpDto.getNation())
                 .address(signUpDto.getAddress())
-                .introduction(signUpDto.getIntroduction())
                 .role(signUpDto.getRole())
+                .introduction("")
                 .image("defaultImageUrl");
 
         return memberBuilder.build();

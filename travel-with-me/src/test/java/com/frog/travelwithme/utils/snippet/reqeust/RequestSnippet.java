@@ -91,12 +91,6 @@ public class RequestSnippet {
                 partWithName("file").description("회원의 프로필 이미지").optional());
     }
 
-    public static Snippet getSignUpMultipartSnippet() {
-        return requestParts(
-                partWithName("file").description("회원의 프로필 이미지").optional(),
-                partWithName("data").description("회원 데이터"));
-    }
-
     public static Snippet getSignUpSnippet() {
         return requestFields(
                 List.of(
@@ -105,7 +99,6 @@ public class RequestSnippet {
                         fieldWithPath("nickname").type(STRING).description("회원 닉네임"),
                         fieldWithPath("gender").type(STRING).description("회원 성별 (남자/여자)"),
                         fieldWithPath("address").type(STRING).description("회원 주소"),
-                        fieldWithPath("introduction").type(STRING).description("자기 소개"),
                         fieldWithPath("nation").type(STRING).description(
                                 "회원 국가: CH / FR / IT / JP / KO / SP / TH / TU / UK / US"),
                         fieldWithPath("role").type(STRING).description("회원 역할"),

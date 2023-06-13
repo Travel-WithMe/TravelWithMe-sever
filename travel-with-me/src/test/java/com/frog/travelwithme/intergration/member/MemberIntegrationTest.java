@@ -119,7 +119,6 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         assertThat(signUpDto.getEmail()).isEqualTo(response.getEmail());
         assertThat(signUpDto.getNickname()).isEqualTo(response.getNickname());
         assertThat(signUpDto.getAddress()).isEqualTo(response.getAddress());
-        assertThat(signUpDto.getIntroduction()).isEqualTo(response.getIntroduction());
         assertThat(signUpDto.getNation()).isEqualTo(response.getNation());
         assertThat(signUpDto.getRole()).isEqualTo(response.getRole());
         assertThat(response.getImage()).isNotNull();

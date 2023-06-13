@@ -2,7 +2,6 @@ package com.frog.travelwithme.utils.snippet.response;
 
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
-import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.restdocs.snippet.Snippet;
 
 import java.util.List;
