@@ -23,7 +23,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URL;
@@ -75,8 +74,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
                 new URL(StubData.CustomMultipartFile.getIMAGE_URL()));
 
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
-        MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
-        memberService.signUp(signUpDto, file);
+        memberService.signUp(signUpDto);
     }
 
     @Test
@@ -90,7 +88,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/login")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(loginSuccessDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentAndCsrf(mvc, uri, json);
 
         // then
         LoginResponse responseDto = ObjectMapperUtils.actionsSingleToResponseWithData(actions, LoginResponse.class);
@@ -116,7 +114,7 @@ class AuthIntegrationTest extends BaseIntegrationTest {
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/login")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(loginFailDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentAndCsrf(mvc, uri, json);
 
         // then
         actions

@@ -32,9 +32,8 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public ResponseEntity signUp(@RequestPart(value = "file", required = false) MultipartFile multipartFile,
-                                 @Valid @RequestPart(value = "data") MemberDto.SignUp signUpDto) {
-        MemberDto.Response response = memberService.signUp(signUpDto, multipartFile);
+    public ResponseEntity signUp(@Valid @RequestBody MemberDto.SignUp signUpDto) {
+        MemberDto.Response response = memberService.signUp(signUpDto);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
     }
@@ -57,7 +56,7 @@ public class MemberController {
 
     @PatchMapping("/images")
     public ResponseEntity patchProfileImage(@AuthenticationPrincipal CustomUserDetails user,
-                                      @RequestPart("file") MultipartFile multipartFile) {
+                                            @RequestPart("file") MultipartFile multipartFile) {
         String email = user.getEmail();
         MemberDto.Response response = memberService.changeProfileImage(multipartFile, email);
 

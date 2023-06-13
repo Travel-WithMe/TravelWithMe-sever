@@ -69,17 +69,15 @@ class MemberControllerTest {
     @WithMockCustomUser
     void memberControllerTest1() throws Exception {
         // given
-        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
         MemberDto.SignUp signUpDto = MockMember.getSignUpDto();
         MemberDto.Response response = MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-        MockMultipartFile data = StubData.CustomMockMultipartFile.getData(json);
-        ResultActions actions = ResultActionsUtils.postRequestWithTwoMultiPartWithCsrf(mvc, uri, file, data);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentAndCsrf(mvc, uri, json);
 
         // then
         actions
@@ -149,13 +147,13 @@ class MemberControllerTest {
         String failedEmail = "ema..il@gmail.com";
         MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByEmail(failedEmail);
         MemberDto.Response response = MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentAndCsrf(mvc, uri, json);
 
         // then
         actions
@@ -170,13 +168,13 @@ class MemberControllerTest {
         String failedEmail = ".email@gmail.com";
         MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByEmail(failedEmail);
         MemberDto.Response response = MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentAndCsrf(mvc, uri, json);
 
         // then
         actions
@@ -191,13 +189,13 @@ class MemberControllerTest {
         String failedEmail = "email.@gmail.com";
         MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByEmail(failedEmail);
         MemberDto.Response response = MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentAndCsrf(mvc, uri, json);
 
         // then
         actions
@@ -212,13 +210,13 @@ class MemberControllerTest {
         String failedEmail = "emailemailemailemailemailemailemailemailemailemailemailemailemail@gmail.com";
         MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByEmail(failedEmail);
         MemberDto.Response response = MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentAndCsrf(mvc, uri, json);
 
         // then
         actions
@@ -233,13 +231,13 @@ class MemberControllerTest {
         String failedPassword = "password1!";
         MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByPassword(failedPassword);
         MemberDto.Response response = MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentAndCsrf(mvc, uri, json);
 
         // then
         actions
@@ -254,13 +252,13 @@ class MemberControllerTest {
         String failedPassword = "PASSWORD1!";
         MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByPassword(failedPassword);
         MemberDto.Response response = MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentAndCsrf(mvc, uri, json);
 
         // then
         actions
@@ -275,13 +273,13 @@ class MemberControllerTest {
         String failedPassword = "Password!";
         MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByPassword(failedPassword);
         MemberDto.Response response = MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentAndCsrf(mvc, uri, json);
 
         // then
         actions
@@ -296,13 +294,13 @@ class MemberControllerTest {
         String failedPassword = "Password1";
         MemberDto.SignUp signUpDto = MockMember.getFailedSignUpDtoByPassword(failedPassword);
         MemberDto.Response response = MockMember.getResponseDto();
-        given(memberService.signUp(any(MemberDto.SignUp.class), any(MultipartFile.class))).willReturn(response);
+        given(memberService.signUp(any(MemberDto.SignUp.class))).willReturn(response);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
-        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
+        ResultActions actions = ResultActionsUtils.postRequestWithContentAndCsrf(mvc, uri, json);
 
         // then
         actions

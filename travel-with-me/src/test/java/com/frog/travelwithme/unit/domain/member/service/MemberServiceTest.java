@@ -60,10 +60,8 @@ class MemberServiceTest {
     void memberServiceTest1() {
         // given
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
-        MultipartFile file = StubData.CustomMockMultipartFile.getFile();
         Member member = StubData.MockMember.getMember();
         MemberDto.Response expectedResponse = StubData.MockMember.getResponseDto();
-        given(fileUploadService.upload(any(MultipartFile.class), any(AwsS3Path.class))).willReturn("imageUrl");
         given(interestService.findInterests(anyList())).willReturn(new ArrayList<>());
         given(memberMapper.toEntity(any(MemberDto.SignUp.class))).willReturn(member);
         given(memberRepository.findByEmail(any())).willReturn(Optional.empty());
@@ -71,7 +69,7 @@ class MemberServiceTest {
         given(memberMapper.toDto(any(Member.class))).willReturn(expectedResponse);
 
         // when
-        MemberDto.Response response = memberService.signUp(signUpDto, file);
+        MemberDto.Response response = memberService.signUp(signUpDto);
 
         // then
         assertNotNull(response);
@@ -166,7 +164,7 @@ class MemberServiceTest {
 
         // when // then
         assertThrows(BusinessLogicException.class,
-                () -> memberService.signUp(signUpDto, file));
+                () -> memberService.signUp(signUpDto));
     }
 
     @Test

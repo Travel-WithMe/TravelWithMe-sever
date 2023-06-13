@@ -64,7 +64,7 @@ public class MemberService {
     @Value("${spring.mail.auth-code-expiration-millis}")
     private long authCodeExpirationMillis;
 
-    public MemberDto.Response signUp(MemberDto.SignUp signUpDto, MultipartFile multipartFile) {
+    public MemberDto.Response signUp(MemberDto.SignUp signUpDto) {
         verifiedRole(signUpDto.getRole());
         this.checkDuplicatedEmail(signUpDto.getEmail());
         List<Interest> interests = interestService
@@ -74,10 +74,7 @@ public class MemberService {
         member.passwordEncoding(passwordEncoder);
         member.changeInterests(interests);
 
-        Member saveMember = memberRepository.save(member);
-        this.uploadAndAndChangeImage(multipartFile, saveMember);
-
-        return memberMapper.toDto(saveMember);
+        return memberMapper.toDto(memberRepository.save(member));
     }
 
     @Transactional(readOnly = true)

@@ -32,9 +32,9 @@ public class ResultActionsUtils {
     private static final String REFRESH_HEADER = "Refresh";
     private static final String BEARER_PREFIX = "Bearer ";
 
-    public static ResultActions postRequestWithContent(MockMvc mockMvc,
-                                                       String url,
-                                                       String json) throws Exception {
+    public static ResultActions postRequestWithContentAndCsrf(MockMvc mockMvc,
+                                                              String url,
+                                                              String json) throws Exception {
         return mockMvc.perform(post(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
@@ -111,26 +111,13 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
-    public static ResultActions postRequestWithTwoMultiPartWithCsrf(MockMvc mockMvc,
-                                                                    String url,
-                                                                    MockMultipartFile file,
-                                                                    MockMultipartFile data) throws Exception {
-        return mockMvc.perform(multipart(url)
-                        .file(file)
-                        .file(data)
-                        .contentType(MediaType.MULTIPART_FORM_DATA)
-                        .with(csrf()))
-                .andDo(print());
-    }
-
-    public static ResultActions postRequestWithTwoMultiPart(MockMvc mockMvc,
-                                                            String url,
-                                                            MockMultipartFile file,
-                                                            MockMultipartFile data) throws Exception {
-        return mockMvc.perform(multipart(url)
-                        .file(file)
-                        .file(data)
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
+    public static ResultActions postRequestWithContent(MockMvc mockMvc,
+                                                       String url,
+                                                       String json) throws Exception {
+        return mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .content(json))
                 .andDo(print());
     }
 
