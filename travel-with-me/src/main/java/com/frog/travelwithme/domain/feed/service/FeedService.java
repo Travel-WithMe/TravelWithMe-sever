@@ -74,6 +74,20 @@ public class FeedService implements LikeService {
         return feedMapper.toResponseList(feedList, email);
     }
 
+    @Transactional(readOnly = true)
+    public List<Response> findAllByNickname(Long lastFeedId, String nickname, String email) {
+        List<Feed> feedList = feedRepository.findAllByNickname(lastFeedId, nickname, email);
+
+        return feedMapper.toResponseList(feedList, email);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Response> findAllByTagName(Long lastFeedId, String tagName, String email) {
+        List<Feed> feedList = feedRepository.findAllByTagName(lastFeedId, tagName, email);
+
+        return feedMapper.toResponseList(feedList, email);
+    }
+
     public Response updateFeed(String email, long feedId, FeedDto.Patch patchDto, List<MultipartFile> multipartFiles) {
         Feed saveFeed = this.findFeed(feedId);
         this.checkWriter(email, saveFeed.getMember().getEmail());
@@ -94,8 +108,8 @@ public class FeedService implements LikeService {
         feedRepository.deleteById(feedId);
         currentImageUrls.forEach(fileUploadService::remove);
     }
-
     // TODO: Redis 캐시 사용 고려
+
     @Override
     public ResponseBody doLike(String email, long feedId) {
         Feed feed = this.findFeed(feedId);
@@ -107,8 +121,8 @@ public class FeedService implements LikeService {
         }
         return ResponseBody.SUCCESS_FEED_LIKE;
     }
-
     // TODO: Redis 캐시 사용 고려
+
     @Override
     public ResponseBody cancelLike(String email, long feedId) {
         Feed feed = this.findFeed(feedId);
