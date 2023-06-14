@@ -4,7 +4,6 @@ package com.frog.travelwithme.domain.common.comment.service;
 import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.domain.common.comment.dto.CommentTypeDto;
 import com.frog.travelwithme.domain.common.comment.entity.Comment;
-import com.frog.travelwithme.domain.common.comment.repository.CommentRepository;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
