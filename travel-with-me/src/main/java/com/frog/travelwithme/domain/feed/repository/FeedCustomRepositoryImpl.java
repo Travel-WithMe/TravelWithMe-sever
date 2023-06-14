@@ -29,9 +29,39 @@ public class FeedCustomRepositoryImpl implements FeedCustomRepository {
 
         return jpaQueryFactory
                 .selectFrom(feed)
-                .leftJoin(feed.member, member)
-                .leftJoin(feed.tags, tag)
+                .leftJoin(feed.member, member).fetchJoin()
+                .leftJoin(feed.tags, tag).fetchJoin()
                 .where(ltFeedId(lastFeedId))
+                .orderBy(feed.id.desc())
+                .limit(pageSize)
+                .fetch();
+    }
+
+    @Override
+    public List<Feed> findAllByNickname(Long lastFeedId, String nickname, String email) {
+        int pageSize = 20;
+
+        return jpaQueryFactory
+                .selectFrom(feed)
+                .leftJoin(feed.member, member).fetchJoin()
+                .leftJoin(feed.tags, tag).fetchJoin()
+                .where(ltFeedId(lastFeedId))
+                .where(member.nickname.eq(nickname))
+                .orderBy(feed.id.desc())
+                .limit(pageSize)
+                .fetch();
+    }
+
+    @Override
+    public List<Feed> findAllByTagName(Long lastFeedId, String tagName, String email) {
+        int pageSize = 20;
+
+        return jpaQueryFactory
+                .selectFrom(feed)
+                .leftJoin(feed.member, member).fetchJoin()
+                .leftJoin(feed.tags, tag).fetchJoin()
+                .where(ltFeedId(lastFeedId))
+                .where(tag.name.eq(tagName))
                 .orderBy(feed.id.desc())
                 .limit(pageSize)
                 .fetch();
