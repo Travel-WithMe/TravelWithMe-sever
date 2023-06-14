@@ -26,17 +26,21 @@ public interface RecruitmentCommentMapper {
         }
 
         Long taggedMemberId = null;
+        Long groupId = null;
 
         if (Optional.ofNullable(recruitmentCommentCreateDto.getTaggedMemberId()).isPresent()) {
             taggedMemberId = recruitmentCommentCreateDto.getTaggedMemberId();
         }
+        if (Optional.ofNullable(recruitmentCommentCreateDto.getGroupId()).isPresent()) {
+            groupId = recruitmentCommentCreateDto.getGroupId();
+        }
 
-        DeletionEntity deletionEntity = new DeletionEntity();
 
         return RecruitmentComment.builder()
-                .taggedMemberId(taggedMemberId)
                 .depth(recruitmentCommentCreateDto.getDepth())
+                .groupId(groupId)
                 .content(recruitmentCommentCreateDto.getContent())
+                .taggedMemberId(taggedMemberId)
                 .build();
     };
 
@@ -47,14 +51,20 @@ public interface RecruitmentCommentMapper {
         }
 
         Long taggedMemberId = null;
+        Long groupId = null;
 
         if (Optional.ofNullable(comment.getTaggedMemberId()).isPresent()) {
             taggedMemberId = comment.getTaggedMemberId();
         }
 
+        if (Optional.ofNullable(comment.getGroupId()).isPresent()) {
+            groupId = comment.getGroupId();
+        }
+
         return CommentDto.PostResponse.builder()
                 .commentId(comment.getId())
                 .depth(comment.getDepth())
+                .groupId(groupId)
                 .content(comment.getContent())
                 .taggedMemberId(taggedMemberId)
                 .build();
@@ -67,13 +77,19 @@ public interface RecruitmentCommentMapper {
         }
 
         Long taggedMemberId = null;
+        Long groupId = null;
 
         if (Optional.ofNullable(postDto.getTaggedMemberId()).isPresent()) {
             taggedMemberId = postDto.getTaggedMemberId();
         }
 
+        if (Optional.ofNullable(postDto.getGroupId()).isPresent()) {
+            groupId = postDto.getGroupId();
+        }
+
         return RecruitmentCommentCreateDto.builder()
                 .depth(postDto.getDepth())
+                .groupId(groupId)
                 .content(postDto.getContent())
                 .taggedMemberId(taggedMemberId)
                 .build();
@@ -112,6 +128,7 @@ public interface RecruitmentCommentMapper {
         return CommentDto.PatchResponse.builder()
                 .commentId(comment.getId())
                 .depth(comment.getDepth())
+                .groupId(comment.getGroupId())
                 .content(comment.getContent())
                 .taggedMemberId(taggedMemberId)
                 .build();

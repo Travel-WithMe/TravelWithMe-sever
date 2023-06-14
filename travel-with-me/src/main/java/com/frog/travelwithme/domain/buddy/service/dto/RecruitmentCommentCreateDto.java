@@ -22,8 +22,9 @@ public class RecruitmentCommentCreateDto {
 
     private Recruitment recruitment;
     private Member member;
-    private Long taggedMemberId;
     private Integer depth;
+    private Long groupId;
+    private Long taggedMemberId;
     private String content;
 
     public RecruitmentCommentCreateDto addRecruitment(Recruitment recruitment) {

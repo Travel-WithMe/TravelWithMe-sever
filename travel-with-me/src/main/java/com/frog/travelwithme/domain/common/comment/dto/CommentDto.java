@@ -20,6 +20,8 @@ public class CommentDto {
         @Max(value = 2)
         private Integer depth;
 
+        private Long groupId;
+
         @NotNull
         private String content;
 
@@ -44,6 +46,7 @@ public class CommentDto {
     public static class PostResponse {
         private Long commentId;
         private Integer depth;
+        private Long groupId;
         private String content;
         private Long taggedMemberId;
     }
@@ -55,6 +58,7 @@ public class CommentDto {
     public static class PatchResponse {
         private Long commentId;
         private Integer depth;
+        private Long groupId;
         private String content;
         private Long taggedMemberId;
     }

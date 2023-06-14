@@ -6,6 +6,7 @@ import com.frog.travelwithme.domain.buddy.mapper.RecruitmentCommentMapper;
 import com.frog.travelwithme.domain.buddy.repository.RecruitmentCommentRepository;
 import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentUpdateDto;
 import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
+import com.frog.travelwithme.domain.common.comment.entity.Comment;
 import com.frog.travelwithme.domain.common.comment.service.CommentService;
 import com.frog.travelwithme.domain.common.comment.dto.CommentTypeDto;
 import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentCreateDto;
@@ -18,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 
 /**
  * 작성자: 이재혁
@@ -29,7 +29,6 @@ import java.util.Optional;
 @Slf4j
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class RecruitmentCommentService extends CommentService {
 
     private final RecruitmentCommentRepository recruitmentCommentRepository;
@@ -40,10 +39,23 @@ public class RecruitmentCommentService extends CommentService {
 
     private final RecruitmentService recruitmentService;
 
+    public RecruitmentCommentService(MemberService memberService,
+                                     RecruitmentCommentRepository recruitmentCommentRepository,
+                                     RecruitmentCommentMapper recruitmentCommentMapper,
+                                     RecruitmentService recruitmentService) {
+
+        super(memberService);
+        this.recruitmentCommentRepository = recruitmentCommentRepository;
+        this.recruitmentCommentMapper = recruitmentCommentMapper;
+        this.memberService = memberService;
+        this.recruitmentService = recruitmentService;
+    }
+
     public CommentDto.PostResponse createCommentByEmail(CommentDto.Post postDto,
                                                         Long recruitmentId,
                                                         String email) {
-        this.checkExistTaggedMemberId(postDto);
+        super.checkExistTaggedMemberId(postDto);
+        super.checkPossibleToMakeGroup(postDto);
         Member findMember = memberService.findMember(email);
         Recruitment findRecruitment = recruitmentService.findRecruitmentByIdAndCheckExpired(recruitmentId);
         RecruitmentCommentCreateDto recruitmentCommentCreateDto =
@@ -71,6 +83,7 @@ public class RecruitmentCommentService extends CommentService {
                 .addRecruitment(recruitmentCommentCreateDto.getRecruitment())
                 .addMember(recruitmentCommentCreateDto.getMember());
         RecruitmentComment savedComment = recruitmentCommentRepository.save(comment);
+        this.joinGroup(savedComment);
         return recruitmentCommentMapper.toPostResponseCommentDto(savedComment);
     }
 
@@ -82,22 +95,19 @@ public class RecruitmentCommentService extends CommentService {
         return recruitmentCommentMapper.toPatchResponseCommentDto(recruitmentComment);
     }
 
-    @Transactional(readOnly = true)
-    public RecruitmentComment findRecruitmentCommentById(Long id) {
-        return recruitmentCommentRepository.findById(id).orElseThrow(
-                () -> new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND)
-        );
+    @Override
+    protected void checkExistCommentById(Long id) {
+        this.findRecruitmentCommentById(id);
     }
 
-    public void checkExistTaggedMemberId(CommentDto.Post postDto) {
-        if (Optional.ofNullable(postDto.getTaggedMemberId()).isPresent()) {
-            try {
-                memberService.findMember(postDto.getTaggedMemberId());
-            } catch (BusinessLogicException e) {
-                log.debug("RecruitmentCommentService.checkExistTaggedMemberId exception occur postDto: {}", postDto);
-                throw new BusinessLogicException(ExceptionCode.TAGGED_MEMBER_NOT_FOUND);
-            }
-        }
+    @Transactional(readOnly = true)
+    public RecruitmentComment findRecruitmentCommentById(Long id) {
+        return recruitmentCommentRepository.findById(id).orElseThrow(() -> {
+                    log.debug("RecruitmentCommentService.findRecruitmentCommentById exception occur " +
+                            "id: {}", id);
+                    throw new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND);
+                }
+        );
     }
 
     public void checkEqualWriterAndUser(RecruitmentComment recruitmentComment, String email) {

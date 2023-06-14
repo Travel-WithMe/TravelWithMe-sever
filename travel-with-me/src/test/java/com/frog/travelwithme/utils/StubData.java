@@ -557,9 +557,12 @@ public class StubData {
                     .build();
         }
 
-        public static CommentDto.Post getPostDtoByDepthAndTaggedMemberId(Integer depth, Long taggedMemberId) {
+        public static CommentDto.Post getPostDtoByDepthAndGroupIdAndTaggedMemberId(Integer depth,
+                                                                                   Long groupId,
+                                                                                   Long taggedMemberId) {
             return CommentDto.Post.builder()
                     .depth(depth)
+                    .groupId(groupId)
                     .content(content)
                     .taggedMemberId(taggedMemberId)
                     .build();
@@ -569,6 +572,7 @@ public class StubData {
             return CommentDto.PostResponse.builder()
                     .commentId(commentId)
                     .depth(depth)
+                    .groupId(groupId)
                     .content(content)
                     .taggedMemberId(taggedMemberId)
                     .build();
