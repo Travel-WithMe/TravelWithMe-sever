@@ -213,4 +213,18 @@ public class RequestSnippet {
                 parameterWithName("nickname").description("중복 체크하려는 닉네임")
         );
     }
+
+    public static Snippet getFeedsByNicknameParamSnippet() {
+        return requestParameters(
+                parameterWithName("lastFeedId").description("이전 조회한 목록 중 마지막 Feed의 인덱스. 첫 번째 조회에서는 해당 파라미터 제외").optional(),
+                parameterWithName("nickname").description("조회하려는 Feed들의 작성자 Nickname")
+        );
+    }
+
+    public static Snippet getFeedsByTagNameParamSnippet() {
+        return requestParameters(
+                parameterWithName("lastFeedId").description("이전 조회한 목록 중 마지막 Feed의 인덱스. 첫 번째 조회에서는 해당 파라미터 제외").optional(),
+                parameterWithName("tagName").description("조회하려는 Feed들에 포함된 tagName")
+        );
+    }
 }

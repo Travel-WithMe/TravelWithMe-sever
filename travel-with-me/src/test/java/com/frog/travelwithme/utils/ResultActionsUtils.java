@@ -467,4 +467,19 @@ public class ResultActionsUtils {
                         .header(REFRESH_HEADER, encryptedRefreshToken))
                 .andDo(print());
     }
+
+    public static ResultActions getRequestWithTwoParamsAndToken(MockMvc mockMvc,
+                                                                String url,
+                                                                MultiValueMap<String, String> lastFeedIdParam,
+                                                                MultiValueMap<String, String> nicknameParam,
+                                                                String accessToken,
+                                                                String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(get(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .params(lastFeedIdParam)
+                        .params(nicknameParam)
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
 }
