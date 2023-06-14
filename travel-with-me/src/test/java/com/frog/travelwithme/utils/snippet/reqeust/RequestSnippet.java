@@ -168,40 +168,22 @@ public class RequestSnippet {
         );
     }
 
-    public static Snippet getPostCommentSnippet() {
+    public static Snippet getPostCommentSnippet(JsonFieldType groupId, JsonFieldType taggedMemberId) {
         return requestFields(
                 List.of(
                         fieldWithPath("depth").type(NUMBER).description("댓글:1, 대댓글:2"),
+                        fieldWithPath("groupId").type(groupId).description("작성된 댓글,대댓글의 Group ID"),
                         fieldWithPath("content").type(STRING).description("댓글,대댓글 내용"),
-                        fieldWithPath("taggedMemberId").type(NULL).description("언급(태그)된 회원 아이디")
+                        fieldWithPath("taggedMemberId").type(taggedMemberId).description("언급(태그)된 회원 아이디")
                 )
         );
     }
 
-    public static Snippet getPostCommentWithTaggedSnippet() {
-        return requestFields(
-                List.of(
-                        fieldWithPath("depth").type(NUMBER).description("댓글:1, 대댓글:2"),
-                        fieldWithPath("content").type(STRING).description("댓글,대댓글 내용"),
-                        fieldWithPath("taggedMemberId").type(NUMBER).description("언급(태그)된 회원 아이디")
-                )
-        );
-    }
-
-    public static Snippet getPatchCommentSnippet() {
+    public static Snippet getPatchCommentSnippet(JsonFieldType taggedMemberType) {
         return requestFields(
                 List.of(
                         fieldWithPath("content").type(STRING).description("댓글,대댓글 내용"),
-                        fieldWithPath("taggedMemberId").type(NULL).description("언급(태그)된 회원 아이디")
-                )
-        );
-    }
-
-    public static Snippet getPatchCommentWithTaggedSnippet() {
-        return requestFields(
-                List.of(
-                        fieldWithPath("content").type(STRING).description("댓글,대댓글 내용"),
-                        fieldWithPath("taggedMemberId").type(NUMBER).description("언급(태그)된 회원 아이디")
+                        fieldWithPath("taggedMemberId").type(taggedMemberType).description("언급(태그)된 회원 아이디")
                 )
         );
     }

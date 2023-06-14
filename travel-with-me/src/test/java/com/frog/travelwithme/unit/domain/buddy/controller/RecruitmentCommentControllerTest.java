@@ -1,12 +1,9 @@
 package com.frog.travelwithme.unit.domain.buddy.controller;
 
 import com.frog.travelwithme.domain.buddy.controller.RecruitmentCommentController;
-import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddy.service.RecruitmentCommentService;
-import com.frog.travelwithme.domain.buddy.service.RecruitmentService;
 import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
-import com.frog.travelwithme.global.utils.TimeUtils;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.ResultActionsUtils;
 import com.frog.travelwithme.utils.StubData;
@@ -22,15 +19,10 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -67,7 +59,8 @@ class RecruitmentCommentControllerTest {
     void recruitmentCommentControllerTest1() throws Exception {
         // given
 
-        CommentDto.Post postDto = StubData.MockComment.getPostDtoByDepthAndTaggedMemberId(1, 1L);
+        CommentDto.Post postDto =
+                StubData.MockComment.getPostDtoByDepthAndGroupIdAndTaggedMemberId(1, null,1L);
         CommentDto.PostResponse postResponseDto = StubData.MockComment.getPostResponseDto();
 
         given(recruitmentCommentService.createCommentByEmail(any(),any(),any())).willReturn(postResponseDto);

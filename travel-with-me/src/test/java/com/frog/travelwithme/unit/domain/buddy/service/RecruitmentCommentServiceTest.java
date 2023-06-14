@@ -62,11 +62,12 @@ class RecruitmentCommentServiceTest {
     protected MemberService memberService;
 
     @Test
-    @DisplayName("동행 모집글 댓글,대댓글 작성 (회원태그 사용)")
+    @DisplayName("동행 모집글 댓글 작성 (회원태그 사용)")
     void recruitmentCommentServiceTest1() {
         //given
         RecruitmentComment recruitmentComment = StubData.MockComment.getRecruitmentComment();
-        CommentDto.Post postDto = StubData.MockComment.getPostDtoByDepthAndTaggedMemberId(1, 1L);
+        CommentDto.Post postDto =
+                StubData.MockComment.getPostDtoByDepthAndGroupIdAndTaggedMemberId(1, null, 1L);
         RecruitmentCommentCreateDto recruitmentCommentCreateDto = StubData.MockComment.getRecruitmentCommentCreateDto();
         CommentDto.PostResponse postResponseDto = StubData.MockComment.getPostResponseDto();
         Member member = StubData.MockMember.getMember();
@@ -95,17 +96,19 @@ class RecruitmentCommentServiceTest {
         assertAll(
                 () -> assertEquals(response.getCommentId(), postResponseDto.getCommentId()),
                 () -> assertEquals(response.getDepth(), postResponseDto.getDepth()),
+                () -> assertEquals(response.getGroupId(), postResponseDto.getGroupId()),
                 () -> assertEquals(response.getContent(), postResponseDto.getContent()),
                 () -> assertEquals(response.getTaggedMemberId(), postResponseDto.getTaggedMemberId())
         );
     }
 
     @Test
-    @DisplayName("동행 모집글 대댓글 작성 (회원태그 미사용)")
+    @DisplayName("동행 모집글 댓글 작성 (회원태그 미사용)")
     void recruitmentCommentServiceTest2() {
         //given
         RecruitmentComment recruitmentComment = StubData.MockComment.getRecruitmentComment();
-        CommentDto.Post postDto = StubData.MockComment.getPostDtoByDepthAndTaggedMemberId(1, null);
+        CommentDto.Post postDto =
+                StubData.MockComment.getPostDtoByDepthAndGroupIdAndTaggedMemberId(1, null, null);
         RecruitmentCommentCreateDto recruitmentCommentCreateDto = StubData.MockComment.getRecruitmentCommentCreateDto();
         CommentDto.PostResponse postResponseDto = StubData.MockComment.getPostResponseDto();
         Member member = StubData.MockMember.getMember();
@@ -132,17 +135,44 @@ class RecruitmentCommentServiceTest {
         assertAll(
                 () -> assertEquals(response.getCommentId(), postResponseDto.getCommentId()),
                 () -> assertEquals(response.getDepth(), postResponseDto.getDepth()),
+                () -> assertEquals(response.getGroupId(), postResponseDto.getGroupId()),
                 () -> assertEquals(response.getContent(), postResponseDto.getContent()),
                 () -> assertEquals(response.getTaggedMemberId(), postResponseDto.getTaggedMemberId())
         );
     }
 
     @Test
-    @DisplayName("동행 모집글 댓글,대댓글 작성 (태그된 멤버가 존재하지 않는 경우)")
+    @DisplayName("동행 모집글 댓글 작성 (예외: GroupId가 있는 경우)")
     void recruitmentCommentServiceTest3() {
         //given
         RecruitmentComment recruitmentComment = StubData.MockComment.getRecruitmentComment();
-        CommentDto.Post postDto = StubData.MockComment.getPostDtoByDepthAndTaggedMemberId(1, 1L);
+        CommentDto.Post postDto =
+                StubData.MockComment.getPostDtoByDepthAndGroupIdAndTaggedMemberId(1, 1L,1L);
+        Member member = StubData.MockMember.getMember();
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitmentComment.addMember(member);
+        recruitmentComment.addRecruitment(recruitment);
+
+        Long memberId = member.getId();
+        Long recruitmentId = recruitment.getId();
+        String memberEmail = member.getEmail();
+
+        when(memberService.findMember(memberId)).thenReturn(member);
+
+        //when
+        //then
+        assertThatThrownBy(() -> recruitmentCommentService.createCommentByEmail(
+                postDto, recruitmentId, memberEmail
+        )).isInstanceOf(BusinessLogicException.class);
+    }
+
+    @Test
+    @DisplayName("동행 모집글 댓글 작성 (예외: 태그된 멤버가 존재하지 않는 경우)")
+    void recruitmentCommentServiceTest4() {
+        //given
+        RecruitmentComment recruitmentComment = StubData.MockComment.getRecruitmentComment();
+        CommentDto.Post postDto =
+                StubData.MockComment.getPostDtoByDepthAndGroupIdAndTaggedMemberId(1, null,1L);
         Member member = StubData.MockMember.getMember();
         Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
         recruitmentComment.addMember(member);
@@ -162,8 +192,73 @@ class RecruitmentCommentServiceTest {
     }
 
     @Test
+    @DisplayName("동행 모집글 대댓글 작성")
+    void recruitmentCommentServiceTest5() {
+        //given
+        RecruitmentComment recruitmentComment = StubData.MockComment.getRecruitmentComment();
+        CommentDto.Post postDto =
+                StubData.MockComment.getPostDtoByDepthAndGroupIdAndTaggedMemberId(2, 1L,1L);
+        RecruitmentCommentCreateDto recruitmentCommentCreateDto = StubData.MockComment.getRecruitmentCommentCreateDto();
+        CommentDto.PostResponse postResponseDto = StubData.MockComment.getPostResponseDto();
+        Member member = StubData.MockMember.getMember();
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitmentComment.addMember(member);
+        recruitmentComment.addRecruitment(recruitment);
+
+        Long recruitmentId = recruitment.getId();
+        String memberEmail = member.getEmail();
+        when(memberService.findMember(anyString())).thenReturn(member);
+        when(recruitmentCommentRepository.findById(anyLong())).thenReturn(Optional.of(recruitmentComment));
+        when(memberService.findMember(anyLong())).thenReturn(member);
+        when(recruitmentService.findRecruitmentByIdAndCheckExpired(recruitmentId)).thenReturn(recruitment);
+        when(recruitmentCommentMapper.postDtoToRecruitmentCommentCreateDto(postDto)).thenReturn(recruitmentCommentCreateDto);
+        when(recruitmentCommentMapper.toEntity(recruitmentCommentCreateDto)).thenReturn(recruitmentComment);
+        when(recruitmentCommentRepository.save(recruitmentComment)).thenReturn(recruitmentComment);
+        when(recruitmentCommentMapper.toPostResponseCommentDto(recruitmentComment)).thenReturn(postResponseDto);
+
+        //when
+        CommentDto.PostResponse response = recruitmentCommentService.createCommentByEmail(
+                postDto, recruitmentId, memberEmail
+        );
+
+        //then
+        assertAll(
+                () -> assertEquals(response.getCommentId(), postResponseDto.getCommentId()),
+                () -> assertEquals(response.getDepth(), postResponseDto.getDepth()),
+                () -> assertEquals(response.getGroupId(), postResponseDto.getGroupId()),
+                () -> assertEquals(response.getContent(), postResponseDto.getContent()),
+                () -> assertEquals(response.getTaggedMemberId(), postResponseDto.getTaggedMemberId())
+        );
+    }
+
+    @Test
+    @DisplayName("동행 모집글 대댓글 작성 (예외: GroupId가 없는 경우)")
+    void recruitmentCommentServiceTest11() {
+        //given
+        RecruitmentComment recruitmentComment = StubData.MockComment.getRecruitmentComment();
+        CommentDto.Post postDto =
+                StubData.MockComment.getPostDtoByDepthAndGroupIdAndTaggedMemberId(2, null,1L);
+        Member member = StubData.MockMember.getMember();
+        Recruitment recruitment = StubData.MockRecruitment.getRecruitment();
+        recruitmentComment.addMember(member);
+        recruitmentComment.addRecruitment(recruitment);
+
+        Long memberId = member.getId();
+        Long recruitmentId = recruitment.getId();
+        String memberEmail = member.getEmail();
+
+        when(memberService.findMember(memberId)).thenReturn(member);
+
+        //when
+        //then
+        assertThatThrownBy(() -> recruitmentCommentService.createCommentByEmail(
+                postDto, recruitmentId, memberEmail
+        )).isInstanceOf(BusinessLogicException.class);
+    }
+
+    @Test
     @DisplayName("동행 모집글 댓글,대댓글 수정 (회원태그 사용)")
-    void recruitmentCommentServiceTest4() {
+    void recruitmentCommentServiceTest6() {
         //given
         RecruitmentComment recruitmentComment = StubData.MockComment.getRecruitmentComment();
         CommentDto.Patch patchDto =
@@ -204,7 +299,7 @@ class RecruitmentCommentServiceTest {
 
     @Test
     @DisplayName("동행 모집글 댓글,대댓글 수정 (회원태그 미사용)")
-    void recruitmentCommentServiceTest5() {
+    void recruitmentCommentServiceTest7() {
         //given
         RecruitmentComment recruitmentComment = StubData.MockComment.getRecruitmentComment();
         CommentDto.Patch patchDto =
@@ -244,8 +339,8 @@ class RecruitmentCommentServiceTest {
     }
 
     @Test
-    @DisplayName("동행 모집글 댓글,대댓글 수정 (댓글이 존재하지 않는경우)")
-    void recruitmentCommentServiceTest6() {
+    @DisplayName("동행 모집글 댓글,대댓글 수정 (예외: 댓글이 존재하지 않는경우)")
+    void recruitmentCommentServiceTest8() {
         //given
         RecruitmentComment recruitmentComment = StubData.MockComment.getRecruitmentComment();
         CommentDto.Patch patchDto =
@@ -273,8 +368,8 @@ class RecruitmentCommentServiceTest {
     }
 
     @Test
-    @DisplayName("동행 모집글 댓글,대댓글 수정 (댓글이 작성자가 일치하지 않는 경우)")
-    void recruitmentCommentServiceTest7() {
+    @DisplayName("동행 모집글 댓글,대댓글 수정 (예외: 댓글이 작성자가 일치하지 않는 경우)")
+    void recruitmentCommentServiceTest9() {
         //given
         RecruitmentComment recruitmentComment = StubData.MockComment.getRecruitmentComment();
         CommentDto.Patch patchDto =

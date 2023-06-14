@@ -1,5 +1,6 @@
 package com.frog.travelwithme.domain.common.comment.entity;
 
+import com.frog.travelwithme.domain.buddy.entity.RecruitmentComment;
 import com.frog.travelwithme.domain.common.BaseTimeEntity;
 import com.frog.travelwithme.domain.member.entity.Member;
 import lombok.AccessLevel;
@@ -49,6 +50,11 @@ public class Comment extends BaseTimeEntity {
         this.groupId = groupId;
         this.taggedMemberId = taggedMemberId;
         this.content = content;
+    }
+
+    public Comment addGroupId(Long groupId) {
+        this.groupId = groupId;
+        return this;
     }
 
     public void changeContent(String content) {
