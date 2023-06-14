@@ -16,6 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
+import static com.frog.travelwithme.global.enums.EnumCollection.ResponseBody.SUCCESS_MEMBER_FOLLOW;
+import static com.frog.travelwithme.global.enums.EnumCollection.ResponseBody.SUCCESS_MEMBER_UNFOLLOW;
+
 /**
  * 작성자: 김찬빈
  * 버전 정보: 1.0.0
@@ -29,16 +32,14 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public ResponseEntity signUp(@RequestPart(value = "file", required = false) MultipartFile multipartFile,
-                                 @Valid @RequestPart(value = "data") MemberDto.SignUp signUpDto) {
-        MemberDto.Response response = memberService.signUp(signUpDto, multipartFile);
+    public ResponseEntity signUp(@Valid @RequestBody MemberDto.SignUp signUpDto) {
+        MemberDto.Response response = memberService.signUp(signUpDto);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity getMember(@AuthenticationPrincipal CustomUserDetails user) {
-        String email = user.getEmail();
+    @GetMapping("/{email}")
+    public ResponseEntity getMember(@PathVariable("email") @Valid @CustomEmail String email) {
         MemberDto.Response response = memberService.findMemberByEmail(email);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
@@ -55,7 +56,7 @@ public class MemberController {
 
     @PatchMapping("/images")
     public ResponseEntity patchProfileImage(@AuthenticationPrincipal CustomUserDetails user,
-                                      @RequestPart("file") MultipartFile multipartFile) {
+                                            @RequestPart("file") MultipartFile multipartFile) {
         String email = user.getEmail();
         MemberDto.Response response = memberService.changeProfileImage(multipartFile, email);
 
@@ -91,5 +92,37 @@ public class MemberController {
         EmailVerificationResult response = memberService.verifiedCode(email, authCode);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+    }
+
+    @PostMapping("/follow/{followee-email}")
+    public ResponseEntity follow(@PathVariable("followee-email") String followeeEmail,
+                                 @AuthenticationPrincipal CustomUserDetails user) {
+        String followerEmail = user.getEmail();
+        memberService.follow(followerEmail, followeeEmail);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(SUCCESS_MEMBER_FOLLOW.getDescription()), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/unfollow/{followee-email}")
+    public ResponseEntity unfollow(@PathVariable("followee-email") String followeeEmail,
+                                   @AuthenticationPrincipal CustomUserDetails user) {
+        String followerEmail = user.getEmail();
+        memberService.unfollow(followerEmail, followeeEmail);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(SUCCESS_MEMBER_UNFOLLOW.getDescription()), HttpStatus.OK);
+    }
+
+    @PostMapping("/check-duplicated-emails")
+    public ResponseEntity checkDuplicatedEmail(@RequestParam("email") String email) {
+        memberService.checkDuplicatedEmail(email);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/check-duplicated-nicknames")
+    public ResponseEntity checkDuplicatedNickname(@RequestParam("nickname") String nickname) {
+        memberService.checkDuplicatedNickname(nickname);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

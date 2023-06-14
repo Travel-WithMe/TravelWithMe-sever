@@ -58,6 +58,26 @@ public class FeedController {
         return new ResponseEntity<>(new PagelessMultiResponseDto<>(responseList), HttpStatus.OK);
     }
 
+    @GetMapping("/nicknames")
+    public ResponseEntity getAllByNickname(@RequestParam(required = false) Long lastFeedId,
+                                           @RequestParam String nickname,
+                                           @AuthenticationPrincipal CustomUserDetails user) {
+        List<FeedDto.Response> responseList = feedService.findAllByNickname(
+                lastFeedId, nickname, user.getEmail());
+
+        return new ResponseEntity<>(new PagelessMultiResponseDto<>(responseList), HttpStatus.OK);
+    }
+
+    @GetMapping("/tagnames")
+    public ResponseEntity getAllByTagName(@RequestParam(required = false) Long lastFeedId,
+                                          @RequestParam String tagName,
+                                          @AuthenticationPrincipal CustomUserDetails user) {
+        List<FeedDto.Response> responseList = feedService.findAllByTagName(
+                lastFeedId, tagName, user.getEmail());
+
+        return new ResponseEntity<>(new PagelessMultiResponseDto<>(responseList), HttpStatus.OK);
+    }
+
     @PatchMapping("/{feed-id}")
     public ResponseEntity patchFeed(@PathVariable("feed-id") Long feedId,
                                     @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles,

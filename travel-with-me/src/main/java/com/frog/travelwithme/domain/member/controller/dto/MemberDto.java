@@ -1,5 +1,6 @@
 package com.frog.travelwithme.domain.member.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.frog.travelwithme.global.enums.EnumCollection.Gender;
 import com.frog.travelwithme.global.enums.EnumCollection.Nation;
 import com.frog.travelwithme.global.validation.CustomAnnotationCollection.CustomEmail;
@@ -37,7 +38,6 @@ public class MemberDto {
         private Nation nation;
         @NotNull(message = "주소를 입력해야 합니다.")
         private String address;
-        private String introduction;
         @NotBlank(message = "권한은 공백이 아니어야 합니다.")
         private String role;
         private List<String> interests;
@@ -71,6 +71,10 @@ public class MemberDto {
         private String address;
         private String introduction;
         private String role;
+        private Long followerCount;
+        private Long followingCount;
+        @JsonProperty("isFollow")
+        private boolean follow;
         private List<String> interests;
         private LocalDateTime createdAt;
         private LocalDateTime lastModifiedAt;

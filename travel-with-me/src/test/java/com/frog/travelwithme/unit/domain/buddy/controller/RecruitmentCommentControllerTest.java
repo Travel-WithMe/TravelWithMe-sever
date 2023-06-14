@@ -1,12 +1,9 @@
 package com.frog.travelwithme.unit.domain.buddy.controller;
 
 import com.frog.travelwithme.domain.buddy.controller.RecruitmentCommentController;
-import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddy.service.RecruitmentCommentService;
-import com.frog.travelwithme.domain.buddy.service.RecruitmentService;
 import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
-import com.frog.travelwithme.global.utils.TimeUtils;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.ResultActionsUtils;
 import com.frog.travelwithme.utils.StubData;
@@ -22,15 +19,10 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -67,7 +59,8 @@ class RecruitmentCommentControllerTest {
     void recruitmentCommentControllerTest1() throws Exception {
         // given
 
-        CommentDto.Post postDto = StubData.MockComment.getPostDtoByDepthAndTaggedMemberId(1, 1L);
+        CommentDto.Post postDto =
+                StubData.MockComment.getPostDtoByDepthAndGroupIdAndTaggedMemberId(1, null,1L);
         CommentDto.PostResponse postResponseDto = StubData.MockComment.getPostResponseDto();
 
         given(recruitmentCommentService.createCommentByEmail(any(),any(),any())).willReturn(postResponseDto);
@@ -88,5 +81,35 @@ class RecruitmentCommentControllerTest {
         assertThat(response.getDepth()).isEqualTo(postResponseDto.getDepth());
         assertThat(response.getTaggedMemberId()).isEqualTo(postResponseDto.getTaggedMemberId());
         assertThat(response.getContent()).isEqualTo(postResponseDto.getContent());
+    }
+
+    @Test
+    @DisplayName("동행 모집글 댓글,대댓글 수정")
+    @WithMockCustomUser
+    void recruitmentCommentControllerTest2() throws Exception {
+        // given
+
+        CommentDto.Patch patchDto =
+                StubData.MockComment.getPatchDtoByContentAndTaggedMemberId("변경확인", 1L);
+        CommentDto.PatchResponse patchResponseDto = StubData.MockComment.getPatchResponseDto();
+
+        given(recruitmentCommentService.updateCommentByEmail(any(),any(),any())).willReturn(patchResponseDto);
+
+        // when
+        String uri = BASE_URL + SUB_URL + "/1";
+
+        String json = ObjectMapperUtils.objectToJsonString(patchDto);
+        ResultActions actions = ResultActionsUtils.patchRequestWithContentAndUserDetails(mvc, uri, json, userDetails);
+
+        // then
+        CommentDto.PatchResponse response =
+                ObjectMapperUtils.actionsSingleToResponseWithData(actions, CommentDto.PatchResponse.class);
+
+        actions
+                .andExpect(status().isOk());
+        assertThat(response.getCommentId()).isEqualTo(patchResponseDto.getCommentId());
+        assertThat(response.getDepth()).isEqualTo(patchResponseDto.getDepth());
+        assertThat(response.getTaggedMemberId()).isEqualTo(patchResponseDto.getTaggedMemberId());
+        assertThat(response.getContent()).isEqualTo(patchResponseDto.getContent());
     }
 }

@@ -4,11 +4,14 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
+import com.frog.travelwithme.domain.feed.entity.Feed;
 import com.frog.travelwithme.domain.feed.entity.Tag;
+import com.frog.travelwithme.domain.feed.repository.FeedRepository;
 import com.frog.travelwithme.domain.feed.repository.TagRepository;
 import com.frog.travelwithme.domain.feed.service.FeedService;
 import com.frog.travelwithme.domain.feed.service.TagService;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
+import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
@@ -38,7 +41,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.persistence.EntityManager;
 import java.net.URL;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getResponsePreProcessor;
@@ -61,6 +66,10 @@ class FeedIntegrationTest extends BaseIntegrationTest {
     private final int SIZE = StubData.MockFeed.getSize();
 
     private long feedId;
+
+    private Tag tagOne;
+
+    private Tag tagTwo;
 
     @Autowired
     private FeedService feedService;
@@ -86,6 +95,9 @@ class FeedIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private AmazonS3 amazonS3;
 
+    @Autowired
+    private FeedRepository feedRepository;
+
     @BeforeEach
     public void beforEach() throws Exception {
         given(amazonS3.putObject(any(PutObjectRequest.class))).willReturn(new PutObjectResult());
@@ -93,12 +105,11 @@ class FeedIntegrationTest extends BaseIntegrationTest {
                 new URL(StubData.CustomMultipartFile.getIMAGE_URL()));
 
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
-        MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
         List<MultipartFile> files = StubData.CustomMultipartFile.getMultipartFiles();
-        memberService.signUp(signUpDto, file);
-        Tag tagOne = Tag.builder().name(TAG_NAME + "1").build();
+        memberService.signUp(signUpDto);
+        this.tagOne = Tag.builder().name(TAG_NAME + "1").build();
         tagRepository.save(tagOne);
-        Tag tagTwo = Tag.builder().name(TAG_NAME + "2").build();
+        this.tagTwo = Tag.builder().name(TAG_NAME + "2").build();
         tagRepository.save(tagTwo);
         FeedDto.Post postDto = StubData.MockFeed.getPostDto();
         FeedDto.Response response = feedService.postFeed(this.EMAIL, postDto, files);
@@ -415,8 +426,85 @@ class FeedIntegrationTest extends BaseIntegrationTest {
                 .andExpect(status().is4xxClientError())
                 .andDo(document("delete-like-fail",
                         getRequestPreProcessor(),
+                        getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getFeedPathVariableSnippet(),
                         ResponseSnippet.getErrorSnippet()));
+    }
+
+    @Test
+    @DisplayName("작성자 nickname이 일치하는 모든 Feed 조회")
+    void feedControllerTest12() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Member member = memberService.findMember(this.EMAIL);
+        Set<Tag> tags = new LinkedHashSet<>();
+        tags.add(tagOne);
+        Feed feed = StubData.MockFeed.getFeed(member, tags);
+        feedRepository.save(feed);
+
+        MultiValueMap<String, String> lastFeedIdParam = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> nicknameParam = new LinkedMultiValueMap<>();
+        lastFeedIdParam.add("lastFeedId", null);
+        nicknameParam.add("nickname", StubData.MockMember.getNickname());
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/nicknames")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.getRequestWithTwoParamsAndToken(
+                mvc, uri, lastFeedIdParam, nicknameParam, accessToken, encryptedRefreshToken);
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("find-all-feed-by-nickname",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getFeedsByNicknameParamSnippet(),
+                        ResponseSnippet.getFeedsSnippet()));
+    }
+
+    @Test
+    @DisplayName("작성자 tagName이 일치하는 모든 Feed 조회")
+    void feedControllerTest13() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Member member = memberService.findMember(this.EMAIL);
+        Set<Tag> tags = new LinkedHashSet<>();
+        tags.add(tagOne);
+        Feed feed = StubData.MockFeed.getFeed(member, tags);
+        feedRepository.save(feed);
+
+        MultiValueMap<String, String> lastFeedIdParam = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> nicknameParam = new LinkedMultiValueMap<>();
+        lastFeedIdParam.add("lastFeedId", null);
+        nicknameParam.add("tagName", tagTwo.getName());
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/tagnames")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.getRequestWithTwoParamsAndToken(
+                mvc, uri, lastFeedIdParam, nicknameParam, accessToken, encryptedRefreshToken);
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("find-all-feed-by-tagname",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getFeedsByTagNameParamSnippet(),
+                        ResponseSnippet.getFeedsSnippet()));
     }
 }

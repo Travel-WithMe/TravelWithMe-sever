@@ -6,6 +6,10 @@ import com.amazonaws.services.s3.model.PutObjectResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.Response;
+import com.frog.travelwithme.domain.member.entity.Follow;
+import com.frog.travelwithme.domain.member.entity.Member;
+import com.frog.travelwithme.domain.member.repository.FollowRepository;
+import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.domain.member.service.InterestService;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
@@ -17,6 +21,7 @@ import com.frog.travelwithme.intergration.BaseIntegrationTest;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
 import com.frog.travelwithme.utils.ResultActionsUtils;
 import com.frog.travelwithme.utils.StubData;
+import com.frog.travelwithme.utils.StubData.MockMember;
 import com.frog.travelwithme.utils.security.WithMockCustomUser;
 import com.frog.travelwithme.utils.snippet.reqeust.RequestSnippet;
 import com.frog.travelwithme.utils.snippet.response.ResponseSnippet;
@@ -25,17 +30,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static com.frog.travelwithme.global.enums.EnumCollection.ResponseBody.SUCCESS_MEMBER_FOLLOW;
+import static com.frog.travelwithme.global.enums.EnumCollection.ResponseBody.SUCCESS_MEMBER_UNFOLLOW;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getResponsePreProcessor;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,17 +54,17 @@ class MemberIntegrationTest extends BaseIntegrationTest {
 
     private final String BASE_URL = "/members";
 
-    private final String EMAIL = StubData.MockMember.getEmail();
+    private final String EMAIL = MockMember.getEmail();
 
-    private final String EMAIL_KEY = StubData.MockMember.getEmailKey();
+    private final String EMAIL_KEY = MockMember.getEmailKey();
 
-    private final String EMAIL_VALUE = StubData.MockMember.getEmail();
+    private final String EMAIL_VALUE = MockMember.getEmail();
 
-    private final String CODE_KEY = StubData.MockMember.getCodeKey();
+    private final String CODE_KEY = MockMember.getCodeKey();
 
-    private final String CODE_VALUE = StubData.MockMember.getCodeValue();
+    private final String CODE_VALUE = MockMember.getCodeValue();
 
-    private final String AUTH_CODE_PREFIX = StubData.MockMember.getAuthCodePrefix();
+    private final String AUTH_CODE_PREFIX = MockMember.getAuthCodePrefix();
 
     @Autowired
     private MemberService memberService;
@@ -79,38 +84,41 @@ class MemberIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private InterestService interestService;
 
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private FollowRepository followRepository;
+
     @BeforeEach
     void beforeEach() throws MalformedURLException {
         given(amazonS3.putObject(any(PutObjectRequest.class))).willReturn(new PutObjectResult());
         given(amazonS3.getUrl(any(), any())).willReturn(
                 new URL(StubData.CustomMultipartFile.getIMAGE_URL()));
 
-        MultipartFile file = StubData.CustomMultipartFile.getMultipartFile();
-        MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
-        memberService.signUp(signUpDto, file);
+        MemberDto.SignUp signUpDto = MockMember.getSignUpDto();
+        memberService.signUp(signUpDto);
     }
 
     @Test
     @DisplayName("회원가입")
     void memberIntegrationTest1() throws Exception {
         // given
-        MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
         memberService.deleteMember(EMAIL);
-        MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
+        MemberDto.SignUp signUpDto = MockMember.getSignUpDto();
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(signUpDto);
         MockMultipartFile data = StubData.CustomMockMultipartFile.getData(json);
-        ResultActions actions = ResultActionsUtils.postRequestWithTwoMultiPart(mvc, uri, file, data);
+        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
 
         // then
         Response response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, Response.class);
         assertThat(signUpDto.getEmail()).isEqualTo(response.getEmail());
         assertThat(signUpDto.getNickname()).isEqualTo(response.getNickname());
         assertThat(signUpDto.getAddress()).isEqualTo(response.getAddress());
-        assertThat(signUpDto.getIntroduction()).isEqualTo(response.getIntroduction());
         assertThat(signUpDto.getNation()).isEqualTo(response.getNation());
         assertThat(signUpDto.getRole()).isEqualTo(response.getRole());
         assertThat(response.getImage()).isNotNull();
@@ -119,8 +127,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 .andDo(document("signup",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
-                        RequestSnippet.getSignUpMultipartSnippet(),
-                        RequestSnippet.getSignUpMultipartDataFieldSnippet(),
+                        RequestSnippet.getSignUpSnippet(),
                         ResponseSnippet.getMemberSnippet()));
     }
 
@@ -128,13 +135,13 @@ class MemberIntegrationTest extends BaseIntegrationTest {
     @DisplayName("회원 정보 수정")
     void memberIntegrationTest2() throws Exception {
         // given
-        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        CustomUserDetails userDetails = MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
         Response originMemberDto = memberService.findMemberByEmail(EMAIL);
-        MemberDto.Patch patchDto = StubData.MockMember.getPatchDto();
+        MemberDto.Patch patchDto = MockMember.getPatchDto();
 
         // when
         String json = ObjectMapperUtils.asJsonString(patchDto);
@@ -167,16 +174,16 @@ class MemberIntegrationTest extends BaseIntegrationTest {
     @DisplayName("회원 조회")
     void memberIntegrationTest3() throws Exception {
         // given
-        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        CustomUserDetails userDetails = MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
-                .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.getRequestWithToken(mvc, uri, accessToken, encryptedRefreshToken);
+        String uri = BASE_URL + "/{email}";
+        ResultActions actions = ResultActionsUtils.
+                getRequestWithTokenAndPathVariable(mvc, uri, MockMember.getEmail(), accessToken, encryptedRefreshToken);
 
         // then
         actions
@@ -185,6 +192,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getEmailPathVariableSnippet(),
                         ResponseSnippet.getMemberSnippet()));
     }
 
@@ -192,8 +200,8 @@ class MemberIntegrationTest extends BaseIntegrationTest {
     @DisplayName("회원 삭제")
     void memberIntegrationTest4() throws Exception {
         // given
-        MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
-        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        MemberDto.SignUp signUpDto = MockMember.getSignUpDto();
+        CustomUserDetails userDetails = MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
@@ -301,12 +309,11 @@ class MemberIntegrationTest extends BaseIntegrationTest {
     void memberControllerTest8() throws Exception {
         // given
         MockMultipartFile file = StubData.CustomMockMultipartFile.getFile();
-        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        CustomUserDetails userDetails = MockMember.getUserDetails();
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
-        Response originMemberDto = memberService.findMemberByEmail(EMAIL);
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/images")
@@ -330,26 +337,154 @@ class MemberIntegrationTest extends BaseIntegrationTest {
     @DisplayName("회원가입 시 성별은 남자, 여자만 입력 가능")
     void memberIntegrationTest9() throws Exception {
         // given
-        MockMultipartFile file = new MockMultipartFile("file",
-                "originalFilename", "text/plain", "fileContent".getBytes());
         memberService.deleteMember(EMAIL);
-        StubData.MockMember.MockGenderFailSingUp failedSignUpDto =
-                StubData.MockMember.getFailedSignUpDtoByGender("중성");
+        MockMember.MockGenderFailSingUp failedSignUpDto =
+                MockMember.getFailedSignUpDtoByGender("중성");
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/signup")
                 .build().toUri().toString();
         String json = ObjectMapperUtils.asJsonString(failedSignUpDto);
-        MockMultipartFile data =
-                new MockMultipartFile("data", null, MediaType.APPLICATION_JSON_VALUE, json.getBytes());
-        ResultActions actions = ResultActionsUtils.postRequestWithTwoMultiPart(mvc, uri, file, data);
+        ResultActions actions = ResultActionsUtils.postRequestWithContent(mvc, uri, json);
 
         // then
         actions
                 .andExpect(status().is4xxClientError())
                 .andDo(document("signup-fail1",
                         getRequestPreProcessor(),
-                        RequestSnippet.getSignUpMultipartSnippet(),
-                        RequestSnippet.getSignUpMultipartDataFieldSnippet()));
+                        RequestSnippet.getSignUpSnippet()));
+    }
+
+    @Test
+    @DisplayName("회원 팔로우")
+    void memberIntegrationTest10() throws Exception {
+        // given
+        Member member = MockMember.getMemberByEmailAndNickname("mock@gmail.com", "mock1");
+        Member followee = memberRepository.save(member);
+        CustomUserDetails userDetails = MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        // when
+        String uri = BASE_URL + "/follow/{followee-email}";
+        ResultActions actions = ResultActionsUtils.postRequestWithTokenAndPathVariable(
+                mvc, uri, followee.getEmail(), accessToken, encryptedRefreshToken);
+
+        // then
+        String response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, String.class);
+        assertThat(SUCCESS_MEMBER_FOLLOW.getDescription()).isEqualTo(response);
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("member-follow",
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getFollowingPathVariableSnippet()));
+    }
+
+    @Test
+    @DisplayName("회원 언팔로우")
+    void memberIntegrationTest11() throws Exception {
+        // given
+        Member follower = memberRepository.findByEmail(MockMember.getEmail()).get();
+        Member member = MockMember.getMemberByEmailAndNickname("mock@gmail.com", "mock1");
+        Member followee = memberRepository.save(member);
+        Follow follow = MockMember.getFollow(follower, followee);
+        followRepository.save(follow);
+        CustomUserDetails userDetails = MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        // when
+        String uri = BASE_URL + "/unfollow/{followee-email}";
+        ResultActions actions = ResultActionsUtils.deleteRequestWithTokenAndPathVariable(
+                mvc, uri, followee.getEmail(), accessToken, encryptedRefreshToken);
+
+        // then
+        String response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, String.class);
+        assertThat(SUCCESS_MEMBER_UNFOLLOW.getDescription()).isEqualTo(response);
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("member-unfollow",
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getFollowingPathVariableSnippet()));
+    }
+
+    @Test
+    @DisplayName("회원 이메일 중복될 경우 예외 발생")
+    void memberIntegrationTest12() throws Exception {
+        // given
+        MultiValueMap<String, String> papram = new LinkedMultiValueMap<>();
+        papram.add("email", StubData.MockMember.getEmail());
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/check-duplicated-emails")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.postRequestWithParams(mvc, uri, papram);
+
+        // then
+        actions
+                .andExpect(status().is4xxClientError())
+                .andDo(document("check-duplicated-email-fail",
+                        RequestSnippet.getCheckDuplicatedEmailParamSnippet()));
+    }
+
+    @Test
+    @DisplayName("회원 닉네임 중복될 경우 예외 발생")
+    void memberIntegrationTest13() throws Exception {
+        // given
+        MultiValueMap<String, String> papram = new LinkedMultiValueMap<>();
+        papram.add("nickname", StubData.MockMember.getNickname());
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/check-duplicated-nicknames")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.postRequestWithParams(mvc, uri, papram);
+
+        // then
+        actions
+                .andExpect(status().is4xxClientError())
+                .andDo(document("check-duplicated-nickname-fail",
+                        RequestSnippet.getCheckDuplicatedNicknameParamSnippet()));
+    }
+
+    @Test
+    @DisplayName("회원 이메일 중복되지 않았을 경우 200 Status 반환")
+    void memberIntegrationTest14() throws Exception {
+        // given
+        MultiValueMap<String, String> papram = new LinkedMultiValueMap<>();
+        papram.add("email", "");
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/check-duplicated-emails")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.postRequestWithParams(mvc, uri, papram);
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("check-duplicated-email-success",
+                        RequestSnippet.getCheckDuplicatedEmailParamSnippet()));
+    }
+
+    @Test
+    @DisplayName("회원 닉네임 중복되지 않았을 경우 200 Status 반환")
+    void memberIntegrationTest15() throws Exception {
+        // given
+        MultiValueMap<String, String> papram = new LinkedMultiValueMap<>();
+        papram.add("nickname", "");
+
+        // when
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/check-duplicated-nicknames")
+                .build().toUri().toString();
+        ResultActions actions = ResultActionsUtils.postRequestWithParams(mvc, uri, papram);
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("check-duplicated-nickname-success",
+                        RequestSnippet.getCheckDuplicatedNicknameParamSnippet()));
     }
 }

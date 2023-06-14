@@ -32,9 +32,9 @@ public class ResultActionsUtils {
     private static final String REFRESH_HEADER = "Refresh";
     private static final String BEARER_PREFIX = "Bearer ";
 
-    public static ResultActions postRequestWithContent(MockMvc mockMvc,
-                                                       String url,
-                                                       String json) throws Exception {
+    public static ResultActions postRequestWithContentAndCsrf(MockMvc mockMvc,
+                                                              String url,
+                                                              String json) throws Exception {
         return mockMvc.perform(post(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
@@ -111,26 +111,13 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
-    public static ResultActions postRequestWithTwoMultiPartWithCsrf(MockMvc mockMvc,
-                                                                    String url,
-                                                                    MockMultipartFile file,
-                                                                    MockMultipartFile data) throws Exception {
-        return mockMvc.perform(multipart(url)
-                        .file(file)
-                        .file(data)
-                        .contentType(MediaType.MULTIPART_FORM_DATA)
-                        .with(csrf()))
-                .andDo(print());
-    }
-
-    public static ResultActions postRequestWithTwoMultiPart(MockMvc mockMvc,
-                                                            String url,
-                                                            MockMultipartFile file,
-                                                            MockMultipartFile data) throws Exception {
-        return mockMvc.perform(multipart(url)
-                        .file(file)
-                        .file(data)
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
+    public static ResultActions postRequestWithContent(MockMvc mockMvc,
+                                                       String url,
+                                                       String json) throws Exception {
+        return mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .content(json))
                 .andDo(print());
     }
 
@@ -162,6 +149,47 @@ public class ResultActionsUtils {
                         .file(data)
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .with(csrf())
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions postRequestWithTokenAndPathvariable(MockMvc mockMvc,
+                                                                    String url,
+                                                                    Object pathVariable,
+                                                                    String accessToken,
+                                                                    String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(RestDocumentationRequestBuilders.post(url, pathVariable)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions postRequestWithTokenAndPathVariable(MockMvc mockMvc,
+                                                                    String url,
+                                                                    Object pathVariable,
+                                                                    String accessToken,
+                                                                    String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(RestDocumentationRequestBuilders.post(url, pathVariable)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions postRequestWithTokenAndPathVariableAndContent(MockMvc mockMvc,
+                                                                              String url,
+                                                                              Object pathVariable,
+                                                                              String json,
+                                                                              String accessToken,
+                                                                              String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(RestDocumentationRequestBuilders.post(url, pathVariable)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .characterEncoding(StandardCharsets.UTF_8)
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
                         .header(REFRESH_HEADER, encryptedRefreshToken))
                 .andDo(print());
@@ -286,6 +314,57 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
+    public static ResultActions postRequestWithTokenAndMultipartListAndMultipartData(MockMvc mockMvc,
+                                                                                     String url,
+                                                                                     String accessToken,
+                                                                                     String encryptedRefreshToken,
+                                                                                     List<MockMultipartFile> files,
+                                                                                     MockMultipartFile data) throws Exception {
+        MockMultipartHttpServletRequestBuilder requestBuilder = (MockMultipartHttpServletRequestBuilder) multipart(url)
+                .file(data)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                .header(REFRESH_HEADER, encryptedRefreshToken);
+        for (MockMultipartFile file : files) {
+            requestBuilder.file(file);
+        }
+        return mockMvc.perform(requestBuilder)
+                .andDo(print());
+    }
+
+    public static ResultActions patchRequestWithTwoMultiPartAndToken(MockMvc mockMvc,
+                                                                     String url,
+                                                                     String accessToken,
+                                                                     String encryptedRefreshToken,
+                                                                     List<MockMultipartFile> files,
+                                                                     MockMultipartFile data) throws Exception {
+        MockMultipartHttpServletRequestBuilder requestBuilder = (MockMultipartHttpServletRequestBuilder) multipart(HttpMethod.PATCH, url)
+                .file(data)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                .header(REFRESH_HEADER, encryptedRefreshToken);
+        for (MockMultipartFile file : files) {
+            requestBuilder.file(file);
+        }
+        return mockMvc.perform(requestBuilder)
+                .andDo(print());
+    }
+
+    public static ResultActions patchRequestWithTokenAndPathVariableAndContent(MockMvc mockMvc,
+                                                                               String url,
+                                                                               Object pathVariable,
+                                                                               String json,
+                                                                               String accessToken,
+                                                                               String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(RestDocumentationRequestBuilders.patch(url, pathVariable)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
     public static ResultActions deleteRequestWithUserDetails(MockMvc mockMvc,
                                                              String url,
                                                              CustomUserDetails userDetails) throws Exception {
@@ -300,6 +379,18 @@ public class ResultActionsUtils {
                                                        String accessToken,
                                                        String encryptedRefreshToken) throws Exception {
         return mockMvc.perform(delete(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
+
+    public static ResultActions deleteRequestWithTokenAndPathVariable(MockMvc mockMvc,
+                                                                      String url,
+                                                                      Object pathVariable,
+                                                                      String accessToken,
+                                                                      String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(RestDocumentationRequestBuilders.delete(url, pathVariable)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
                         .header(REFRESH_HEADER, encryptedRefreshToken))
@@ -365,89 +456,28 @@ public class ResultActionsUtils {
                 .andDo(print());
     }
 
-    public static ResultActions postRequestWithTokenAndMultipartListAndMultipartData(MockMvc mockMvc,
-                                                                 String url,
-                                                                 String accessToken,
-                                                                 String encryptedRefreshToken,
-                                                                 List<MockMultipartFile> files,
-                                                                 MockMultipartFile data) throws Exception {
-        MockMultipartHttpServletRequestBuilder requestBuilder = (MockMultipartHttpServletRequestBuilder) multipart(url)
-                .file(data)
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
-                .header(REFRESH_HEADER, encryptedRefreshToken);
-        for (MockMultipartFile file : files) {
-            requestBuilder.file(file);
-        }
-        return mockMvc.perform(requestBuilder)
-                .andDo(print());
-    }
-
-    public static ResultActions patchRequestWithTwoMultiPartAndToken(MockMvc mockMvc,
-                                                                     String url,
-                                                                     String accessToken,
-                                                                     String encryptedRefreshToken,
-                                                                     List<MockMultipartFile> files,
-                                                                     MockMultipartFile data) throws Exception {
-        MockMultipartHttpServletRequestBuilder requestBuilder = (MockMultipartHttpServletRequestBuilder) multipart(HttpMethod.PATCH, url)
-                .file(data)
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
-                .header(REFRESH_HEADER, encryptedRefreshToken);
-        for (MockMultipartFile file : files) {
-            requestBuilder.file(file);
-        }
-        return mockMvc.perform(requestBuilder)
-                .andDo(print());
-    }
-
     public static ResultActions getRequestWithTokenAndPathVariable(MockMvc mockMvc,
                                                                    String url,
-                                                                   long id,
+                                                                   Object pathVaraible,
                                                                    String accessToken,
                                                                    String encryptedRefreshToken) throws Exception {
-        return mockMvc.perform(RestDocumentationRequestBuilders.get(url, id)
+        return mockMvc.perform(RestDocumentationRequestBuilders.get(url, pathVaraible)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
                         .header(REFRESH_HEADER, encryptedRefreshToken))
                 .andDo(print());
     }
 
-    public static ResultActions deleteRequestWithTokenAndPathVariable(MockMvc mockMvc,
-                                                                      String url,
-                                                                      long id,
-                                                                      String accessToken,
-                                                                      String encryptedRefreshToken) throws Exception {
-        return mockMvc.perform(RestDocumentationRequestBuilders.delete(url, id)
+    public static ResultActions getRequestWithTwoParamsAndToken(MockMvc mockMvc,
+                                                                String url,
+                                                                MultiValueMap<String, String> lastFeedIdParam,
+                                                                MultiValueMap<String, String> nicknameParam,
+                                                                String accessToken,
+                                                                String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(get(url)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
-                        .header(REFRESH_HEADER, encryptedRefreshToken))
-                .andDo(print());
-    }
-
-    public static ResultActions postRequestWithTokenAndPathvariable(MockMvc mockMvc,
-                                                                    String url,
-                                                                    long id,
-                                                                    String accessToken,
-                                                                    String encryptedRefreshToken) throws Exception {
-        return mockMvc.perform(RestDocumentationRequestBuilders.post(url, id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
-                        .header(REFRESH_HEADER, encryptedRefreshToken))
-                .andDo(print());
-    }
-
-    public static ResultActions postRequestWithTokenAndPathVariableAndContent(MockMvc mockMvc,
-                                                                              String url,
-                                                                              long id,
-                                                                              String json,
-                                                                              String accessToken,
-                                                                              String encryptedRefreshToken) throws Exception {
-        return mockMvc.perform(RestDocumentationRequestBuilders.post(url, id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json)
-                        .characterEncoding(StandardCharsets.UTF_8)
+                        .params(lastFeedIdParam)
+                        .params(nicknameParam)
                         .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
                         .header(REFRESH_HEADER, encryptedRefreshToken))
                 .andDo(print());

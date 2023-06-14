@@ -17,6 +17,8 @@ public enum ExceptionCode {
     UNABLE_TO_SEND_EMAIL(404, "메일을 전송할 수 없습니다."),
     NO_SUCH_ALGORITHM(400, "인증 번호 생성을 위한 알고리즘을 찾을 수 없습니다."),
     INVALID_GENDER(404, "성별이 올바르지 않습니다. 성별은 남자, 여자만 허용됩니다."),
+    FOLLOW_NOT_FOUND(404, "팔로우를 하지 않았습니다."),
+    FOLLOW_EXISTS(404, "이미 팔로우 했습니다."),
     TAGGED_MEMBER_NOT_FOUND(404, "태그된 회원을 찾을 수 없습니다."),
 
     // Recruitment & Buddy
@@ -42,7 +44,10 @@ public enum ExceptionCode {
 
     // Comment
     COMMENT_NOT_FOUND(404, "댓글이 존재하지 않습니다."),
-    COMMENT_CREATE_IMPOSSIBLE(404, "댓글을 생성할 수 없습니다."),
+    COMMENT_WRITER_NOT_MATCH(404, "해당 댓글을 작성한 유저가 아닙니다."),
+    COMMENT_DO_NOT_NEED_GROUP_ID(404, "댓글에는 GROUP ID 정보가 필요하지 않습니다."),
+    COMMENT_REPLY_NEED_GROUP_ID(404, "대댓글에는 GROUP ID 정보가 필수입니다. GROUP ID를 넣어주십시오."),
+    COMMENT_REPLY_GROUP_ID_NOT_FOUND(404, "대댓글의 기준이되는 댓글이 존재하지 않습니다."),
 
     // Security, JWT
     NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),

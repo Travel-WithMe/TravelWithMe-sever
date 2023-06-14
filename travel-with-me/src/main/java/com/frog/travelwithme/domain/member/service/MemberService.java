@@ -59,10 +59,12 @@ public class MemberService {
 
     private final InterestService interestService;
 
+    private final FollowService followService;
+
     @Value("${spring.mail.auth-code-expiration-millis}")
     private long authCodeExpirationMillis;
 
-    public MemberDto.Response signUp(MemberDto.SignUp signUpDto, MultipartFile multipartFile) {
+    public MemberDto.Response signUp(MemberDto.SignUp signUpDto) {
         verifiedRole(signUpDto.getRole());
         this.checkDuplicatedEmail(signUpDto.getEmail());
         List<Interest> interests = interestService
@@ -72,10 +74,7 @@ public class MemberService {
         member.passwordEncoding(passwordEncoder);
         member.changeInterests(interests);
 
-        Member saveMember = memberRepository.save(member);
-        this.uploadAndAndChangeImage(multipartFile, saveMember);
-
-        return memberMapper.toDto(saveMember);
+        return memberMapper.toDto(memberRepository.save(member));
     }
 
     @Transactional(readOnly = true)
@@ -106,7 +105,7 @@ public class MemberService {
     public Member findMember(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.debug("MemberServiceImpl.findMemberAndCheckMemberExists exception occur id: {}", id);
+                    log.debug("MemberService.findMemberAndCheckMemberExists exception occur id: {}", id);
                     throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
                 });
     }
@@ -123,7 +122,6 @@ public class MemberService {
         String newImageUrl = fileUploadService.upload(file, PROFILEIMAGE);
         findMember.changeImage(newImageUrl);
         fileUploadService.remove(beforeImageUrl);
-
         return memberMapper.toDto(findMember);
     }
 
@@ -140,7 +138,7 @@ public class MemberService {
     public Member findMember(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> {
-                    log.debug("MemberServiceImpl.findMemberAndCheckMemberExists exception occur email: {}", email);
+                    log.debug("MemberService.findMemberAndCheckMemberExists exception occur email: {}", email);
                     return new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
                 });
     }
@@ -155,10 +153,38 @@ public class MemberService {
                 authCode, Duration.ofMillis(this.authCodeExpirationMillis));
     }
 
-    private void checkDuplicatedEmail(String email) {
+    public EmailVerificationResult verifiedCode(String email, String authCode) {
+        this.checkDuplicatedEmail(email);
+        String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
+        boolean authResult = redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode);
+
+        return EmailVerificationResult.from(authResult);
+    }
+
+    public void follow(String followerEmail, String followeeEmail) {
+        Member follower = this.findMember(followerEmail);
+        Member followee = this.findMember(followeeEmail);
+        followService.follow(follower, followee);
+    }
+
+    public void unfollow(String followerEmail, String followeeEmail) {
+        Member follower = this.findMember(followerEmail);
+        Member followee = this.findMember(followeeEmail);
+        followService.unfollow(follower, followee);
+    }
+
+    public void checkDuplicatedEmail(String email) {
         Optional<Member> member = memberRepository.findByEmail(email);
         if (member.isPresent()) {
-            log.debug("MemberServiceImpl.checkDuplicatedEmail exception occur email: {}", email);
+            log.debug("MemberService.checkDuplicatedEmail exception occur email: {}", email);
+            throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
+        }
+    }
+
+    public void checkDuplicatedNickname(String nickname) {
+        Optional<Member> member = memberRepository.findByNickname(nickname);
+        if (member.isPresent()) {
+            log.debug("MemberService.checkDuplicatedEmail exception occur email: {}", nickname);
             throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
         }
     }
@@ -184,13 +210,5 @@ public class MemberService {
             String imageUrl = fileUploadService.upload(multipartFile, PROFILEIMAGE);
             saveMember.changeImage(imageUrl);
         }
-    }
-
-    public EmailVerificationResult verifiedCode(String email, String authCode) {
-        this.checkDuplicatedEmail(email);
-        String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
-        boolean authResult = redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode);
-
-        return EmailVerificationResult.from(authResult);
     }
 }

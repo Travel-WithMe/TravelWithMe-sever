@@ -9,9 +9,7 @@ import java.util.List;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.payload.JsonFieldType.NULL;
-import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
-import static org.springframework.restdocs.payload.JsonFieldType.STRING;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 
@@ -69,6 +67,13 @@ public class RequestSnippet {
                 ));
     }
 
+    public static Snippet getCommentPathVariableSnippet() {
+        return pathParameters(
+                List.of(
+                        parameterWithName("comment-id").description("접근하려는 댓글 인덱스")
+                ));
+    }
+
     public static Snippet getMailVerificiationRequestSnippet() {
         return requestParameters(
                 List.of(
@@ -91,26 +96,22 @@ public class RequestSnippet {
                 partWithName("file").description("회원의 프로필 이미지").optional());
     }
 
-    public static Snippet getSignUpMultipartSnippet() {
-        return requestParts(
-                partWithName("file").description("회원의 프로필 이미지").optional(),
-                partWithName("data").description("회원 데이터"));
-    }
-
-    public static Snippet getSignUpMultipartDataFieldSnippet() {
-        return requestPartFields("data",
-                fieldWithPath("email").type(STRING).description("회원 이메일"),
-                fieldWithPath("password").type(STRING).description("회원 비밀번호"),
-                fieldWithPath("nickname").type(STRING).description("회원 닉네임"),
-                fieldWithPath("gender").type(STRING).description("회원 성별 (남자/여자)"),
-                fieldWithPath("address").type(STRING).description("회원 주소"),
-                fieldWithPath("introduction").type(STRING).description("자기 소개"),
-                fieldWithPath("nation").type(STRING).description(
-                        "회원 국가: CH / FR / IT / JP / KO / SP / TH / TU / UK / US"),
-                fieldWithPath("role").type(STRING).description("회원 역할"),
-                fieldWithPath("interests").type(JsonFieldType.ARRAY).description(
-                        "회원 관심사 : 하이킹 / 서핑 / 다이빙 / 스노클링 / 사파리 / 스키 / 자전거 / 액티비티 / " +
-                                "음식 체험 / 음악 감상 / 공연 감상 / 전시회 / 예술 관람 / 사진 촬영 / 지역 축제 / 계획형 / 즉흥형"));
+    public static Snippet getSignUpSnippet() {
+        return requestFields(
+                List.of(
+                        fieldWithPath("email").type(STRING).description("회원 이메일"),
+                        fieldWithPath("password").type(STRING).description("회원 비밀번호"),
+                        fieldWithPath("nickname").type(STRING).description("회원 닉네임"),
+                        fieldWithPath("gender").type(STRING).description("회원 성별 (남자/여자)"),
+                        fieldWithPath("address").type(STRING).description("회원 주소"),
+                        fieldWithPath("nation").type(STRING).description(
+                                "회원 국가: CH / FR / IT / JP / KO / SP / TH / TU / UK / US"),
+                        fieldWithPath("role").type(STRING).description("회원 역할"),
+                        fieldWithPath("interests").type(JsonFieldType.ARRAY).description(
+                                "회원 관심사 : 하이킹 / 서핑 / 다이빙 / 스노클링 / 사파리 / 스키 / 자전거 / 액티비티 / " +
+                                        "음식 체험 / 음악 감상 / 공연 감상 / 전시회 / 예술 관람 / 사진 촬영 / 지역 축제 / 계획형 / 즉흥형")
+                )
+        );
     }
 
     public static Snippet getTokenSnippet() {
@@ -167,23 +168,63 @@ public class RequestSnippet {
         );
     }
 
-    public static Snippet getPostCommentSnippet() {
+    public static Snippet getPostCommentSnippet(JsonFieldType groupId, JsonFieldType taggedMemberId) {
         return requestFields(
                 List.of(
                         fieldWithPath("depth").type(NUMBER).description("댓글:1, 대댓글:2"),
+                        fieldWithPath("groupId").type(groupId).description("작성된 댓글,대댓글의 Group ID"),
                         fieldWithPath("content").type(STRING).description("댓글,대댓글 내용"),
-                        fieldWithPath("taggedMemberId").type(NULL).description("언급(태그)된 회원 아이디")
+                        fieldWithPath("taggedMemberId").type(taggedMemberId).description("언급(태그)된 회원 아이디")
                 )
         );
     }
 
-    public static Snippet getPostCommentWithTaggedSnippet() {
+    public static Snippet getPatchCommentSnippet(JsonFieldType taggedMemberType) {
         return requestFields(
                 List.of(
-                        fieldWithPath("depth").type(NUMBER).description("댓글:1, 대댓글:2"),
                         fieldWithPath("content").type(STRING).description("댓글,대댓글 내용"),
-                        fieldWithPath("taggedMemberId").type(NUMBER).description("언급(태그)된 회원 아이디")
+                        fieldWithPath("taggedMemberId").type(taggedMemberType).description("언급(태그)된 회원 아이디")
                 )
+        );
+    }
+
+    public static Snippet getFollowingPathVariableSnippet() {
+        return pathParameters(
+                List.of(
+                        parameterWithName("followee-email").description("팔로잉할 회원의 이메일")
+                ));
+    }
+
+    public static Snippet getEmailPathVariableSnippet() {
+        return pathParameters(
+                List.of(
+                        parameterWithName("email").description("조회할 회원의 이메일")
+                ));
+    }
+
+    public static Snippet getCheckDuplicatedEmailParamSnippet() {
+        return requestParameters(
+                parameterWithName("email").description("중복 체크하려는 이메일")
+        );
+    }
+
+    public static Snippet getCheckDuplicatedNicknameParamSnippet() {
+        return requestParameters(
+                parameterWithName("nickname").description("중복 체크하려는 닉네임")
+        );
+    }
+
+    public static Snippet getFeedsByNicknameParamSnippet() {
+        return requestParameters(
+                parameterWithName("lastFeedId").description("이전 조회한 목록 중 마지막 Feed의 인덱스. 첫 번째 조회에서는 해당 파라미터 제외").optional(),
+                parameterWithName("nickname").description("조회하려는 Feed들의 작성자 Nickname")
+        );
+    }
+
+    public static Snippet getFeedsByTagNameParamSnippet() {
+        return requestParameters(
+                parameterWithName("lastFeedId").description("이전 조회한 목록 중 마지막 Feed의 인덱스. 첫 번째 조회에서는 해당 파라미터 제외").optional(),
+                parameterWithName("tagName").description("조회하려는 Feed들에 포함된 tagName")
         );
     }
 }

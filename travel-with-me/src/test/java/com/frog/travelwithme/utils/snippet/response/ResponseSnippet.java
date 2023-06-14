@@ -2,7 +2,6 @@ package com.frog.travelwithme.utils.snippet.response;
 
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
-import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.restdocs.snippet.Snippet;
 
 import java.util.List;
@@ -26,8 +25,11 @@ public class ResponseSnippet {
                         fieldWithPath("data.gender").type(JsonFieldType.STRING).description("회원 성별 (남자/여자)"),
                         fieldWithPath("data.interests").type(JsonFieldType.ARRAY).description("회원 관심사"),
                         fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("회원 가입일"),
-                        fieldWithPath("data.lastModifiedAt").type(JsonFieldType.STRING).description("회원 정보 수정일")
-                )
+                        fieldWithPath("data.lastModifiedAt").type(JsonFieldType.STRING).description("회원 정보 수정일"),
+                        fieldWithPath("data.isFollow").type(JsonFieldType.BOOLEAN).description("해당 회원 팔로우 여부"),
+                        fieldWithPath("data.followerCount").type(JsonFieldType.NUMBER).description("회원의 팔로워 수"),
+                        fieldWithPath("data.followingCount").type(JsonFieldType.NUMBER).description("회원의 팔로잉 수")
+                        )
         );
     }
 
@@ -146,21 +148,23 @@ public class ResponseSnippet {
         );
     }
 
-    public static Snippet getPostCommentSnippet() {
+    public static Snippet getPostCommentSnippet(JsonFieldType groupType, JsonFieldType taggedMemberType) {
         return responseFields(
                 fieldWithPath("data.commentId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 ID"),
                 fieldWithPath("data.depth").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 여부 (댓글:1, 대댓글:2)"),
+                fieldWithPath("data.groupId").type(groupType).description("작성된 댓글,대댓글의 Group ID"),
                 fieldWithPath("data.content").type(JsonFieldType.STRING).description("작성된 댓글,대댓글 내용"),
-                fieldWithPath("data.taggedMemberId").type(JsonFieldType.NULL).description("작성된 댓글,대댓글의 언급(태그)된 회원 ID")
+                fieldWithPath("data.taggedMemberId").type(taggedMemberType).description("작성된 댓글,대댓글의 언급(태그)된 회원 ID")
         );
     }
 
-    public static Snippet getPostCommentWithTaggedSnippet() {
+    public static Snippet getPatchCommentSnippet(JsonFieldType taggedMemberType) {
         return responseFields(
                 fieldWithPath("data.commentId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 ID"),
                 fieldWithPath("data.depth").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 여부 (댓글:1, 대댓글:2)"),
+                fieldWithPath("data.groupId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글의 Group ID"),
                 fieldWithPath("data.content").type(JsonFieldType.STRING).description("작성된 댓글,대댓글 내용"),
-                fieldWithPath("data.taggedMemberId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글의 언급(태그)된 회원 ID")
+                fieldWithPath("data.taggedMemberId").type(taggedMemberType).description("작성된 댓글,대댓글의 언급(태그)된 회원 ID")
         );
     }
 

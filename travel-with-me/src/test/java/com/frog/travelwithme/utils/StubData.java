@@ -1,21 +1,24 @@
 package com.frog.travelwithme.utils;
 
 
+import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
 import com.frog.travelwithme.domain.buddy.entity.Matching;
 import com.frog.travelwithme.domain.buddy.entity.Recruitment;
 import com.frog.travelwithme.domain.buddy.entity.RecruitmentComment;
-import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentDto;
+import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentCreateDto;
+import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentUpdateDto;
 import com.frog.travelwithme.domain.common.DeletionEntity;
 import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
+import com.frog.travelwithme.domain.feed.entity.Feed;
+import com.frog.travelwithme.domain.feed.entity.Tag;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
+import com.frog.travelwithme.domain.member.entity.Follow;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
-import com.frog.travelwithme.domain.buddy.entity.Recruitment;
-import com.frog.travelwithme.global.enums.EnumCollection;
 import com.frog.travelwithme.global.enums.EnumCollection.Gender;
 import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto;
@@ -29,11 +32,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static com.frog.travelwithme.global.enums.EnumCollection.*;
 
@@ -49,6 +52,7 @@ public class StubData {
         @Getter
         static String email = "e_ma-il@gmail.com";
         static String password = "Password1234!";
+        @Getter
         static String nickname = "nickname";
         @Getter
         static String image = "defaultImageUrl";
@@ -80,7 +84,6 @@ public class StubData {
                     .password(password)
                     .nickname(nickname)
                     .address(address)
-                    .introduction(introduction)
                     .nation(nation)
                     .gender(enumGender)
                     .role(role)
@@ -94,7 +97,6 @@ public class StubData {
                     .password(password)
                     .nickname(nickname)
                     .address(address)
-                    .introduction(introduction)
                     .gender(enumGender)
                     .nation(nation)
                     .role(role)
@@ -107,7 +109,6 @@ public class StubData {
                     .password(password)
                     .nickname(nickname)
                     .address(address)
-                    .introduction(introduction)
                     .gender(enumGender)
                     .nation(nation)
                     .role(role)
@@ -120,7 +121,6 @@ public class StubData {
                     .password(failedPassword)
                     .nickname(nickname)
                     .address(address)
-                    .introduction(introduction)
                     .gender(enumGender)
                     .nation(nation)
                     .role(role)
@@ -133,7 +133,6 @@ public class StubData {
                     .password(password)
                     .nickname(nickname)
                     .address(address)
-                    .introduction(introduction)
                     .gender(failedGender)
                     .nation(nation)
                     .role(role)
@@ -243,6 +242,13 @@ public class StubData {
                     .build();
         }
 
+        public static Follow getFollow(Member follower, Member followee) {
+            return Follow.builder()
+                    .follower(follower)
+                    .following(followee)
+                    .build();
+        }
+
         @Getter
         @Builder
         @AllArgsConstructor
@@ -254,7 +260,6 @@ public class StubData {
             private String gender;
             private Nation nation;
             private String address;
-            private String introduction;
             private String role;
             private List<String> interests;
         }
@@ -420,6 +425,18 @@ public class StubData {
             return responseList;
         }
 
+        public static Feed getFeed(Member member, Set<Tag> tags) {
+            Feed feed = Feed.builder()
+                    .contents(contents)
+                    .location(location)
+                    .imageUrls(List.of(profileImage))
+                    .member(member)
+                    .build();
+            feed.addTags(tags);
+
+            return feed;
+        }
+
         private static TagDto.Response getTagResponseDto(int addName) {
             return TagDto.Response.builder()
                     .name(tagName + addName)
@@ -527,23 +544,40 @@ public class StubData {
             return RecruitmentComment.builder()
                     .depth(depth)
                     .groupId(groupId)
-                    .taggedMemberId(taggedMemberId)
                     .content(content)
-                    .deletionEntity(new DeletionEntity())
+                    .taggedMemberId(taggedMemberId)
                     .build();
         }
 
-        public static RecruitmentCommentDto getRecruitmentCommentDto() {
-            return RecruitmentCommentDto.builder()
-                    .taggedMemberId(taggedMemberId)
+        public static RecruitmentComment getRecruitmentCommentByNoTaggedMemberId() {
+            return RecruitmentComment.builder()
                     .depth(depth)
+                    .groupId(groupId)
                     .content(content)
                     .build();
         }
 
-        public static CommentDto.Post getPostDtoByDepthAndTaggedMemberId(Integer depth, Long taggedMemberId) {
+        public static RecruitmentCommentCreateDto getRecruitmentCommentCreateDto() {
+            return RecruitmentCommentCreateDto.builder()
+                    .taggedMemberId(taggedMemberId)
+                    .content(content)
+                    .depth(depth)
+                    .build();
+        }
+
+        public static RecruitmentCommentUpdateDto getRecruitmentCommentUpdateDto() {
+            return RecruitmentCommentUpdateDto.builder()
+                    .content(content)
+                    .taggedMemberId(taggedMemberId)
+                    .build();
+        }
+
+        public static CommentDto.Post getPostDtoByDepthAndGroupIdAndTaggedMemberId(Integer depth,
+                                                                                   Long groupId,
+                                                                                   Long taggedMemberId) {
             return CommentDto.Post.builder()
                     .depth(depth)
+                    .groupId(groupId)
                     .content(content)
                     .taggedMemberId(taggedMemberId)
                     .build();
@@ -551,6 +585,23 @@ public class StubData {
 
         public static CommentDto.PostResponse getPostResponseDto() {
             return CommentDto.PostResponse.builder()
+                    .commentId(commentId)
+                    .depth(depth)
+                    .groupId(groupId)
+                    .content(content)
+                    .taggedMemberId(taggedMemberId)
+                    .build();
+        }
+
+        public static CommentDto.Patch getPatchDtoByContentAndTaggedMemberId(String content, Long taggedMemberId) {
+            return CommentDto.Patch.builder()
+                    .content(content)
+                    .taggedMemberId(taggedMemberId)
+                    .build();
+        }
+
+        public static CommentDto.PatchResponse getPatchResponseDto() {
+            return CommentDto.PatchResponse.builder()
                     .commentId(commentId)
                     .depth(depth)
                     .content(content)

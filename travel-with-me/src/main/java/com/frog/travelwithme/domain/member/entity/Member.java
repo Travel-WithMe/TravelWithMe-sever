@@ -61,6 +61,12 @@ public class Member extends BaseTimeEntity {
 
     private String role;
 
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follow> followers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follow> followings = new ArrayList<>();
+
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private OAuthStatus oauthstatus;
