@@ -10,6 +10,8 @@ import com.frog.travelwithme.domain.common.DeletionEntity;
 import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
+import com.frog.travelwithme.domain.feed.entity.Feed;
+import com.frog.travelwithme.domain.feed.entity.Tag;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
@@ -30,6 +32,7 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static com.frog.travelwithme.global.enums.EnumCollection.*;
 
@@ -416,6 +419,18 @@ public class StubData {
             }
 
             return responseList;
+        }
+
+        public static Feed getFeed(Member member, Set<Tag> tags) {
+            Feed feed = Feed.builder()
+                    .contents(contents)
+                    .location(location)
+                    .imageUrls(List.of(profileImage))
+                    .member(member)
+                    .build();
+            feed.addTags(tags);
+
+            return feed;
         }
 
         private static TagDto.Response getTagResponseDto(int addName) {
