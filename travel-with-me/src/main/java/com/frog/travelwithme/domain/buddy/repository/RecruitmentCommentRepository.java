@@ -1,7 +1,6 @@
 package com.frog.travelwithme.domain.buddy.repository;
 
 import com.frog.travelwithme.domain.buddy.entity.RecruitmentComment;
-import com.frog.travelwithme.domain.common.comment.repository.CommentRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -11,6 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  **/
 
 public interface RecruitmentCommentRepository
-        extends JpaRepository<RecruitmentComment, Long>, RecruitmentCommentCustomRepository, CommentRepository {
+        extends JpaRepository<RecruitmentComment, Long>, RecruitmentCommentCustomRepository {
 
 }
