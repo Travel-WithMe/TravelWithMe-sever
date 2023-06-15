@@ -9,7 +9,6 @@ import com.frog.travelwithme.domain.feed.mapper.FeedMapper;
 import com.frog.travelwithme.domain.feed.repository.FeedRepository;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
-import com.frog.travelwithme.global.enums.EnumCollection.ResponseBody;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
 import com.frog.travelwithme.global.file.FileUploadService;
@@ -111,7 +110,7 @@ public class FeedService implements LikeService {
     // TODO: Redis 캐시 사용 고려
 
     @Override
-    public ResponseBody doLike(String email, long feedId) {
+    public void doLike(String email, long feedId) {
         Feed feed = this.findFeed(feedId);
         if (!feed.isLikedByMember(email)) {
             feed.addLike(memberService.findMember(email));
@@ -119,12 +118,11 @@ public class FeedService implements LikeService {
             log.debug("FeedService.doLike exception occur email : {}, feedId : {}", email, feedId);
             throw new BusinessLogicException(ExceptionCode.ALREADY_LIKED_FEED);
         }
-        return ResponseBody.SUCCESS_FEED_LIKE;
     }
     // TODO: Redis 캐시 사용 고려
 
     @Override
-    public ResponseBody cancelLike(String email, long feedId) {
+    public void cancelLike(String email, long feedId) {
         Feed feed = this.findFeed(feedId);
         if (feed.isLikedByMember(email)) {
             feed.removeLike(email);
@@ -132,7 +130,6 @@ public class FeedService implements LikeService {
             log.debug("FeedService.cancelLike exception occur email : {}, feedId : {}", email, feedId);
             throw new BusinessLogicException(ExceptionCode.UNABLE_TO_CANCEL_LIKE);
         }
-        return ResponseBody.SUCCESS_CANCEL_FEED_LIKE;
     }
 
     private void checkWriter(String email, String writerEmail) {
