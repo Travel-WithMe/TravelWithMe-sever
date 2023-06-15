@@ -66,6 +66,7 @@ public class MemberService {
     public MemberDto.Response signUp(MemberDto.SignUp signUpDto) {
         verifiedRole(signUpDto.getRole());
         this.checkDuplicatedEmail(signUpDto.getEmail());
+        this.checkDuplicatedNickname(signUpDto.getNickname());
         List<Interest> interests = interestService
                 .findInterests(Optional.ofNullable(signUpDto.getInterests()).orElse(Collections.emptyList()));
         Member member = memberMapper.toEntity(signUpDto);
