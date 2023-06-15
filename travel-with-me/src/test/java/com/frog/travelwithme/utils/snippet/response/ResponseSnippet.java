@@ -64,11 +64,6 @@ public class ResponseSnippet {
         );
     }
 
-    public static ResponseFieldsSnippet getMailVerificationSnippet() {
-        return responseFields(
-                fieldWithPath("data.success").type(JsonFieldType.BOOLEAN).description("이메일 인증 성공 여부")
-        );
-    }
     public static ResponseFieldsSnippet getPatchRecruitmentSnippet() {
         return responseFields(
                 List.of(
