@@ -7,6 +7,8 @@ import com.frog.travelwithme.domain.feed.service.TagService;
 import com.frog.travelwithme.global.dto.PagelessMultiResponseDto;
 import com.frog.travelwithme.global.dto.SingleResponseDto;
 import com.frog.travelwithme.global.enums.EnumCollection;
+import com.frog.travelwithme.global.exception.BusinessLogicException;
+import com.frog.travelwithme.global.exception.ExceptionCode;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -57,24 +59,24 @@ public class FeedController {
         return new ResponseEntity<>(new PagelessMultiResponseDto<>(responseList), HttpStatus.OK);
     }
 
-    @GetMapping("/nicknames")
+    @GetMapping("/search")
     public ResponseEntity getAllByNickname(@RequestParam(required = false) Long lastFeedId,
-                                           @RequestParam String nickname,
+                                           @RequestParam(required = false) String nickname,
+                                           @RequestParam(required = false) String tag,
                                            @AuthenticationPrincipal CustomUserDetails user) {
-        List<FeedDto.Response> responseList = feedService.findAllByNickname(
-                lastFeedId, nickname, user.getEmail());
+        if ((nickname != null && tag != null) || (nickname == null && tag == null)) {
+            throw new BusinessLogicException(ExceptionCode.ONLY_ONE_PARAMETER_TO_FEED_SEARCH);
+        } else if (nickname != null) {
+            List<FeedDto.Response> responseList = feedService.findAllByNickname(
+                    lastFeedId, nickname, user.getEmail());
 
-        return new ResponseEntity<>(new PagelessMultiResponseDto<>(responseList), HttpStatus.OK);
-    }
+            return new ResponseEntity<>(new PagelessMultiResponseDto<>(responseList), HttpStatus.OK);
+        } else {
+            List<FeedDto.Response> responseList = feedService.findAllByTagName(
+                    lastFeedId, tag, user.getEmail());
 
-    @GetMapping("/tagnames")
-    public ResponseEntity getAllByTagName(@RequestParam(required = false) Long lastFeedId,
-                                          @RequestParam String tagName,
-                                          @AuthenticationPrincipal CustomUserDetails user) {
-        List<FeedDto.Response> responseList = feedService.findAllByTagName(
-                lastFeedId, tagName, user.getEmail());
-
-        return new ResponseEntity<>(new PagelessMultiResponseDto<>(responseList), HttpStatus.OK);
+            return new ResponseEntity<>(new PagelessMultiResponseDto<>(responseList), HttpStatus.OK);
+        }
     }
 
     @PatchMapping("/{feed-id}")
