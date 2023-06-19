@@ -217,14 +217,14 @@ public class RequestSnippet {
     public static Snippet getFeedsByNicknameParamSnippet() {
         return requestParameters(
                 parameterWithName("lastFeedId").description("이전 조회한 목록 중 마지막 Feed의 인덱스. 첫 번째 조회에서는 해당 파라미터 제외").optional(),
-                parameterWithName("nickname").description("조회하려는 Feed들의 작성자 Nickname")
+                parameterWithName("nickname").description("Feed 검색을 위한 nickname")
         );
     }
 
-    public static Snippet getFeedsByTagNameParamSnippet() {
+    public static Snippet getFeedsByTagParamSnippet() {
         return requestParameters(
                 parameterWithName("lastFeedId").description("이전 조회한 목록 중 마지막 Feed의 인덱스. 첫 번째 조회에서는 해당 파라미터 제외").optional(),
-                parameterWithName("tagName").description("조회하려는 Feed들에 포함된 tagName")
+                parameterWithName("tag").description("Feed 검색을 위한 tag")
         );
     }
 
