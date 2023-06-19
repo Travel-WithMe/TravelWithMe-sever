@@ -216,6 +216,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getAllFeedParamSnippet(),
                         ResponseSnippet.getFeedsSnippet()));;
     }
 
