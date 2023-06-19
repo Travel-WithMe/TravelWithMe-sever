@@ -112,7 +112,7 @@ class MemberControllerTest {
         given(memberService.findMemberByEmail(any())).willReturn(response);
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + MockMember.getEmail())
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + MockMember.getNickname())
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.getRequestWithUserDetails(mvc, uri, userDetails);
 

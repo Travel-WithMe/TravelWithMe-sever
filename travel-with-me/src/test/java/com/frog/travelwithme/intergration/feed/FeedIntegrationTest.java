@@ -201,12 +201,14 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+        MultiValueMap<String, String> lastFeedIdParam = new LinkedMultiValueMap<>();
+        lastFeedIdParam.add("lastFeedId", "1000");
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.getRequestWithToken(
-                mvc, uri, accessToken, encryptedRefreshToken);
+        ResultActions actions = ResultActionsUtils.getRequestWithTokenAndParam(
+                mvc, uri, lastFeedIdParam, accessToken, encryptedRefreshToken);
 
         // then
         // TODO: actionsMultiToResponseWithData 필요
@@ -451,7 +453,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
 
         MultiValueMap<String, String> lastFeedIdParam = new LinkedMultiValueMap<>();
         MultiValueMap<String, String> nicknameParam = new LinkedMultiValueMap<>();
-        lastFeedIdParam.add("lastFeedId", null);
+        lastFeedIdParam.add("lastFeedId", "1000");
         nicknameParam.add("nickname", StubData.MockMember.getNickname());
 
         // when
@@ -489,7 +491,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
 
         MultiValueMap<String, String> lastFeedIdParam = new LinkedMultiValueMap<>();
         MultiValueMap<String, String> nicknameParam = new LinkedMultiValueMap<>();
-        lastFeedIdParam.add("lastFeedId", null);
+        lastFeedIdParam.add("lastFeedId", "1000");
         nicknameParam.add("tag", tagTwo.getName());
 
         // when
