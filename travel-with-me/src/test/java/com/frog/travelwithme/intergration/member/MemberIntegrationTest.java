@@ -178,9 +178,9 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
         // when
-        String uri = BASE_URL + "/{email}";
+        String uri = BASE_URL + "/{nickname}";
         ResultActions actions = ResultActionsUtils.
-                getRequestWithTokenAndPathVariable(mvc, uri, MockMember.getEmail(), accessToken, encryptedRefreshToken);
+                getRequestWithTokenAndPathVariable(mvc, uri, MockMember.getNickname(), accessToken, encryptedRefreshToken);
 
         // then
         actions
@@ -189,7 +189,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
-                        RequestSnippet.getEmailPathVariableSnippet(),
+                        RequestSnippet.getNicknamePathVariableSnippet(),
                         ResponseSnippet.getMemberSnippet()));
     }
 

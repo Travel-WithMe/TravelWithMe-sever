@@ -34,9 +34,9 @@ public class MemberController {
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity getMember(@PathVariable("email") @Valid @CustomEmail String email) {
-        MemberDto.Response response = memberService.findMemberByEmail(email);
+    @GetMapping("/{nickname}")
+    public ResponseEntity getMember(@PathVariable("nickname") String nickname) {
+        MemberDto.Response response = memberService.findMemberByNickname(nickname);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }

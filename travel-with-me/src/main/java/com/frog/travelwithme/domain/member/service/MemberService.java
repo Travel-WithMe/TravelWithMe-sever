@@ -91,6 +91,17 @@ public class MemberService {
         return memberMapper.toDto(findMember);
     }
 
+    @Transactional(readOnly = true)
+    public MemberDto.Response findMemberByNickname(String nickname) {
+        Member findMember = memberRepository.findByNickname(nickname)
+                .orElseThrow(() -> {
+                    log.debug("MemberService.findMemberAndCheckMemberExists exception occur nickname: {}", nickname);
+                    throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+                });
+
+        return memberMapper.toDto(findMember);
+    }
+
     public MemberDto.Response updateMember(MemberDto.Patch patchDto, String email) {
         Member findMember = this.findMember(email);
         findMember.updateMemberData(patchDto);

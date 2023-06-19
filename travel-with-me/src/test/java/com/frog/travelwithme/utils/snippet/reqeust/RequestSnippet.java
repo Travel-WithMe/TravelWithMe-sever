@@ -195,10 +195,10 @@ public class RequestSnippet {
                 ));
     }
 
-    public static Snippet getEmailPathVariableSnippet() {
+    public static Snippet getNicknamePathVariableSnippet() {
         return pathParameters(
                 List.of(
-                        parameterWithName("email").description("조회할 회원의 이메일")
+                        parameterWithName("nickname").description("조회할 회원의 닉네임")
                 ));
     }
 
