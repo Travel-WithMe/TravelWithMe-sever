@@ -79,15 +79,4 @@ public class MemberDto {
         private LocalDateTime createdAt;
         private LocalDateTime lastModifiedAt;
     }
-
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class EmailVerificationResult {
-        private boolean success;
-
-        public static EmailVerificationResult from(boolean authResult) {
-            return new EmailVerificationResult(authResult);
-        }
-    }
 }

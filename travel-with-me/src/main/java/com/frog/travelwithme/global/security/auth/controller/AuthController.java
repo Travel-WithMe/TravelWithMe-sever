@@ -1,6 +1,5 @@
 package com.frog.travelwithme.global.security.auth.controller;
 
-import com.frog.travelwithme.global.dto.SingleResponseDto;
 import com.frog.travelwithme.global.security.auth.jwt.JwtTokenProvider;
 import com.frog.travelwithme.global.security.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +31,7 @@ public class AuthController {
         String newAccessToken = authService.reissueAccessToken(encryptedRefreshToken);
         jwtTokenProvider.accessTokenSetHeader(newAccessToken, response);
 
-        return new ResponseEntity<>(new SingleResponseDto<>(
-                "The access token was successfully reissued"), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/logout")
@@ -42,6 +40,6 @@ public class AuthController {
         String accessToken = jwtTokenProvider.resolveAccessToken(request);
         authService.logout(encryptedRefreshToken, accessToken);
 
-        return new ResponseEntity<>(new SingleResponseDto<>("Logged out successfully"), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

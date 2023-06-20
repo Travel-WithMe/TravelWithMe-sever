@@ -1,7 +1,6 @@
 package com.frog.travelwithme.domain.member.controller;
 
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
-import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.dto.SingleResponseDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
@@ -15,9 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-
-import static com.frog.travelwithme.global.enums.EnumCollection.ResponseBody.SUCCESS_MEMBER_FOLLOW;
-import static com.frog.travelwithme.global.enums.EnumCollection.ResponseBody.SUCCESS_MEMBER_UNFOLLOW;
 
 /**
  * 작성자: 김찬빈
@@ -38,9 +34,9 @@ public class MemberController {
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity getMember(@PathVariable("email") @Valid @CustomEmail String email) {
-        MemberDto.Response response = memberService.findMemberByEmail(email);
+    @GetMapping("/{nickname}")
+    public ResponseEntity getMember(@PathVariable("nickname") String nickname) {
+        MemberDto.Response response = memberService.findMemberByNickname(nickname);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
@@ -76,7 +72,7 @@ public class MemberController {
         String email = user.getEmail();
         memberService.deleteMember(email);
 
-        return new ResponseEntity<>(new SingleResponseDto<>("Member deleted successfully"), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/emails/verification-requests")
@@ -89,9 +85,9 @@ public class MemberController {
     @GetMapping("/emails/verifications")
     public ResponseEntity verificationEmail(@RequestParam("email") @Valid @CustomEmail String email,
                                             @RequestParam("code") String authCode) {
-        EmailVerificationResult response = memberService.verifiedCode(email, authCode);
+        memberService.verifiedCode(email, authCode);
 
-        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/follow/{followee-email}")
@@ -100,7 +96,7 @@ public class MemberController {
         String followerEmail = user.getEmail();
         memberService.follow(followerEmail, followeeEmail);
 
-        return new ResponseEntity<>(new SingleResponseDto<>(SUCCESS_MEMBER_FOLLOW.getDescription()), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/unfollow/{followee-email}")
@@ -109,7 +105,7 @@ public class MemberController {
         String followerEmail = user.getEmail();
         memberService.unfollow(followerEmail, followeeEmail);
 
-        return new ResponseEntity<>(new SingleResponseDto<>(SUCCESS_MEMBER_UNFOLLOW.getDescription()), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/check-duplicated-emails")

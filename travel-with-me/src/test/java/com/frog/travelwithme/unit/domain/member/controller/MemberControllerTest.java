@@ -2,7 +2,6 @@ package com.frog.travelwithme.unit.domain.member.controller;
 
 import com.frog.travelwithme.domain.member.controller.MemberController;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
-import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import com.frog.travelwithme.utils.ObjectMapperUtils;
@@ -113,7 +112,7 @@ class MemberControllerTest {
         given(memberService.findMemberByEmail(any())).willReturn(response);
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + MockMember.getEmail())
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/" + MockMember.getNickname())
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.getRequestWithUserDetails(mvc, uri, userDetails);
 
@@ -334,9 +333,7 @@ class MemberControllerTest {
         MultiValueMap<String, String> codePapram = new LinkedMultiValueMap<>();
         emailPapram.add(EMAIL_KEY, EMAIL_VALUE);
         codePapram.add(CODE_KEY, CODE_VALUE);
-        EmailVerificationResult response =
-                MockMember.getEmailVerificationResult(true);
-        given(memberService.verifiedCode(Mockito.any(), Mockito.any())).willReturn(response);
+        doNothing().when(memberService).verifiedCode(Mockito.any(), Mockito.any());
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/emails/verifications")

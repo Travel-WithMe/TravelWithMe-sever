@@ -9,7 +9,7 @@ Chan Bin Kim <chanbin.backend@gmail.com>
 
 v1.0.0, 2023.05.30
 
-***
+'''
 == MemberController
 === 회원 등록
 .curl-request
@@ -120,9 +120,6 @@ include::{snippets}/email-verification-success/request-parameters.adoc[]
 .http-response
 include::{snippets}/email-verification-success/http-response.adoc[]
 
-.response-fileds
-include::{snippets}/email-verification-success/response-fields.adoc[]
-
 === 이메일 인증 실패
 .curl-request
 include::{snippets}/email-verification-fail/curl-request.adoc[]
@@ -135,9 +132,6 @@ include::{snippets}/email-verification-fail/request-parameters.adoc[]
 
 .http-response
 include::{snippets}/email-verification-fail/http-response.adoc[]
-
-.response-fileds
-include::{snippets}/email-verification-fail/response-fields.adoc[]
 
 === 이메일 중복 체크(성공)
 .curl-request
@@ -379,6 +373,9 @@ include::{snippets}/find-all-feed/http-request.adoc[]
 .request-headers
 include::{snippets}/find-all-feed/request-headers.adoc[]
 
+.request-parameter
+include::{snippets}/find-all-feed/request-parameters.adoc[]
+
 .http-response
 include::{snippets}/find-all-feed/http-response.adoc[]
 
@@ -387,41 +384,41 @@ include::{snippets}/find-all-feed/response-fields.adoc[]
 
 === nickname으로 모든 Feed 검색
 .curl-request
-include::{snippets}/find-all-feed-by-nickname/curl-request.adoc[]
+include::{snippets}/search-feed-by-nickname/curl-request.adoc[]
 
 .http-request
-include::{snippets}/find-all-feed-by-nickname/http-request.adoc[]
+include::{snippets}/search-feed-by-nickname/http-request.adoc[]
 
 .request-headers
-include::{snippets}/find-all-feed-by-nickname/request-headers.adoc[]
+include::{snippets}/search-feed-by-nickname/request-headers.adoc[]
 
 .request-param
-include::{snippets}/find-all-feed-by-nickname/request-parameters.adoc[]
+include::{snippets}/search-feed-by-nickname/request-parameters.adoc[]
 
 .http-response
-include::{snippets}/find-all-feed-by-nickname/http-response.adoc[]
+include::{snippets}/search-feed-by-nickname/http-response.adoc[]
 
 .response-fields
-include::{snippets}/find-all-feed-by-nickname/response-fields.adoc[]
+include::{snippets}/search-feed-by-nickname/response-fields.adoc[]
 
 === tagName으로 모든 Feed 검색
 .curl-request
-include::{snippets}/find-all-feed-by-tagname/curl-request.adoc[]
+include::{snippets}/search-feed-by-tag/curl-request.adoc[]
 
 .http-request
-include::{snippets}/find-all-feed-by-tagname/http-request.adoc[]
+include::{snippets}/search-feed-by-tag/http-request.adoc[]
 
 .request-headers
-include::{snippets}/find-all-feed-by-tagname/request-headers.adoc[]
+include::{snippets}/search-feed-by-tag/request-headers.adoc[]
 
 .request-param
-include::{snippets}/find-all-feed-by-tagname/request-parameters.adoc[]
+include::{snippets}/search-feed-by-tag/request-parameters.adoc[]
 
 .http-response
-include::{snippets}/find-all-feed-by-tagname/http-response.adoc[]
+include::{snippets}/search-feed-by-tag/http-response.adoc[]
 
 .response-fields
-include::{snippets}/find-all-feed-by-tagname/response-fields.adoc[]
+include::{snippets}/search-feed-by-tag/response-fields.adoc[]
 
 === Feed 삭제
 .curl-request

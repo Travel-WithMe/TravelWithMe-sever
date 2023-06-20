@@ -41,6 +41,7 @@ public enum ExceptionCode {
     UNABLE_TO_CANCEL_LIKE(409, "좋아요를 하지 않았기 때문에 좋아요를 취소할 수 없습니다. "),
     UNABLE_TO_DELETE_FEED_IMAGE(404, "피드 이미지는 최소 한 장 이상 존재해야 합니다."),
     UNABLE_TO_SAVE_FEED(404, "피드를 생성할 수 없습니다."),
+    ONLY_ONE_PARAMETER_TO_FEED_SEARCH(404, "피드 검색에는 반드시 tag 또는 nickname 중 하나의 파라미터만 전달되어야 합니다."),
 
     // Comment
     COMMENT_NOT_FOUND(404, "댓글이 존재하지 않습니다."),

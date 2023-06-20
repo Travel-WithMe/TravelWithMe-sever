@@ -1,7 +1,6 @@
 package com.frog.travelwithme.domain.member.service;
 
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
-import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.entity.Interest;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.mapper.MemberMapper;
@@ -67,6 +66,7 @@ public class MemberService {
     public MemberDto.Response signUp(MemberDto.SignUp signUpDto) {
         verifiedRole(signUpDto.getRole());
         this.checkDuplicatedEmail(signUpDto.getEmail());
+        this.checkDuplicatedNickname(signUpDto.getNickname());
         List<Interest> interests = interestService
                 .findInterests(Optional.ofNullable(signUpDto.getInterests()).orElse(Collections.emptyList()));
         Member member = memberMapper.toEntity(signUpDto);
@@ -87,6 +87,17 @@ public class MemberService {
     @Transactional(readOnly = true)
     public MemberDto.Response findMemberById(Long id) {
         Member findMember = this.findMember(id);
+
+        return memberMapper.toDto(findMember);
+    }
+
+    @Transactional(readOnly = true)
+    public MemberDto.Response findMemberByNickname(String nickname) {
+        Member findMember = memberRepository.findByNickname(nickname)
+                .orElseThrow(() -> {
+                    log.debug("MemberService.findMemberAndCheckMemberExists exception occur nickname: {}", nickname);
+                    throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+                });
 
         return memberMapper.toDto(findMember);
     }
@@ -153,12 +164,13 @@ public class MemberService {
                 authCode, Duration.ofMillis(this.authCodeExpirationMillis));
     }
 
-    public EmailVerificationResult verifiedCode(String email, String authCode) {
+    public void verifiedCode(String email, String authCode) {
         this.checkDuplicatedEmail(email);
         String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
         boolean authResult = redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode);
-
-        return EmailVerificationResult.from(authResult);
+        if (!authResult) {
+            throw new BusinessLogicException(ExceptionCode.AUTH_CODE_IS_NOT_SAME);
+        }
     }
 
     public void follow(String followerEmail, String followeeEmail) {

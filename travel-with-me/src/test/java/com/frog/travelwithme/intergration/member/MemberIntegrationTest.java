@@ -4,7 +4,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
-import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.Response;
 import com.frog.travelwithme.domain.member.entity.Follow;
 import com.frog.travelwithme.domain.member.entity.Member;
@@ -39,8 +38,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static com.frog.travelwithme.global.enums.EnumCollection.ResponseBody.SUCCESS_MEMBER_FOLLOW;
-import static com.frog.travelwithme.global.enums.EnumCollection.ResponseBody.SUCCESS_MEMBER_UNFOLLOW;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getResponsePreProcessor;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -181,9 +178,9 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
         // when
-        String uri = BASE_URL + "/{email}";
+        String uri = BASE_URL + "/{nickname}";
         ResultActions actions = ResultActionsUtils.
-                getRequestWithTokenAndPathVariable(mvc, uri, MockMember.getEmail(), accessToken, encryptedRefreshToken);
+                getRequestWithTokenAndPathVariable(mvc, uri, MockMember.getNickname(), accessToken, encryptedRefreshToken);
 
         // then
         actions
@@ -192,7 +189,7 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
-                        RequestSnippet.getEmailPathVariableSnippet(),
+                        RequestSnippet.getNicknamePathVariableSnippet(),
                         ResponseSnippet.getMemberSnippet()));
     }
 
@@ -260,15 +257,11 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         ResultActions actions = ResultActionsUtils.getRequestWithTwoParams(mvc, uri, emailPapram, codePapram);
 
         // then
-        EmailVerificationResult response = ObjectMapperUtils.
-                actionsSingleToResponseWithData(actions, EmailVerificationResult.class);
-        assertThat(response.isSuccess()).isTrue();
         actions.andExpect(status().isOk())
                 .andDo(document("email-verification-success",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
-                        RequestSnippet.getMailVerificiationSnippet(),
-                        ResponseSnippet.getMailVerificationSnippet()));
+                        RequestSnippet.getMailVerificiationSnippet()));
 
         redisService.deleteValues(AUTH_CODE_PREFIX + EMAIL_VALUE);
     }
@@ -290,15 +283,11 @@ class MemberIntegrationTest extends BaseIntegrationTest {
         ResultActions actions = ResultActionsUtils.getRequestWithTwoParams(mvc, uri, emailPapram, codePapram);
 
         // then
-        EmailVerificationResult response = ObjectMapperUtils.
-                actionsSingleToResponseWithData(actions, EmailVerificationResult.class);
-        assertThat(response.isSuccess()).isFalse();
-        actions.andExpect(status().isOk())
+        actions.andExpect(status().is4xxClientError())
                 .andDo(document("email-verification-fail",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
-                        RequestSnippet.getMailVerificiationSnippet(),
-                        ResponseSnippet.getMailVerificationSnippet()));
+                        RequestSnippet.getMailVerificiationSnippet()));
 
         redisService.deleteValues(AUTH_CODE_PREFIX + EMAIL_VALUE);
     }
@@ -373,8 +362,6 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 mvc, uri, followee.getEmail(), accessToken, encryptedRefreshToken);
 
         // then
-        String response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, String.class);
-        assertThat(SUCCESS_MEMBER_FOLLOW.getDescription()).isEqualTo(response);
         actions
                 .andExpect(status().isOk())
                 .andDo(document("member-follow",
@@ -403,8 +390,6 @@ class MemberIntegrationTest extends BaseIntegrationTest {
                 mvc, uri, followee.getEmail(), accessToken, encryptedRefreshToken);
 
         // then
-        String response = ObjectMapperUtils.actionsSingleToResponseWithData(actions, String.class);
-        assertThat(SUCCESS_MEMBER_UNFOLLOW.getDescription()).isEqualTo(response);
         actions
                 .andExpect(status().isOk())
                 .andDo(document("member-unfollow",

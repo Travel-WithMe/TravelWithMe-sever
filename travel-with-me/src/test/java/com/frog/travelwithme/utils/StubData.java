@@ -14,13 +14,9 @@ import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
 import com.frog.travelwithme.domain.feed.entity.Feed;
 import com.frog.travelwithme.domain.feed.entity.Tag;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
-import com.frog.travelwithme.domain.member.controller.dto.MemberDto.EmailVerificationResult;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
 import com.frog.travelwithme.domain.member.entity.Follow;
 import com.frog.travelwithme.domain.member.entity.Member;
-import com.frog.travelwithme.domain.buddy.controller.dto.BuddyDto;
-import com.frog.travelwithme.global.enums.EnumCollection.Gender;
-import com.frog.travelwithme.global.enums.EnumCollection.OAuthStatus;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto;
 import com.frog.travelwithme.global.security.auth.controller.dto.AuthDto.LoginDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
@@ -227,10 +223,6 @@ public class StubData {
 
         public static CustomUserDetails getUserDetailsByEmailAndRole(String email, String role) {
             return CustomUserDetails.of(email, role);
-        }
-
-        public static EmailVerificationResult getEmailVerificationResult(boolean authResult) {
-            return EmailVerificationResult.from(authResult);
         }
 
         public static BuddyDto.MatchingMemberResponse getMatchingRequestMemberResponse(Long id,

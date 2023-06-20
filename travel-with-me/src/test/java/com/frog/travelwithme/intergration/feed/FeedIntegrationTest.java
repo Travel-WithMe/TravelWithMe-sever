@@ -201,12 +201,14 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+        MultiValueMap<String, String> lastFeedIdParam = new LinkedMultiValueMap<>();
+        lastFeedIdParam.add("lastFeedId", "1000");
 
         // when
         String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
                 .build().toUri().toString();
-        ResultActions actions = ResultActionsUtils.getRequestWithToken(
-                mvc, uri, accessToken, encryptedRefreshToken);
+        ResultActions actions = ResultActionsUtils.getRequestWithTokenAndParam(
+                mvc, uri, lastFeedIdParam, accessToken, encryptedRefreshToken);
 
         // then
         // TODO: actionsMultiToResponseWithData 필요
@@ -216,6 +218,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getAllFeedParamSnippet(),
                         ResponseSnippet.getFeedsSnippet()));;
     }
 
@@ -450,11 +453,11 @@ class FeedIntegrationTest extends BaseIntegrationTest {
 
         MultiValueMap<String, String> lastFeedIdParam = new LinkedMultiValueMap<>();
         MultiValueMap<String, String> nicknameParam = new LinkedMultiValueMap<>();
-        lastFeedIdParam.add("lastFeedId", null);
+        lastFeedIdParam.add("lastFeedId", "1000");
         nicknameParam.add("nickname", StubData.MockMember.getNickname());
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/nicknames")
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/search")
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.getRequestWithTwoParamsAndToken(
                 mvc, uri, lastFeedIdParam, nicknameParam, accessToken, encryptedRefreshToken);
@@ -462,7 +465,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         // then
         actions
                 .andExpect(status().isOk())
-                .andDo(document("find-all-feed-by-nickname",
+                .andDo(document("search-feed-by-nickname",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
@@ -488,11 +491,11 @@ class FeedIntegrationTest extends BaseIntegrationTest {
 
         MultiValueMap<String, String> lastFeedIdParam = new LinkedMultiValueMap<>();
         MultiValueMap<String, String> nicknameParam = new LinkedMultiValueMap<>();
-        lastFeedIdParam.add("lastFeedId", null);
-        nicknameParam.add("tagName", tagTwo.getName());
+        lastFeedIdParam.add("lastFeedId", "1000");
+        nicknameParam.add("tag", tagTwo.getName());
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/tagnames")
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/search")
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.getRequestWithTwoParamsAndToken(
                 mvc, uri, lastFeedIdParam, nicknameParam, accessToken, encryptedRefreshToken);
@@ -500,11 +503,11 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         // then
         actions
                 .andExpect(status().isOk())
-                .andDo(document("find-all-feed-by-tagname",
+                .andDo(document("search-feed-by-tag",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
-                        RequestSnippet.getFeedsByTagNameParamSnippet(),
+                        RequestSnippet.getFeedsByTagParamSnippet(),
                         ResponseSnippet.getFeedsSnippet()));
     }
 }
