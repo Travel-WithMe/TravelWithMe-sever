@@ -57,32 +57,13 @@ public class FeedService implements LikeService {
     }
 
     @Transactional(readOnly = true)
-    public Feed findFeedById(Long feedId) {
-        return this.findFeed(feedId);
-    }
-
-    @Transactional(readOnly = true)
     public Response findFeedById(String email, long feedId) {
         return feedMapper.toResponse(this.findFeed(feedId), email);
     }
 
     @Transactional(readOnly = true)
-    public List<Response> findAll(Long lastFeedId, String email) {
-        List<Feed> feedList = feedRepository.findAll(lastFeedId, email);
-
-        return feedMapper.toResponseList(feedList, email);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Response> findAllByNickname(Long lastFeedId, String nickname, String email) {
-        List<Feed> feedList = feedRepository.findAllByNickname(lastFeedId, nickname, email);
-
-        return feedMapper.toResponseList(feedList, email);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Response> findAllByTagName(Long lastFeedId, String tagName, String email) {
-        List<Feed> feedList = feedRepository.findAllByTagName(lastFeedId, tagName, email);
+    public List<Response> search(Long lastFeedId, String nickname, String tagName, String email) {
+        List<Feed> feedList = feedRepository.search(lastFeedId, nickname, tagName, email);
 
         return feedMapper.toResponseList(feedList, email);
     }
