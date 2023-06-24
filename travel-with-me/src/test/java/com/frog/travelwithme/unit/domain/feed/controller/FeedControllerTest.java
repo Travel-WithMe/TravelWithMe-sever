@@ -110,10 +110,10 @@ class FeedControllerTest {
     void feedControllerTest3() throws Exception {
         // given
         List<FeedDto.Response> responseDtos = StubData.MockFeed.getResponseDtos();
-        given(feedService.findAll(anyLong(), any())).willReturn(responseDtos);
+        given(feedService.search(anyLong(), any(), any(), any())).willReturn(responseDtos);
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/search")
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.getRequestWithUserDetails(mvc, uri, userDetails);
 
