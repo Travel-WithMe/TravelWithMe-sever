@@ -2,6 +2,7 @@ package com.frog.travelwithme.domain.feed.repository;
 
 import com.frog.travelwithme.domain.feed.entity.Feed;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,11 @@ public class FeedCustomRepositoryImpl implements FeedCustomRepository {
                 .fetch();
         } else {
             return query
-                .where(tag.name.eq(tagName))
+                .where(feed.tags.contains(
+                        JPAExpressions
+                                .selectFrom(tag)
+                                .where(tag.name.eq(tagName))
+                ))
                 .orderBy(feed.id.desc())
                 .limit(pageSize)
                 .fetch();
