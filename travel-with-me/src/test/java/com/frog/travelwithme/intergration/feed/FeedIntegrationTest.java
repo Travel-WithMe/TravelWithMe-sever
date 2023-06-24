@@ -205,7 +205,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         lastFeedIdParam.add("lastFeedId", "1000");
 
         // when
-        String uri = UriComponentsBuilder.newInstance().path(BASE_URL)
+        String uri = UriComponentsBuilder.newInstance().path(BASE_URL + "/search")
                 .build().toUri().toString();
         ResultActions actions = ResultActionsUtils.getRequestWithTokenAndParam(
                 mvc, uri, lastFeedIdParam, accessToken, encryptedRefreshToken);
