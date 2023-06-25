@@ -1,5 +1,6 @@
 set SQL_SAFE_UPDATES = 0;
 
+delete from member_interest;
 delete from interest;
 
 insert into interest (id, type)
