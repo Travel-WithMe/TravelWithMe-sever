@@ -1,6 +1,7 @@
 package com.frog.travelwithme.domain.feed.controller;
 
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
+import com.frog.travelwithme.domain.feed.controller.dto.FeedDto.Response;
 import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
 import com.frog.travelwithme.domain.feed.service.FeedService;
 import com.frog.travelwithme.domain.feed.service.TagService;
@@ -50,30 +51,15 @@ public class FeedController {
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity getAllFeed(@RequestParam(required = false) Long lastFeedId,
-                                     @AuthenticationPrincipal CustomUserDetails user) {
-        // TODO: 팔로잉, 관심사 태그 기반 검색 알고리즘 고민
-        List<FeedDto.Response> responseList = feedService.findAll(lastFeedId, user.getEmail());
-
-        return new ResponseEntity<>(new PagelessMultiResponseDto<>(responseList), HttpStatus.OK);
-    }
-
     @GetMapping("/search")
-    public ResponseEntity getAllByNickname(@RequestParam(required = false) Long lastFeedId,
-                                           @RequestParam(required = false) String nickname,
-                                           @RequestParam(required = false) String tag,
-                                           @AuthenticationPrincipal CustomUserDetails user) {
-        if ((nickname != null && tag != null) || (nickname == null && tag == null)) {
+    public ResponseEntity search(@RequestParam(required = false) Long lastFeedId,
+                                 @RequestParam(required = false) String nickname,
+                                 @RequestParam(required = false) String tag,
+                                 @AuthenticationPrincipal CustomUserDetails user) {
+        if (nickname != null && tag != null) {
             throw new BusinessLogicException(ExceptionCode.ONLY_ONE_PARAMETER_TO_FEED_SEARCH);
-        } else if (nickname != null) {
-            List<FeedDto.Response> responseList = feedService.findAllByNickname(
-                    lastFeedId, nickname, user.getEmail());
-
-            return new ResponseEntity<>(new PagelessMultiResponseDto<>(responseList), HttpStatus.OK);
         } else {
-            List<FeedDto.Response> responseList = feedService.findAllByTagName(
-                    lastFeedId, tag, user.getEmail());
+            List<Response> responseList = feedService.search(lastFeedId, nickname, tag, user.getEmail());
 
             return new ResponseEntity<>(new PagelessMultiResponseDto<>(responseList), HttpStatus.OK);
         }

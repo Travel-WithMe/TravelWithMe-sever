@@ -2,6 +2,8 @@ package com.frog.travelwithme.domain.feed.repository;
 
 import com.frog.travelwithme.domain.feed.entity.Feed;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -24,47 +26,37 @@ public class FeedCustomRepositoryImpl implements FeedCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Feed> findAll(Long lastFeedId, String email) {
+    public List<Feed> search(Long lastFeedId, String nickname, String tagName, String email) {
         int pageSize = 20;
 
-        return jpaQueryFactory
-                .selectFrom(feed)
-                .leftJoin(feed.member, member).fetchJoin()
-                .leftJoin(feed.tags, tag).fetchJoin()
-                .where(ltFeedId(lastFeedId))
+        JPAQuery<Feed> query = jpaQueryFactory
+            .selectFrom(feed)
+            .leftJoin(feed.member, member).fetchJoin()
+            .leftJoin(feed.tags, tag).fetchJoin()
+            .where(ltFeedId(lastFeedId));
+
+        if (nickname == null && tagName == null) {
+            return query
                 .orderBy(feed.id.desc())
                 .limit(pageSize)
                 .fetch();
-    }
-
-    @Override
-    public List<Feed> findAllByNickname(Long lastFeedId, String nickname, String email) {
-        int pageSize = 20;
-
-        return jpaQueryFactory
-                .selectFrom(feed)
-                .leftJoin(feed.member, member).fetchJoin()
-                .leftJoin(feed.tags, tag).fetchJoin()
-                .where(ltFeedId(lastFeedId))
+        } else if (nickname != null) {
+            return query
                 .where(member.nickname.eq(nickname))
                 .orderBy(feed.id.desc())
                 .limit(pageSize)
                 .fetch();
-    }
-
-    @Override
-    public List<Feed> findAllByTagName(Long lastFeedId, String tagName, String email) {
-        int pageSize = 20;
-
-        return jpaQueryFactory
-                .selectFrom(feed)
-                .leftJoin(feed.member, member).fetchJoin()
-                .leftJoin(feed.tags, tag).fetchJoin()
-                .where(ltFeedId(lastFeedId))
-                .where(tag.name.eq(tagName))
+        } else {
+            return query
+                .where(feed.tags.contains(
+                        JPAExpressions
+                                .selectFrom(tag)
+                                .where(tag.name.eq(tagName))
+                ))
                 .orderBy(feed.id.desc())
                 .limit(pageSize)
                 .fetch();
+        }
     }
 
     private BooleanExpression ltFeedId(Long lastFeedId) {

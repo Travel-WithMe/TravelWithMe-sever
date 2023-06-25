@@ -11,9 +11,5 @@ import java.util.List;
  **/
 public interface FeedCustomRepository {
 
-    List<Feed> findAll(Long lastFeedId, String email);
-
-    List<Feed> findAllByNickname(Long lastFeedId, String nickname, String email);
-
-    List<Feed> findAllByTagName(Long lastFeedId, String tagName, String email);
+    List<Feed> search(Long lastFeedId, String nickname, String tagName, String email);
 }
