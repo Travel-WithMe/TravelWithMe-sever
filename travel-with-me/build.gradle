@@ -25,6 +25,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
 ext {
@@ -66,6 +67,9 @@ dependencies {
 	// mapstruct
 	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+
+	// logback, logback-discord
+	implementation 'com.github.napstr:logback-discord-appender:1.0.0'
 
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
