@@ -30,11 +30,10 @@ public abstract class CommentService {
 
     protected abstract void checkExistCommentById(Long id);
 
-    protected Comment joinGroup(Comment comment) {
+    protected void joinGroup(Comment comment) {
         if(this.isComment(comment.getDepth())) {
             comment.addGroupId(comment.getId());
         }
-        return comment;
     }
 
     protected <T> CommentTypeDto<T> createCommentTypeDto(T commentDto) {
