@@ -510,4 +510,26 @@ class FeedIntegrationTest extends BaseIntegrationTest {
                         RequestSnippet.getFeedsByTagParamSnippet(),
                         ResponseSnippet.getFeedsSnippet()));
     }
+
+    @Test
+    @DisplayName("피드에 댓글을 작성할 수 있습니다.")
+    void feedControllerTest14() throws Exception {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    @Test
+    @DisplayName("피드에 대댓글을 작성할 수 있습니다.")
+    void feedControllerTest15() throws Exception {
+        // given
+
+        // when
+
+        // then
+
+    }
 }

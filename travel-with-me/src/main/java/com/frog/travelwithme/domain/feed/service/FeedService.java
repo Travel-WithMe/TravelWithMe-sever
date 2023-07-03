@@ -121,7 +121,8 @@ public class FeedService implements LikeService {
         }
     }
 
-    private Feed findFeed(Long feedId) {
+    @Transactional(readOnly = true)
+    public Feed findFeed(Long feedId) {
         return feedRepository.findById(feedId)
                 .orElseThrow(() -> {
                     log.debug("FeedService.findFeed exception occur feedId : {}", feedId);

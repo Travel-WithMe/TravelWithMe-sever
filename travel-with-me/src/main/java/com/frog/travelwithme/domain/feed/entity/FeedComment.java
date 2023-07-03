@@ -41,24 +41,12 @@ public class FeedComment extends Comment {
                        Integer depth,
                        Long groupId,
                        Long taggedMemberId,
-                       String content) {
+                       String content,
+                       Member member,
+                       Feed feed) {
         super(id, depth, groupId, taggedMemberId, content);
-    }
-
-    public FeedComment addMember(Member member) {
-        if (member == null) {
-            return null;
-        }
         this.member = member;
-        return this;
-    }
-
-    public FeedComment addFeed(Feed feed) {
-        if (feed == null) {
-            return null;
-        }
         this.feed = feed;
-        return this;
     }
 
     public FeedComment updateFeedComment(FeedCommentUpdateDto feedCommentUpdateDto) {
