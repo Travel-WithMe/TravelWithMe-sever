@@ -162,5 +162,4 @@ public class ResponseSnippet {
                 fieldWithPath("data.taggedMemberId").type(taggedMemberType).description("작성된 댓글,대댓글의 언급(태그)된 회원 ID")
         );
     }
-
 }
