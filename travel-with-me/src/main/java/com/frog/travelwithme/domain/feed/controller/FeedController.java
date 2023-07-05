@@ -106,19 +106,4 @@ public class FeedController {
 
         return new ResponseEntity(HttpStatus.OK);
     }
-
-    @PostMapping("/{feed-id}/comments")
-    public ResponseEntity postComment() {
-        return new ResponseEntity(HttpStatus.CREATED);
-    }
-
-    @PatchMapping("/{feed-id}/comments")
-    public ResponseEntity patchComment() {
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{feed-id}/comments")
-    public ResponseEntity deleteComment() {
-        return new ResponseEntity(HttpStatus.OK);
-    }
 }
