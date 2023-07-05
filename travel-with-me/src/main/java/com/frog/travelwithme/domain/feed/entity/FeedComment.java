@@ -31,6 +31,7 @@ public class FeedComment extends Comment {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ManyToMany
     @JoinTable(name = "feed_comment_like",
             joinColumns = @JoinColumn(name = "feed_comment_id"),
             inverseJoinColumns = @JoinColumn(name = "member_id"))
