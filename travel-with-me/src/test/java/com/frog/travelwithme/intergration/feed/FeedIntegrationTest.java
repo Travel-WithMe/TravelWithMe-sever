@@ -3,6 +3,7 @@ package com.frog.travelwithme.intergration.feed;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
+import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.entity.Feed;
 import com.frog.travelwithme.domain.feed.entity.Tag;
@@ -52,6 +53,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.JsonFieldType.NULL;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
@@ -64,6 +67,8 @@ class FeedIntegrationTest extends BaseIntegrationTest {
     private final String TAG_NAME = StubData.MockFeed.getTagName();
 
     private final int SIZE = StubData.MockFeed.getSize();
+
+    private Long COMMENT_ID;
 
     private long feedId;
 
@@ -512,24 +517,46 @@ class FeedIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("피드에 댓글을 작성할 수 있습니다.")
+    @DisplayName("피드 댓글 작성 (회원태그 미사용)")
     void feedControllerTest14() throws Exception {
         // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        Long groupId = null;
+        Long memberId = null;
+        CommentDto.Post postDto =
+                StubData.MockComment.getPostDtoByDepthAndGroupIdAndTaggedMemberId(1, groupId, memberId);
 
         // when
+        String uri = BASE_URL + "/{feed-id}" + "/comments";
+        String json = ObjectMapperUtils.objectToJsonString(postDto);
+        ResultActions actions = ResultActionsUtils.postRequestWithTokenAndPathVariableAndContent(
+                mvc, uri, feedId, json, accessToken, encryptedRefreshToken);
 
         // then
+        CommentDto.PostResponse response =
+                ObjectMapperUtils.actionsSingleToResponseWithData(actions, CommentDto.PostResponse.class);
 
+        assertThat(response.getDepth()).isEqualTo(1);
+        assertThat(response.getContent()).isEqualTo(postDto.getContent());
+        assertThat(response.getTaggedMemberId()).isEqualTo(postDto.getTaggedMemberId());
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("post-feed-comment-no-tagged",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getPostCommentSnippet(NULL, NULL),
+                        ResponseSnippet.getPostCommentSnippet(NUMBER, NULL)));
     }
 
     @Test
-    @DisplayName("피드에 대댓글을 작성할 수 있습니다.")
+    @DisplayName("피드 댓글 수정(예외: 댓글이 존재하지 않는 경우)")
     void feedControllerTest15() throws Exception {
-        // given
-
-        // when
-
-        // then
 
     }
 }
