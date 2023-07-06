@@ -6,13 +6,16 @@ import com.amazonaws.services.s3.model.PutObjectResult;
 import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.entity.Feed;
+import com.frog.travelwithme.domain.feed.entity.FeedComment;
 import com.frog.travelwithme.domain.feed.entity.Tag;
+import com.frog.travelwithme.domain.feed.repository.FeedCommentRepository;
 import com.frog.travelwithme.domain.feed.repository.FeedRepository;
 import com.frog.travelwithme.domain.feed.repository.TagRepository;
 import com.frog.travelwithme.domain.feed.service.FeedService;
 import com.frog.travelwithme.domain.feed.service.TagService;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.entity.Member;
+import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
@@ -103,6 +106,12 @@ class FeedIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private FeedRepository feedRepository;
 
+    @Autowired
+    private FeedCommentRepository feedCommentRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
     @BeforeEach
     public void beforEach() throws Exception {
         given(amazonS3.putObject(any(PutObjectRequest.class))).willReturn(new PutObjectResult());
@@ -112,6 +121,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         MemberDto.SignUp signUpDto = StubData.MockMember.getSignUpDto();
         List<MultipartFile> files = StubData.CustomMultipartFile.getMultipartFiles();
         memberService.signUp(signUpDto);
+
         this.tagOne = Tag.builder().name(TAG_NAME + "1").build();
         tagRepository.save(tagOne);
         this.tagTwo = Tag.builder().name(TAG_NAME + "2").build();
@@ -119,6 +129,12 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         FeedDto.Post postDto = StubData.MockFeed.getPostDto();
         FeedDto.Response response = feedService.postFeed(this.EMAIL, postDto, files);
         feedId = response.getId();
+
+        Member member = memberRepository.findByEmail(EMAIL).get();
+        Feed feed = feedRepository.findById(feedId).get();
+        FeedComment feedComment = StubData.MockComment.getFeedComment(member, feed);
+        FeedComment saveFeedComment = feedCommentRepository.save(feedComment);
+        COMMENT_ID = saveFeedComment.getId();
     }
 
     @Test
@@ -555,8 +571,45 @@ class FeedIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("피드 댓글 수정(예외: 댓글이 존재하지 않는 경우)")
+    @DisplayName("피드 댓글 수정 (회원태그 미사용)")
     void feedControllerTest15() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+        CommentDto.Patch patchDto =
+                StubData.MockComment.getPatchDtoByContentAndTaggedMemberId("변경완료", null);
 
+        // when
+        String uri = BASE_URL + "/comments" + "/{comment-id}";
+        String json = ObjectMapperUtils.objectToJsonString(patchDto);
+
+        ResultActions actions =
+                ResultActionsUtils.patchRequestWithTokenAndPathVariableAndContent(
+                        mvc, uri, COMMENT_ID, json, accessToken, encryptedRefreshToken
+                );
+
+        // then
+        CommentDto.PatchResponse response =
+                ObjectMapperUtils.actionsSingleToResponseWithData(actions, CommentDto.PatchResponse.class);
+        FeedComment updatedFeedComment = feedCommentRepository.findById(COMMENT_ID).get();
+
+        assertThat(response.getCommentId()).isEqualTo(COMMENT_ID);
+        assertThat(response.getContent()).isEqualTo(updatedFeedComment.getContent());
+        assertThat(response.getTaggedMemberId()).isEqualTo(updatedFeedComment.getTaggedMemberId());
+        assertThat(response.getTaggedMemberId()).isEqualTo(1);
+
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("patch-feed-comment-no-tagged",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getCommentPathVariableSnippet(),
+                        RequestSnippet.getPatchCommentSnippet(NULL),
+                        ResponseSnippet.getPatchCommentSnippet(NUMBER)
+                ));
     }
 }
