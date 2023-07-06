@@ -1,7 +1,7 @@
 package com.frog.travelwithme.domain.feed.entity;
 
+import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.domain.common.comment.entity.Comment;
-import com.frog.travelwithme.domain.feed.service.dto.FeedCommentUpdateDto;
 import com.frog.travelwithme.domain.member.entity.Member;
 import lombok.*;
 
@@ -50,11 +50,10 @@ public class FeedComment extends Comment {
         this.feed = feed;
     }
 
-    public FeedComment updateFeedComment(FeedCommentUpdateDto feedCommentUpdateDto) {
-        Optional.ofNullable(feedCommentUpdateDto.getContent())
+    public void updateFeedComment(CommentDto.Patch patchDto) {
+        Optional.ofNullable(patchDto.getContent())
                 .ifPresent(super::changeContent);
-        Optional.ofNullable(feedCommentUpdateDto.getTaggedMemberId())
+        Optional.ofNullable(patchDto.getTaggedMemberId())
                 .ifPresent(super::changeTaggedMemberId);
-        return this;
     }
 }
