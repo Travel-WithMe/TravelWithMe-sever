@@ -12,6 +12,7 @@ import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.domain.feed.controller.dto.FeedDto;
 import com.frog.travelwithme.domain.feed.controller.dto.TagDto;
 import com.frog.travelwithme.domain.feed.entity.Feed;
+import com.frog.travelwithme.domain.feed.entity.FeedComment;
 import com.frog.travelwithme.domain.feed.entity.Tag;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto;
 import com.frog.travelwithme.domain.member.controller.dto.MemberDto.SignUp;
@@ -538,6 +539,17 @@ public class StubData {
                     .groupId(groupId)
                     .content(content)
                     .taggedMemberId(taggedMemberId)
+                    .build();
+        }
+
+        public static FeedComment getFeedComment(Member member, Feed feed) {
+            return FeedComment.builder()
+                    .depth(depth)
+                    .groupId(groupId)
+                    .content(content)
+                    .taggedMemberId(taggedMemberId)
+                    .feed(feed)
+                    .member(member)
                     .build();
         }
 
