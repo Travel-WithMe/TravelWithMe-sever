@@ -39,4 +39,15 @@ public class FeedCommentController {
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
+
+    @PatchMapping("/comments/{comment-id}")
+    public ResponseEntity updateComment(@Positive @PathVariable("comment-id") Long commentId,
+                                        @Valid @RequestBody CommentDto.Patch patchDto,
+                                        @AuthenticationPrincipal CustomUserDetails user) {
+        String email = user.getEmail();
+        CommentDto.PatchResponse response =
+                feedCommentService.updateCommentByEmail(patchDto, commentId, email);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+    }
 }

@@ -9,6 +9,8 @@ import com.frog.travelwithme.domain.feed.mapper.FeedCommentMapper;
 import com.frog.travelwithme.domain.feed.repository.FeedCommentRepository;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
+import com.frog.travelwithme.global.exception.BusinessLogicException;
+import com.frog.travelwithme.global.exception.ExceptionCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +49,7 @@ public class FeedCommentService extends CommentService {
                                                         Long feedId,
                                                         String email) {
         super.checkExistTaggedMemberId(postDto);
-        super.checkPossibleToMakeGroup(postDto);
+        super.checkPossibleToMakeGroup(postDto);    // 메서드명 기능에 맞게 변경 고려
         Member member = memberService.findMember(email);
         Feed feed = feedService.findFeed(feedId);
         FeedComment feedComment = feedCommentRepository.save(
@@ -55,6 +57,36 @@ public class FeedCommentService extends CommentService {
         this.joinGroup(feedComment);
 
         return feedCommentMapper.toPostResponseDto(feedComment);
+    }
+
+    public CommentDto.PatchResponse updateCommentByEmail(CommentDto.Patch patchDto,
+                                                        Long commentId,
+                                                        String email) {
+        FeedComment feedComment = this.findFeedCommentById(commentId);
+        this.checkEqualWriterAndUser(feedComment, email);
+        feedComment.updateFeedComment(patchDto);
+
+        return feedCommentMapper.toPatchResponseDto(feedComment);
+    }
+
+    private void checkEqualWriterAndUser(FeedComment feedComment, String email) {
+        Member writer = feedComment.getMember();
+
+        if (!writer.getEmail().equals(email)) {
+            log.debug("FeedCommentServicef.checkEqualWriterAndUser exception occur " +
+                    "feedComment : {},  email : {}", feedComment, email);
+            throw new BusinessLogicException(ExceptionCode.COMMENT_WRITER_NOT_MATCH);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    private FeedComment findFeedCommentById(Long commentId) {
+        return feedCommentRepository.findById(commentId)
+                .orElseThrow(() -> {
+                    log.debug("FeedCommentService.findCommentById exception occur " +
+                            "commentId : {}", commentId);
+                    throw new BusinessLogicException(ExceptionCode.COMMENT_NOT_FOUND);
+                });
     }
 
     @Override
@@ -69,6 +101,6 @@ public class FeedCommentService extends CommentService {
 
     @Override
     protected void checkExistCommentById(Long id) {
-
+        this.findFeedCommentById(id);
     }
 }
