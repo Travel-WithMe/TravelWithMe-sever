@@ -19,6 +19,14 @@ public interface FeedCommentMapper {
     @Mapping(target = "commentId", source = "id")
     CommentDto.PostResponse toPostResponseDto(FeedComment feedComment);
 
+    @Mapping(target = "commentId", source = "feedComment.id")
+    @Mapping(target = "taggedMemberNickname", source = "nickname")
+    CommentDto.PostResponse toPostResponseDto(FeedComment feedComment, String nickname);
+
     @Mapping(target = "commentId", source = "id")
     CommentDto.PatchResponse toPatchResponseDto(FeedComment feedComment);
+
+    @Mapping(target = "commentId", source = "feedComment.id")
+    @Mapping(target = "taggedMemberNickname", source = "nickname")
+    CommentDto.PatchResponse toPatchResponseDto(FeedComment feedComment, String nickname);
 }
