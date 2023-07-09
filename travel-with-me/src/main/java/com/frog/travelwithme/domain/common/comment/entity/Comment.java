@@ -1,19 +1,14 @@
 package com.frog.travelwithme.domain.common.comment.entity;
 
-import com.frog.travelwithme.domain.buddy.entity.RecruitmentComment;
 import com.frog.travelwithme.domain.common.BaseTimeEntity;
-import com.frog.travelwithme.domain.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -63,6 +58,10 @@ public class Comment extends BaseTimeEntity {
 
     public void changeTaggedMemberId(Long id) {
         this.taggedMemberId = id;
+    }
+
+    public boolean hasTaggedMember() {
+        return this.taggedMemberId != null;
     }
 
 }

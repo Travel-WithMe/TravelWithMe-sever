@@ -49,6 +49,7 @@ public class CommentDto {
         private Long groupId;
         private String content;
         private Long taggedMemberId;
+        private String taggedMemberNickname;
     }
 
     @Getter
@@ -61,5 +62,6 @@ public class CommentDto {
         private Long groupId;
         private String content;
         private Long taggedMemberId;
+        private String taggedMemberNickname;
     }
 }
