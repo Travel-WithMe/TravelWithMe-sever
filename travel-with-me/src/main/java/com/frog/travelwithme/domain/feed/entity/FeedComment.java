@@ -53,7 +53,6 @@ public class FeedComment extends Comment {
     public void updateFeedComment(CommentDto.Patch patchDto) {
         Optional.ofNullable(patchDto.getContent())
                 .ifPresent(super::changeContent);
-        Optional.ofNullable(patchDto.getTaggedMemberId())
-                .ifPresent(super::changeTaggedMemberId);
+        super.changeTaggedMemberId(patchDto.getTaggedMemberId());
     }
 }
