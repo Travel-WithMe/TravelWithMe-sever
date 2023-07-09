@@ -50,4 +50,14 @@ public class FeedCommentController {
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
+
+    @DeleteMapping("/comments/{comment-id}")
+    public ResponseEntity deleteComment(@Positive @PathVariable("comment-id") Long commentId,
+                                        @AuthenticationPrincipal CustomUserDetails user) {
+        String email = user.getEmail();
+        CommentDto.DeleteResponse response =
+                feedCommentService.deleteCommentByEmail(commentId, email);
+
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+    }
 }

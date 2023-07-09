@@ -29,4 +29,8 @@ public interface FeedCommentMapper {
     @Mapping(target = "commentId", source = "feedComment.id")
     @Mapping(target = "taggedMemberNickname", source = "nickname")
     CommentDto.PatchResponse toPatchResponseDto(FeedComment feedComment, String nickname);
+
+    @Mapping(target = "commentId", source = "feedComment.id")
+    @Mapping(target = "content", source = "deleteContent")
+    CommentDto.DeleteResponse toDelteResponseDto(FeedComment feedComment, String deleteContent);
 }

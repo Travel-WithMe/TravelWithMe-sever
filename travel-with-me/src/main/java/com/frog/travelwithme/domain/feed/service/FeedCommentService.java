@@ -9,6 +9,7 @@ import com.frog.travelwithme.domain.feed.mapper.FeedCommentMapper;
 import com.frog.travelwithme.domain.feed.repository.FeedCommentRepository;
 import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
+import com.frog.travelwithme.global.enums.EnumCollection.Comment;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
 import lombok.extern.slf4j.Slf4j;
@@ -69,6 +70,7 @@ public class FeedCommentService extends CommentService {
                                                         String email) {
         FeedComment feedComment = this.findFeedCommentById(commentId);
         this.checkEqualWriterAndUser(feedComment, email);
+        this.checkDeletedComment(feedComment);
         feedComment.updateFeedComment(patchDto);
 
         if (feedComment.hasTaggedMember()) {
@@ -77,6 +79,16 @@ public class FeedCommentService extends CommentService {
         } else {
             return feedCommentMapper.toPatchResponseDto(feedComment);
         }
+    }
+
+    public CommentDto.DeleteResponse deleteCommentByEmail(Long commentId, String email) {
+        FeedComment feedComment = this.findFeedCommentById(commentId);
+        this.checkEqualWriterAndUser(feedComment, email);
+        this.checkDeletedComment(feedComment);
+        feedComment.softDeleteComment();
+
+        return feedCommentMapper.toDelteResponseDto(feedComment,
+                Comment.DELETE.getDescription());
     }
 
     private void checkEqualWriterAndUser(FeedComment feedComment, String email) {
@@ -89,7 +101,14 @@ public class FeedCommentService extends CommentService {
         }
     }
 
-    @Transactional(readOnly = true)
+    private void checkDeletedComment(FeedComment feedComment) {
+        if (feedComment.isDeleted()) {
+            log.debug("FeedCommentService.checkDeletedComment exception occur " +
+                    "feedComment : {}", feedComment);
+            throw new BusinessLogicException(ExceptionCode.COMMENT_HAS_BEEN_DELETED);
+        }
+    }
+
     private FeedComment findFeedCommentById(Long commentId) {
         return feedCommentRepository.findById(commentId)
                 .orElseThrow(() -> {
