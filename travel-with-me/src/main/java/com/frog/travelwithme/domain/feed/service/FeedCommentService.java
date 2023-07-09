@@ -50,7 +50,7 @@ public class FeedCommentService extends CommentService {
                                                         Long feedId,
                                                         String email) {
         super.checkExistTaggedMemberId(postDto);
-        super.checkPossibleToMakeGroup(postDto);    // 메서드명 기능에 맞게 변경 고려
+        super.checkAvailableCommentOrReply(postDto);
         Member member = memberService.findMember(email);
         Feed feed = feedService.findFeed(feedId);
         FeedComment feedComment = feedCommentRepository.save(

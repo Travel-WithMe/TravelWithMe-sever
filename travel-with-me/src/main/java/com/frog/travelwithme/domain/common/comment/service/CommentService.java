@@ -41,7 +41,7 @@ public abstract class CommentService {
         return commentTypeDto.addType(commentDto);
     }
 
-    protected void checkPossibleToMakeGroup(CommentDto.Post postDto) {
+    protected void checkAvailableCommentOrReply(CommentDto.Post postDto) {
         Integer depth = postDto.getDepth();
         if (this.isComment(depth)) {
             this.checkAvailableComment(postDto);
