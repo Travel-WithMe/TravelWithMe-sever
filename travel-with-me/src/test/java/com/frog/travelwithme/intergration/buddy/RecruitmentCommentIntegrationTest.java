@@ -31,13 +31,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URL;
 import java.util.List;
-import java.util.Optional;
 
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getRequestPreProcessor;
 import static com.frog.travelwithme.utils.ApiDocumentUtils.getResponsePreProcessor;
@@ -165,7 +163,7 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getRecruitmentPathVariableSnippet(),
                         RequestSnippet.getPostCommentSnippet(NULL, NUMBER),
-                        ResponseSnippet.getPostCommentSnippet(NUMBER, NUMBER)
+                        ResponseSnippet.getPostCommentSnippet()
                 ));
     }
 
@@ -209,7 +207,7 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getRecruitmentPathVariableSnippet(),
                         RequestSnippet.getPostCommentSnippet(NULL, NULL),
-                        ResponseSnippet.getPostCommentSnippet(NUMBER, NULL)
+                        ResponseSnippet.getPostCommentSnippet()
                 ));
     }
 
@@ -339,7 +337,7 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getRecruitmentPathVariableSnippet(),
                         RequestSnippet.getPostCommentSnippet(NUMBER, NUMBER),
-                        ResponseSnippet.getPostCommentSnippet(NUMBER, NUMBER)
+                        ResponseSnippet.getPostCommentSnippet()
                 ));
     }
 
@@ -473,7 +471,7 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getCommentPathVariableSnippet(),
                         RequestSnippet.getPatchCommentSnippet(NUMBER),
-                        ResponseSnippet.getPatchCommentSnippet(NUMBER)
+                        ResponseSnippet.getPatchCommentSnippet()
                 ));
     }
 
@@ -522,7 +520,7 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getCommentPathVariableSnippet(),
                         RequestSnippet.getPatchCommentSnippet(NULL),
-                        ResponseSnippet.getPatchCommentSnippet(NUMBER)
+                        ResponseSnippet.getPatchCommentSnippet()
                 ));
     }
 

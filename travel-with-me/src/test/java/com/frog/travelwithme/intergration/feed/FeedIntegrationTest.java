@@ -57,7 +57,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.JsonFieldType.NULL;
-import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
@@ -567,7 +566,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getPostCommentSnippet(NULL, NULL),
-                        ResponseSnippet.getPostCommentSnippet(NUMBER, NULL)));
+                        ResponseSnippet.getPostCommentSnippet()));
     }
 
     @Test
@@ -609,7 +608,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getCommentPathVariableSnippet(),
                         RequestSnippet.getPatchCommentSnippet(NULL),
-                        ResponseSnippet.getPatchCommentSnippet(NUMBER)
+                        ResponseSnippet.getPatchCommentSnippet()
                 ));
     }
 }
