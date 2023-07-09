@@ -1,5 +1,6 @@
 package com.frog.travelwithme.domain.common.comment.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,6 +51,8 @@ public class CommentDto {
         private String content;
         private Long taggedMemberId;
         private String taggedMemberNickname;
+        @JsonProperty("isDeleted")
+        private boolean deleted;
     }
 
     @Getter
@@ -63,5 +66,20 @@ public class CommentDto {
         private String content;
         private Long taggedMemberId;
         private String taggedMemberNickname;
+        @JsonProperty("isDeleted")
+        private boolean deleted;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class DeleteResponse {
+        private Long commentId;
+        private Integer depth;
+        private Long groupId;
+        private String content;
+        @JsonProperty("isDeleted")
+        private boolean deleted;
     }
 }

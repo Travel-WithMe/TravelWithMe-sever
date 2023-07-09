@@ -147,4 +147,15 @@ public class EnumCollection {
         UK,
         US
     }
+
+    public enum Comment {
+        DELETE("삭제된 댓글입니다.");
+
+        @Getter
+        private final String description;
+
+        Comment(String description) {
+            this.description = description;
+        }
+    }
 }

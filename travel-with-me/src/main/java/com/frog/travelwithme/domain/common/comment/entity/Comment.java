@@ -39,6 +39,8 @@ public class Comment extends BaseTimeEntity {
 
     private Long commentCount = 0L;
 
+    private boolean isDeleted = false;
+
     public Comment(Long id, Integer depth, Long groupId, Long taggedMemberId, String content){
         this.id = id;
         this.depth = depth;
@@ -64,4 +66,11 @@ public class Comment extends BaseTimeEntity {
         return this.taggedMemberId != null;
     }
 
+    public void softDeleteComment() {
+        this.isDeleted = true;
+    }
+
+    public boolean isDeleted() {
+        return this.isDeleted;
+    }
 }
