@@ -6,7 +6,6 @@ import com.frog.travelwithme.domain.buddy.mapper.RecruitmentCommentMapper;
 import com.frog.travelwithme.domain.buddy.repository.RecruitmentCommentRepository;
 import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentUpdateDto;
 import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
-import com.frog.travelwithme.domain.common.comment.entity.Comment;
 import com.frog.travelwithme.domain.common.comment.service.CommentService;
 import com.frog.travelwithme.domain.common.comment.dto.CommentTypeDto;
 import com.frog.travelwithme.domain.buddy.service.dto.RecruitmentCommentCreateDto;
@@ -14,7 +13,6 @@ import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ExceptionCode;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +53,7 @@ public class RecruitmentCommentService extends CommentService {
                                                         Long recruitmentId,
                                                         String email) {
         super.checkExistTaggedMemberId(postDto);
-        super.checkPossibleToMakeGroup(postDto);
+        super.checkAvailableCommentOrReply(postDto);
         Member findMember = memberService.findMember(email);
         Recruitment findRecruitment = recruitmentService.findRecruitmentByIdAndCheckExpired(recruitmentId);
         RecruitmentCommentCreateDto recruitmentCommentCreateDto =
