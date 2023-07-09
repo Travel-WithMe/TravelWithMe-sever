@@ -18,6 +18,7 @@ import com.frog.travelwithme.domain.member.entity.Member;
 import com.frog.travelwithme.domain.member.repository.MemberRepository;
 import com.frog.travelwithme.domain.member.service.MemberService;
 import com.frog.travelwithme.global.config.AES128Config;
+import com.frog.travelwithme.global.enums.EnumCollection.Comment;
 import com.frog.travelwithme.global.exception.BusinessLogicException;
 import com.frog.travelwithme.global.exception.ErrorResponse;
 import com.frog.travelwithme.global.exception.ExceptionCode;
@@ -558,6 +559,8 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getDepth()).isEqualTo(1);
         assertThat(response.getContent()).isEqualTo(postDto.getContent());
         assertThat(response.getTaggedMemberId()).isEqualTo(postDto.getTaggedMemberId());
+        assertThat(response.isDeleted()).isFalse();
+
         actions
                 .andExpect(status().isOk())
                 .andDo(document("post-feed-comment",
@@ -598,6 +601,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getCommentId()).isEqualTo(COMMENT_ID);
         assertThat(response.getContent()).isEqualTo(updatedFeedComment.getContent());
         assertThat(response.getTaggedMemberId()).isEqualTo(updatedFeedComment.getTaggedMemberId());
+        assertThat(response.isDeleted()).isFalse();
 
         actions
                 .andExpect(status().isOk())
@@ -608,6 +612,43 @@ class FeedIntegrationTest extends BaseIntegrationTest {
                         RequestSnippet.getCommentPathVariableSnippet(),
                         RequestSnippet.getPatchCommentSnippet(),
                         ResponseSnippet.getPatchCommentSnippet()
+                ));
+    }
+
+    @Test
+    @DisplayName("피드 댓글 삭제")
+    void feedControllerTest16() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        // when
+        String uri = BASE_URL + "/comments" + "/{comment-id}";
+
+        ResultActions actions =
+                ResultActionsUtils.deleteRequestWithTokenAndPathVariable(
+                        mvc, uri, COMMENT_ID, accessToken, encryptedRefreshToken
+                );
+
+        // then
+        CommentDto.DeleteResponse response =
+                ObjectMapperUtils.actionsSingleToResponseWithData(actions, CommentDto.DeleteResponse.class);
+
+        assertThat(response.getCommentId()).isEqualTo(COMMENT_ID);
+        assertThat(response.getContent()).isEqualTo(Comment.DELETE.getDescription());
+        assertThat(response.isDeleted()).isTrue();
+
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("delete-feed-comment",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getCommentPathVariableSnippet(),
+                        ResponseSnippet.getDeleteCommentSnippet()
                 ));
     }
 }
