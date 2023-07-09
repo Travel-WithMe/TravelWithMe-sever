@@ -56,7 +56,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.JsonFieldType.NULL;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
@@ -532,7 +531,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("피드 댓글 작성 (회원태그 미사용)")
+    @DisplayName("피드 댓글 작성")
     void feedControllerTest14() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
@@ -542,7 +541,7 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
         Long groupId = null;
-        Long memberId = null;
+        Long memberId = memberRepository.findByEmail(EMAIL).get().getId();
         CommentDto.Post postDto =
                 StubData.MockComment.getPostDtoByDepthAndGroupIdAndTaggedMemberId(1, groupId, memberId);
 
@@ -561,16 +560,16 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getTaggedMemberId()).isEqualTo(postDto.getTaggedMemberId());
         actions
                 .andExpect(status().isOk())
-                .andDo(document("post-feed-comment-no-tagged",
+                .andDo(document("post-feed-comment",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
-                        RequestSnippet.getPostCommentSnippet(NULL, NULL),
+                        RequestSnippet.getPostCommentSnippet(),
                         ResponseSnippet.getPostCommentSnippet()));
     }
 
     @Test
-    @DisplayName("피드 댓글 수정 (회원태그 미사용)")
+    @DisplayName("피드 댓글 수정")
     void feedControllerTest15() throws Exception {
         // given
         CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
@@ -578,8 +577,9 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+        Long memberId = memberRepository.findByEmail(EMAIL).get().getId();
         CommentDto.Patch patchDto =
-                StubData.MockComment.getPatchDtoByContentAndTaggedMemberId("변경완료", null);
+                StubData.MockComment.getPatchDtoByContentAndTaggedMemberId("변경완료", memberId);
 
         // when
         String uri = BASE_URL + "/comments" + "/{comment-id}";
@@ -598,16 +598,15 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         assertThat(response.getCommentId()).isEqualTo(COMMENT_ID);
         assertThat(response.getContent()).isEqualTo(updatedFeedComment.getContent());
         assertThat(response.getTaggedMemberId()).isEqualTo(updatedFeedComment.getTaggedMemberId());
-        assertThat(response.getTaggedMemberId()).isEqualTo(1);
 
         actions
                 .andExpect(status().isOk())
-                .andDo(document("patch-feed-comment-no-tagged",
+                .andDo(document("patch-feed-comment",
                         getRequestPreProcessor(),
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getCommentPathVariableSnippet(),
-                        RequestSnippet.getPatchCommentSnippet(NULL),
+                        RequestSnippet.getPatchCommentSnippet(),
                         ResponseSnippet.getPatchCommentSnippet()
                 ));
     }

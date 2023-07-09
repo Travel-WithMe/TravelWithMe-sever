@@ -168,22 +168,22 @@ public class RequestSnippet {
         );
     }
 
-    public static Snippet getPostCommentSnippet(JsonFieldType groupId, JsonFieldType taggedMemberId) {
+    public static Snippet getPostCommentSnippet() {
         return requestFields(
                 List.of(
                         fieldWithPath("depth").type(NUMBER).description("댓글:1, 대댓글:2"),
-                        fieldWithPath("groupId").type(groupId).description("작성된 댓글,대댓글의 Group ID"),
+                        fieldWithPath("groupId").type(NUMBER).description("작성된 댓글,대댓글의 Group ID").optional(),
                         fieldWithPath("content").type(STRING).description("댓글,대댓글 내용"),
-                        fieldWithPath("taggedMemberId").type(taggedMemberId).description("언급(태그)된 회원 아이디")
+                        fieldWithPath("taggedMemberId").type(NUMBER).description("언급(태그)된 회원 아이디").optional()
                 )
         );
     }
 
-    public static Snippet getPatchCommentSnippet(JsonFieldType taggedMemberType) {
+    public static Snippet getPatchCommentSnippet() {
         return requestFields(
                 List.of(
                         fieldWithPath("content").type(STRING).description("댓글,대댓글 내용"),
-                        fieldWithPath("taggedMemberId").type(taggedMemberType).description("언급(태그)된 회원 아이디")
+                        fieldWithPath("taggedMemberId").type(NUMBER).description("언급(태그)된 회원 아이디").optional()
                 )
         );
     }

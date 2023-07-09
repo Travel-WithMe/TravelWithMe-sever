@@ -43,7 +43,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
@@ -162,7 +161,7 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getRecruitmentPathVariableSnippet(),
-                        RequestSnippet.getPostCommentSnippet(NULL, NUMBER),
+                        RequestSnippet.getPostCommentSnippet(),
                         ResponseSnippet.getPostCommentSnippet()
                 ));
     }
@@ -206,7 +205,7 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getRecruitmentPathVariableSnippet(),
-                        RequestSnippet.getPostCommentSnippet(NULL, NULL),
+                        RequestSnippet.getPostCommentSnippet(),
                         ResponseSnippet.getPostCommentSnippet()
                 ));
     }
@@ -336,7 +335,7 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getRecruitmentPathVariableSnippet(),
-                        RequestSnippet.getPostCommentSnippet(NUMBER, NUMBER),
+                        RequestSnippet.getPostCommentSnippet(),
                         ResponseSnippet.getPostCommentSnippet()
                 ));
     }
@@ -470,7 +469,7 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getCommentPathVariableSnippet(),
-                        RequestSnippet.getPatchCommentSnippet(NUMBER),
+                        RequestSnippet.getPatchCommentSnippet(),
                         ResponseSnippet.getPatchCommentSnippet()
                 ));
     }
@@ -519,7 +518,7 @@ public class RecruitmentCommentIntegrationTest extends BaseIntegrationTest {
                         getResponsePreProcessor(),
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getCommentPathVariableSnippet(),
-                        RequestSnippet.getPatchCommentSnippet(NULL),
+                        RequestSnippet.getPatchCommentSnippet(),
                         ResponseSnippet.getPatchCommentSnippet()
                 ));
     }
