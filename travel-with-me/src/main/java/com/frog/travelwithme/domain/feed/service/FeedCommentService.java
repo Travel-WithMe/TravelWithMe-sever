@@ -56,7 +56,12 @@ public class FeedCommentService extends CommentService {
                 feedCommentMapper.toEntity(postDto, member, feed));
         this.joinGroup(feedComment);
 
-        return feedCommentMapper.toPostResponseDto(feedComment);
+        if (feedComment.hasTaggedMember()) {
+            String nickname = memberService.findMember(feedComment.getTaggedMemberId()).getNickname();
+            return feedCommentMapper.toPostResponseDto(feedComment, nickname);
+        } else {
+            return feedCommentMapper.toPostResponseDto(feedComment);
+        }
     }
 
     public CommentDto.PatchResponse updateCommentByEmail(CommentDto.Patch patchDto,
@@ -66,7 +71,12 @@ public class FeedCommentService extends CommentService {
         this.checkEqualWriterAndUser(feedComment, email);
         feedComment.updateFeedComment(patchDto);
 
-        return feedCommentMapper.toPatchResponseDto(feedComment);
+        if (feedComment.hasTaggedMember()) {
+            String nickname = memberService.findMember(feedComment.getTaggedMemberId()).getNickname();
+            return feedCommentMapper.toPatchResponseDto(feedComment, nickname);
+        } else {
+            return feedCommentMapper.toPatchResponseDto(feedComment);
+        }
     }
 
     private void checkEqualWriterAndUser(FeedComment feedComment, String email) {

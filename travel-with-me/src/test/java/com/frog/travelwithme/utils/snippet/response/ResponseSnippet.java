@@ -143,23 +143,25 @@ public class ResponseSnippet {
         );
     }
 
-    public static Snippet getPostCommentSnippet(JsonFieldType groupType, JsonFieldType taggedMemberType) {
-        return responseFields(
-                fieldWithPath("data.commentId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 ID"),
-                fieldWithPath("data.depth").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 여부 (댓글:1, 대댓글:2)"),
-                fieldWithPath("data.groupId").type(groupType).description("작성된 댓글,대댓글의 Group ID"),
-                fieldWithPath("data.content").type(JsonFieldType.STRING).description("작성된 댓글,대댓글 내용"),
-                fieldWithPath("data.taggedMemberId").type(taggedMemberType).description("작성된 댓글,대댓글의 언급(태그)된 회원 ID")
-        );
-    }
-
-    public static Snippet getPatchCommentSnippet(JsonFieldType taggedMemberType) {
+    public static Snippet getPostCommentSnippet() {
         return responseFields(
                 fieldWithPath("data.commentId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 ID"),
                 fieldWithPath("data.depth").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 여부 (댓글:1, 대댓글:2)"),
                 fieldWithPath("data.groupId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글의 Group ID"),
                 fieldWithPath("data.content").type(JsonFieldType.STRING).description("작성된 댓글,대댓글 내용"),
-                fieldWithPath("data.taggedMemberId").type(taggedMemberType).description("작성된 댓글,대댓글의 언급(태그)된 회원 ID")
+                fieldWithPath("data.taggedMemberId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글의 언급(태그)된 회원 ID").optional(),
+                fieldWithPath("data.taggedMemberNickname").type(JsonFieldType.STRING).description("작성된 댓글, 대댓글의 언급(태그)된 회원 Nickname").optional()
+        );
+    }
+
+    public static Snippet getPatchCommentSnippet() {
+        return responseFields(
+                fieldWithPath("data.commentId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 ID"),
+                fieldWithPath("data.depth").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 여부 (댓글:1, 대댓글:2)"),
+                fieldWithPath("data.groupId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글의 Group ID"),
+                fieldWithPath("data.content").type(JsonFieldType.STRING).description("작성된 댓글,대댓글 내용"),
+                fieldWithPath("data.taggedMemberId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글의 언급(태그)된 회원 ID").optional(),
+                fieldWithPath("data.taggedMemberNickname").type(JsonFieldType.STRING).description("작성된 댓글, 대댓글의 언급(태그)된 회원 Nickname").optional()
         );
     }
 }
