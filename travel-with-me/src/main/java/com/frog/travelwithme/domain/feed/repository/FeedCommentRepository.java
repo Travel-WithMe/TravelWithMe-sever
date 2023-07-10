@@ -8,5 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * 버전 정보: 1.0.0
  * 작성일자: 2023/07/03
  **/
-public interface FeedCommentRepository extends JpaRepository<FeedComment, Long> {
+public interface FeedCommentRepository
+        extends JpaRepository<FeedComment, Long>, FeedCommentCustomRepository {
 }

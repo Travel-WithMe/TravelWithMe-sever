@@ -7,4 +7,5 @@ package com.frog.travelwithme.domain.buddy.repository;
  **/
 
 public interface RecruitmentCommentCustomRepository {
+
 }
