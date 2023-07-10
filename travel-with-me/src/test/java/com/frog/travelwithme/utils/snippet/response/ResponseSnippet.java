@@ -176,4 +176,14 @@ public class ResponseSnippet {
                 fieldWithPath("data.isDeleted").type(JsonFieldType.BOOLEAN).description("댓글 삭제 여부 (true : 삭제된 댓글 / false : 삭제되지 않은 댓글)")
         );
     }
+
+    public static Snippet getFindFeedCommentSnippet() {
+        return responseFields(
+                fieldWithPath("data[].commentId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 ID"),
+                fieldWithPath("data[].depth").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 여부 (댓글:1, 대댓글:2)"),
+                fieldWithPath("data[].groupId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글의 Group ID"),
+                fieldWithPath("data[].content").type(JsonFieldType.STRING).description("작성된 댓글,대댓글 내용"),
+                fieldWithPath("data[].isDeleted").type(JsonFieldType.BOOLEAN).description("댓글 삭제 여부 (true : 삭제된 댓글 / false : 삭제되지 않은 댓글)")
+        );
+    }
 }

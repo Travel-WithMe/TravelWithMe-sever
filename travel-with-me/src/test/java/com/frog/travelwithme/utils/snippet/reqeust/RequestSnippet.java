@@ -233,4 +233,11 @@ public class RequestSnippet {
                 parameterWithName("lastFeedId").description("이전 조회한 목록 중 마지막 Feed의 인덱스. 첫 번째 조회에서는 해당 파라미터 제외").optional()
         );
     }
+
+    public static Snippet getAllFeedCommentParamSnippet() {
+        return requestParameters(
+                parameterWithName("lastFeedId").description("이전 조회한 목록 중 마지막 Feed의 인덱스. 첫 번째 조회에서는 해당 파라미터 제외").optional(),
+                parameterWithName("size").description("조회하려는 피드 댓글 개수")
+        );
+    }
 }

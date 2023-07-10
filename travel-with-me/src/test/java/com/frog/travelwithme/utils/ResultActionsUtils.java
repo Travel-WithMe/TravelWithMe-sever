@@ -494,4 +494,18 @@ public class ResultActionsUtils {
                         .header(REFRESH_HEADER, encryptedRefreshToken))
                 .andDo(print());
     }
+
+    public static ResultActions getRequestWithTokenAndPathVariableAndParam(MockMvc mockMvc,
+                                                                           String url,
+                                                                           Object pathVaraible,
+                                                                           MultiValueMap<String, String> param,
+                                                                           String accessToken,
+                                                                           String encryptedRefreshToken) throws Exception {
+        return mockMvc.perform(RestDocumentationRequestBuilders.get(url, pathVaraible)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .params(param)
+                        .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+                        .header(REFRESH_HEADER, encryptedRefreshToken))
+                .andDo(print());
+    }
 }
