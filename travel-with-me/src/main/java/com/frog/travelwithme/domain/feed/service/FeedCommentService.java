@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * 작성자: 김찬빈
  * 버전 정보: 1.0.0
@@ -89,6 +91,16 @@ public class FeedCommentService extends CommentService {
 
         return feedCommentMapper.toDelteResponseDto(feedComment,
                 Comment.DELETE.getDescription());
+    }
+
+    public List<CommentDto.GetResponse> findAllCommentsByFeedId(Long feedId,
+                                                                String email,
+                                                                Long lastCommentId,
+                                                                int size) {
+        List<FeedComment> feedComments =
+                feedCommentRepository.findAllByFeedId(feedId, email, lastCommentId, size);
+
+        return feedCommentMapper.toGetResponseDtoList(feedComments);
     }
 
     private void checkEqualWriterAndUser(FeedComment feedComment, String email) {

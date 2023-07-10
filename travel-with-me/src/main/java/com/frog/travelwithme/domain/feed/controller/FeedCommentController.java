@@ -2,6 +2,7 @@ package com.frog.travelwithme.domain.feed.controller;
 
 import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.domain.feed.service.FeedCommentService;
+import com.frog.travelwithme.global.dto.PagelessMultiResponseDto;
 import com.frog.travelwithme.global.dto.SingleResponseDto;
 import com.frog.travelwithme.global.security.auth.userdetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 /**
  * 작성자: 김찬빈
@@ -59,5 +61,17 @@ public class FeedCommentController {
                 feedCommentService.deleteCommentByEmail(commentId, email);
 
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+    }
+
+    @GetMapping("/{feed-id}/comments")
+    public ResponseEntity getComments(@Positive @PathVariable("feed-id") Long feedId,
+                                     @AuthenticationPrincipal CustomUserDetails user,
+                                     @Positive @RequestParam(required = false) Long lastCommentId,
+                                     @Positive @RequestParam int size) {
+        String email = user.getEmail();
+        List<CommentDto.GetResponse> responseList =
+                feedCommentService.findAllCommentsByFeedId(feedId, email, lastCommentId, size);
+
+        return new ResponseEntity<>(new PagelessMultiResponseDto<>(responseList), HttpStatus.OK);
     }
 }
