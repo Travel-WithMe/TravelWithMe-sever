@@ -82,4 +82,17 @@ public class CommentDto {
         @JsonProperty("isDeleted")
         private boolean deleted;
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class GetResponse {
+        private Long commentId;
+        private Integer depth;
+        private Long groupId;
+        private String content;
+        @JsonProperty("isDeleted")
+        private boolean deleted;
+    }
 }
