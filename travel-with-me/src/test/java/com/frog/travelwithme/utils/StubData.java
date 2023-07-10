@@ -529,6 +529,7 @@ public class StubData {
     public static class MockComment {
         static final Long commentId = 1L;
         static final Integer depth = 1;
+        static final Integer replyDepth = 2;
         static final Long groupId = 1L;
         static final Long taggedMemberId = 1L;
         static final String content = "답글 입니다.";
@@ -545,6 +546,17 @@ public class StubData {
         public static FeedComment getFeedComment(Member member, Feed feed) {
             return FeedComment.builder()
                     .depth(depth)
+                    .groupId(groupId)
+                    .content(content)
+                    .taggedMemberId(taggedMemberId)
+                    .feed(feed)
+                    .member(member)
+                    .build();
+        }
+
+        public static FeedComment getFeedCommentReply(Member member, Feed feed) {
+            return FeedComment.builder()
+                    .depth(replyDepth)
                     .groupId(groupId)
                     .content(content)
                     .taggedMemberId(taggedMemberId)

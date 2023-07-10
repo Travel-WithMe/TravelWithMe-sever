@@ -134,6 +134,9 @@ class FeedIntegrationTest extends BaseIntegrationTest {
         FeedComment feedComment = StubData.MockComment.getFeedComment(member, feed);
         FeedComment saveFeedComment = feedCommentRepository.save(feedComment);
         COMMENT_ID = saveFeedComment.getId();
+
+        FeedComment feedCommentReply = StubData.MockComment.getFeedCommentReply(member, feed);
+        feedCommentRepository.save(feedCommentReply);
     }
 
     @Test
@@ -649,6 +652,39 @@ class FeedIntegrationTest extends BaseIntegrationTest {
                         RequestSnippet.getTokenSnippet(),
                         RequestSnippet.getCommentPathVariableSnippet(),
                         ResponseSnippet.getDeleteCommentSnippet()
+                ));
+    }
+
+    @Test
+    @DisplayName("특정 피드의 댓글 조회")
+    void feedControllerTest17() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+        MultiValueMap<String, String> sizeParam = new LinkedMultiValueMap<>();
+        sizeParam.add("size", "20");
+
+        // when
+        String uri = BASE_URL + "/{feed-id}" + "/comments";
+
+        ResultActions actions =
+                ResultActionsUtils.getRequestWithTokenAndPathVariableAndParam(
+                        mvc, uri, feedId, sizeParam, accessToken, encryptedRefreshToken
+                );
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("find-all-feed-comment",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getFeedPathVariableSnippet(),
+                        RequestSnippet.getAllFeedCommentParamSnippet(),
+                        ResponseSnippet.getFindFeedCommentSnippet()
                 ));
     }
 }
