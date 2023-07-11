@@ -151,7 +151,11 @@ public class ResponseSnippet {
                 fieldWithPath("data.content").type(JsonFieldType.STRING).description("작성된 댓글,대댓글 내용"),
                 fieldWithPath("data.taggedMemberId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글의 언급(태그)된 회원 ID").optional(),
                 fieldWithPath("data.taggedMemberNickname").type(JsonFieldType.STRING).description("작성된 댓글, 대댓글의 언급(태그)된 회원 Nickname").optional(),
-                fieldWithPath("data.isDeleted").type(JsonFieldType.BOOLEAN).description("댓글 삭제 여부 (true : 삭제된 댓글 / false : 삭제되지 않은 댓글)")
+                fieldWithPath("data.isDeleted").type(JsonFieldType.BOOLEAN).description("댓글 삭제 여부 (true : 삭제된 댓글 / false : 삭제되지 않은 댓글)"),
+                fieldWithPath("data.isWriter").type(JsonFieldType.BOOLEAN).description("댓글 작성자 여부 (true : 댓글 작성자 / false : 댓글 작성자가 아님)"),
+                fieldWithPath("data.isLiked").type(JsonFieldType.BOOLEAN).description("댓글 좋아요 여부 (true : 좋아요한 댓글 / false : 좋아요하지 않은 댓글)"),
+                fieldWithPath("data.commentCount").type(JsonFieldType.NUMBER).description("댓글 개수"),
+                fieldWithPath("data.likeCount").type(JsonFieldType.NUMBER).description("좋아요 개수")
         );
     }
 
@@ -163,7 +167,11 @@ public class ResponseSnippet {
                 fieldWithPath("data.content").type(JsonFieldType.STRING).description("작성된 댓글,대댓글 내용"),
                 fieldWithPath("data.taggedMemberId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글의 언급(태그)된 회원 ID").optional(),
                 fieldWithPath("data.taggedMemberNickname").type(JsonFieldType.STRING).description("작성된 댓글, 대댓글의 언급(태그)된 회원 Nickname").optional(),
-                fieldWithPath("data.isDeleted").type(JsonFieldType.BOOLEAN).description("댓글 삭제 여부 (true : 삭제된 댓글 / false : 삭제되지 않은 댓글)")
+                fieldWithPath("data.isDeleted").type(JsonFieldType.BOOLEAN).description("댓글 삭제 여부 (true : 삭제된 댓글 / false : 삭제되지 않은 댓글)"),
+                fieldWithPath("data.isWriter").type(JsonFieldType.BOOLEAN).description("댓글 작성자 여부 (true : 댓글 작성자 / false : 댓글 작성자가 아님)"),
+                fieldWithPath("data.isLiked").type(JsonFieldType.BOOLEAN).description("댓글 좋아요 여부 (true : 좋아요한 댓글 / false : 좋아요하지 않은 댓글)"),
+                fieldWithPath("data.commentCount").type(JsonFieldType.NUMBER).description("댓글 개수"),
+                fieldWithPath("data.likeCount").type(JsonFieldType.NUMBER).description("좋아요 개수")
         );
     }
 
@@ -173,7 +181,11 @@ public class ResponseSnippet {
                 fieldWithPath("data.depth").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 여부 (댓글:1, 대댓글:2)"),
                 fieldWithPath("data.groupId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글의 Group ID"),
                 fieldWithPath("data.content").type(JsonFieldType.STRING).description("작성된 댓글,대댓글 내용"),
-                fieldWithPath("data.isDeleted").type(JsonFieldType.BOOLEAN).description("댓글 삭제 여부 (true : 삭제된 댓글 / false : 삭제되지 않은 댓글)")
+                fieldWithPath("data.isDeleted").type(JsonFieldType.BOOLEAN).description("댓글 삭제 여부 (true : 삭제된 댓글 / false : 삭제되지 않은 댓글)"),
+                fieldWithPath("data.isWriter").type(JsonFieldType.BOOLEAN).description("댓글 작성자 여부 (true : 댓글 작성자 / false : 댓글 작성자가 아님)"),
+                fieldWithPath("data.isLiked").type(JsonFieldType.BOOLEAN).description("댓글 좋아요 여부 (true : 좋아요한 댓글 / false : 좋아요하지 않은 댓글)"),
+                fieldWithPath("data.commentCount").type(JsonFieldType.NUMBER).description("댓글 개수"),
+                fieldWithPath("data.likeCount").type(JsonFieldType.NUMBER).description("좋아요 개수")
         );
     }
 
@@ -183,7 +195,11 @@ public class ResponseSnippet {
                 fieldWithPath("data[].depth").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글 여부 (댓글:1, 대댓글:2)"),
                 fieldWithPath("data[].groupId").type(JsonFieldType.NUMBER).description("작성된 댓글,대댓글의 Group ID"),
                 fieldWithPath("data[].content").type(JsonFieldType.STRING).description("작성된 댓글,대댓글 내용"),
-                fieldWithPath("data[].isDeleted").type(JsonFieldType.BOOLEAN).description("댓글 삭제 여부 (true : 삭제된 댓글 / false : 삭제되지 않은 댓글)")
+                fieldWithPath("data[].isDeleted").type(JsonFieldType.BOOLEAN).description("댓글 삭제 여부 (true : 삭제된 댓글 / false : 삭제되지 않은 댓글)"),
+                fieldWithPath("data[].isWriter").type(JsonFieldType.BOOLEAN).description("댓글 작성자 여부 (true : 댓글 작성자 / false : 댓글 작성자가 아님)"),
+                fieldWithPath("data[].isLiked").type(JsonFieldType.BOOLEAN).description("댓글 좋아요 여부 (true : 좋아요한 댓글 / false : 좋아요하지 않은 댓글)"),
+                fieldWithPath("data[].commentCount").type(JsonFieldType.NUMBER).description("댓글 개수"),
+                fieldWithPath("data[].likeCount").type(JsonFieldType.NUMBER).description("좋아요 개수")
         );
     }
 }
