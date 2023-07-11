@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * FeedComment 설명: 피드 댓글 관리
@@ -54,5 +55,28 @@ public class FeedComment extends Comment {
         Optional.ofNullable(patchDto.getContent())
                 .ifPresent(super::changeContent);
         super.changeTaggedMemberId(patchDto.getTaggedMemberId());
+    }
+
+    public boolean isLikedByMember(String email) {
+        if (this.likedMembers.isEmpty()) {
+            return false;
+        }
+        return this.likedMembers.stream()
+                .map(Member::getEmail)
+                .collect(Collectors.toList())
+                .contains(email);
+    }
+
+    public void addLike(Member member) {
+        this.likedMembers.add(member);
+        super.addLikeCount();
+    }
+
+    public void removeLike(String email) {
+        this.likedMembers.stream()
+                .map(Member::getEmail)
+                .collect(Collectors.toList())
+                .remove(email);
+        super.minusLikeCount();
     }
 }

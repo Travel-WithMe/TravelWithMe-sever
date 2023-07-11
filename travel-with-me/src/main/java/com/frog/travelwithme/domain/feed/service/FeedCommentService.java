@@ -3,6 +3,7 @@ package com.frog.travelwithme.domain.feed.service;
 import com.frog.travelwithme.domain.common.comment.dto.CommentDto;
 import com.frog.travelwithme.domain.common.comment.dto.CommentTypeDto;
 import com.frog.travelwithme.domain.common.comment.service.CommentService;
+import com.frog.travelwithme.domain.common.like.service.LikeService;
 import com.frog.travelwithme.domain.feed.entity.Feed;
 import com.frog.travelwithme.domain.feed.entity.FeedComment;
 import com.frog.travelwithme.domain.feed.mapper.FeedCommentMapper;
@@ -26,7 +27,7 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-public class FeedCommentService extends CommentService {
+public class FeedCommentService extends CommentService implements LikeService {
 
     private final FeedCommentRepository feedCommentRepository;
 
@@ -61,9 +62,9 @@ public class FeedCommentService extends CommentService {
 
         if (feedComment.hasTaggedMember()) {
             String nickname = memberService.findMember(feedComment.getTaggedMemberId()).getNickname();
-            return feedCommentMapper.toPostResponseDto(feedComment, nickname);
+            return feedCommentMapper.toPostResponseDto(feedComment, nickname, email);
         } else {
-            return feedCommentMapper.toPostResponseDto(feedComment);
+            return feedCommentMapper.toPostResponseDto(feedComment, email);
         }
     }
 
@@ -77,9 +78,9 @@ public class FeedCommentService extends CommentService {
 
         if (feedComment.hasTaggedMember()) {
             String nickname = memberService.findMember(feedComment.getTaggedMemberId()).getNickname();
-            return feedCommentMapper.toPatchResponseDto(feedComment, nickname);
+            return feedCommentMapper.toPatchResponseDto(feedComment, nickname, email);
         } else {
-            return feedCommentMapper.toPatchResponseDto(feedComment);
+            return feedCommentMapper.toPatchResponseDto(feedComment, email);
         }
     }
 
@@ -90,7 +91,7 @@ public class FeedCommentService extends CommentService {
         feedComment.softDeleteComment();
 
         return feedCommentMapper.toDelteResponseDto(feedComment,
-                Comment.DELETE.getDescription());
+                Comment.DELETE.getDescription(), email);
     }
 
     public List<CommentDto.GetResponse> findAllCommentsByFeedId(Long feedId,
@@ -100,7 +101,7 @@ public class FeedCommentService extends CommentService {
         List<FeedComment> feedComments =
                 feedCommentRepository.findAllByFeedId(feedId, email, lastCommentId, size);
 
-        return feedCommentMapper.toGetResponseDtoList(feedComments);
+        return feedCommentMapper.toGetResponseDtoList(feedComments, email);
     }
 
     private void checkEqualWriterAndUser(FeedComment feedComment, String email) {
@@ -143,5 +144,27 @@ public class FeedCommentService extends CommentService {
     @Override
     protected void checkExistCommentById(Long id) {
         this.findFeedCommentById(id);
+    }
+
+    @Override
+    public void doLike(String email, long feedCommentId) {
+        FeedComment feedComment = this.findFeedCommentById(feedCommentId);
+        if (!feedComment.isLikedByMember(email)) {
+            feedComment.addLike(memberService.findMember(email));
+        } else {
+            log.debug("FeedService.doLike exception occur email : {}, feedCommentId : {}", email, feedCommentId);
+            throw new BusinessLogicException(ExceptionCode.ALREADY_LIKED_COMMENT);
+        }
+    }
+
+    @Override
+    public void cancelLike(String email, long feedCommentId) {
+        FeedComment feedComment = this.findFeedCommentById(feedCommentId);
+        if (feedComment.isLikedByMember(email)) {
+            feedComment.removeLike(email);
+        } else {
+            log.debug("FeedService.cancelLike exception occur email : {}, feedCommentId : {}", email, feedCommentId);
+            throw new BusinessLogicException(ExceptionCode.UNABLE_TO_CANCEL_LIKE);
+        }
     }
 }

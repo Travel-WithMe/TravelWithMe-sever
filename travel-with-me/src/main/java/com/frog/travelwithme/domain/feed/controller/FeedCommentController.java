@@ -65,13 +65,31 @@ public class FeedCommentController {
 
     @GetMapping("/{feed-id}/comments")
     public ResponseEntity getComments(@Positive @PathVariable("feed-id") Long feedId,
-                                     @AuthenticationPrincipal CustomUserDetails user,
-                                     @Positive @RequestParam(required = false) Long lastCommentId,
-                                     @Positive @RequestParam int size) {
+                                      @AuthenticationPrincipal CustomUserDetails user,
+                                      @Positive @RequestParam(required = false) Long lastCommentId,
+                                      @Positive @RequestParam int size) {
         String email = user.getEmail();
         List<CommentDto.GetResponse> responseList =
                 feedCommentService.findAllCommentsByFeedId(feedId, email, lastCommentId, size);
 
         return new ResponseEntity<>(new PagelessMultiResponseDto<>(responseList), HttpStatus.OK);
+    }
+
+    @PostMapping("/comments/{comment-id}/likes")
+    public ResponseEntity postLike(@Positive @PathVariable("comment-id") Long feedCommentId,
+                                   @AuthenticationPrincipal CustomUserDetails user) {
+        String email = user.getEmail();
+        feedCommentService.doLike(email, feedCommentId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/comments/{comment-id}/likes")
+    public ResponseEntity deleteLike(@Positive @PathVariable("comment-id") Long feedCommentId,
+                                     @AuthenticationPrincipal CustomUserDetails user) {
+        String email = user.getEmail();
+        feedCommentService.cancelLike(email, feedCommentId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
