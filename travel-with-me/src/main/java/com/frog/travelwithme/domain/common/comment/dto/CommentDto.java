@@ -53,6 +53,12 @@ public class CommentDto {
         private String taggedMemberNickname;
         @JsonProperty("isDeleted")
         private boolean deleted;
+        long likeCount;
+        long commentCount;
+        @JsonProperty("isWriter")
+        boolean writer;
+        @JsonProperty("isLiked")
+        boolean liked;
     }
 
     @Getter
@@ -68,6 +74,12 @@ public class CommentDto {
         private String taggedMemberNickname;
         @JsonProperty("isDeleted")
         private boolean deleted;
+        long likeCount;
+        long commentCount;
+        @JsonProperty("isWriter")
+        boolean writer;
+        @JsonProperty("isLiked")
+        boolean liked;
     }
 
     @Getter
@@ -81,6 +93,12 @@ public class CommentDto {
         private String content;
         @JsonProperty("isDeleted")
         private boolean deleted;
+        long likeCount;
+        long commentCount;
+        @JsonProperty("isWriter")
+        boolean writer;
+        @JsonProperty("isLiked")
+        boolean liked;
     }
 
     @Getter
@@ -94,5 +112,11 @@ public class CommentDto {
         private String content;
         @JsonProperty("isDeleted")
         private boolean deleted;
+        long likeCount;
+        long commentCount;
+        @JsonProperty("isWriter")
+        boolean writer;
+        @JsonProperty("isLiked")
+        boolean liked;
     }
 }

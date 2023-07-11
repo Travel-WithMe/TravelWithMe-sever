@@ -50,6 +50,7 @@ public enum ExceptionCode {
     COMMENT_REPLY_NEED_GROUP_ID(404, "대댓글에는 GROUP ID 정보가 필수입니다. GROUP ID를 넣어주십시오."),
     COMMENT_REPLY_GROUP_ID_NOT_FOUND(404, "대댓글의 기준이되는 댓글이 존재하지 않습니다."),
     COMMENT_HAS_BEEN_DELETED(404, "삭제된 댓글입니다. 삭제된 댓글은 수정할 수 없습니다."),
+    ALREADY_LIKED_COMMENT(404, "이미 좋아요한 댓글입니다."),
 
     // Security, JWT
     NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),
