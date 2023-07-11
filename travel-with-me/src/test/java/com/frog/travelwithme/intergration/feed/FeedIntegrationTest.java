@@ -137,6 +137,8 @@ class FeedIntegrationTest extends BaseIntegrationTest {
 
         FeedComment feedCommentReply = StubData.MockComment.getFeedCommentReply(member, feed);
         feedCommentRepository.save(feedCommentReply);
+
+
     }
 
     @Test
@@ -685,6 +687,73 @@ class FeedIntegrationTest extends BaseIntegrationTest {
                         RequestSnippet.getFeedPathVariableSnippet(),
                         RequestSnippet.getAllFeedCommentParamSnippet(),
                         ResponseSnippet.getFindFeedCommentSnippet()
+                ));
+    }
+
+    @Test
+    @DisplayName("특정 피드 좋아요")
+    void feedControllerTest18() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+
+        // when
+        String uri = BASE_URL + "/comments" + "/{comment-id}" + "/likes";
+
+        ResultActions actions =
+                ResultActionsUtils.postRequestWithTokenAndPathVariable(
+                        mvc, uri, COMMENT_ID, accessToken, encryptedRefreshToken
+                );
+
+        // then
+        FeedComment feedComment = feedCommentRepository.findById(COMMENT_ID).get();
+        assertThat(feedComment.getLikeCount()).isPositive();
+
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("post-like-feed-comment",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getCommentPathVariableSnippet()
+                ));
+    }
+
+    @Test
+    @DisplayName("특정 피드 좋아요 취소")
+    void feedControllerTest19() throws Exception {
+        // given
+        CustomUserDetails userDetails = StubData.MockMember.getUserDetails();
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        String accessToken = tokenDto.getAccessToken();
+        String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
+        FeedComment feedComment = feedCommentRepository.findById(COMMENT_ID).get();
+        Member member = memberRepository.findByEmail(EMAIL).get();
+        feedComment.addLike(member);
+
+        // when
+        String uri = BASE_URL + "/comments" + "/{comment-id}" + "/likes";
+
+        ResultActions actions =
+                ResultActionsUtils.deleteRequestWithTokenAndPathVariable(
+                        mvc, uri, COMMENT_ID, accessToken, encryptedRefreshToken
+                );
+
+        // then
+        FeedComment result = feedCommentRepository.findById(COMMENT_ID).get();
+        assertThat(result.getLikeCount()).isZero();
+
+        actions
+                .andExpect(status().isOk())
+                .andDo(document("cancel-like-feed-comment",
+                        getRequestPreProcessor(),
+                        getResponsePreProcessor(),
+                        RequestSnippet.getTokenSnippet(),
+                        RequestSnippet.getCommentPathVariableSnippet()
                 ));
     }
 }
