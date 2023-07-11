@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface FeedCommentMapper {
@@ -18,26 +19,58 @@ public interface FeedCommentMapper {
     @Mapping(target = "feed", source = "feed")
     FeedComment toEntity(CommentDto.Post postDto, Member member, Feed feed);
 
-    @Mapping(target = "commentId", source = "id")
-    CommentDto.PostResponse toPostResponseDto(FeedComment feedComment);
+    @Mapping(target = "commentId", source = "feedComment.id")
+    @Mapping(target = "writer", expression = "java(feedComment.getMember().getEmail().equals(email))")
+    @Mapping(target = "liked", expression = "java(!feedComment.getLikedMembers().isEmpty() && " +
+            "feedComment.getLikedMembers().stream().map(Member::getEmail)" +
+            ".collect(java.util.stream.Collectors.toList()).contains(email))")
+    CommentDto.PostResponse toPostResponseDto(FeedComment feedComment, String email);
 
     @Mapping(target = "commentId", source = "feedComment.id")
     @Mapping(target = "taggedMemberNickname", source = "nickname")
-    CommentDto.PostResponse toPostResponseDto(FeedComment feedComment, String nickname);
+    @Mapping(target = "writer", expression = "java(feedComment.getMember().getEmail().equals(email))")
+    @Mapping(target = "liked", expression = "java(!feedComment.getLikedMembers().isEmpty() && " +
+            "feedComment.getLikedMembers().stream().map(Member::getEmail)" +
+            ".collect(java.util.stream.Collectors.toList()).contains(email))")
+    CommentDto.PostResponse toPostResponseDto(FeedComment feedComment, String nickname, String email);
 
-    @Mapping(target = "commentId", source = "id")
-    CommentDto.PatchResponse toPatchResponseDto(FeedComment feedComment);
+    @Mapping(target = "commentId", source = "feedComment.id")
+    @Mapping(target = "writer", expression = "java(feedComment.getMember().getEmail().equals(email))")
+    @Mapping(target = "liked", expression = "java(!feedComment.getLikedMembers().isEmpty() && " +
+            "feedComment.getLikedMembers().stream().map(Member::getEmail)" +
+            ".collect(java.util.stream.Collectors.toList()).contains(email))")
+    CommentDto.PatchResponse toPatchResponseDto(FeedComment feedComment, String email);
 
     @Mapping(target = "commentId", source = "feedComment.id")
     @Mapping(target = "taggedMemberNickname", source = "nickname")
-    CommentDto.PatchResponse toPatchResponseDto(FeedComment feedComment, String nickname);
+    @Mapping(target = "writer", expression = "java(feedComment.getMember().getEmail().equals(email))")
+    @Mapping(target = "liked", expression = "java(!feedComment.getLikedMembers().isEmpty() && " +
+            "feedComment.getLikedMembers().stream().map(Member::getEmail)" +
+            ".collect(java.util.stream.Collectors.toList()).contains(email))")
+    CommentDto.PatchResponse toPatchResponseDto(FeedComment feedComment, String nickname, String email);
 
     @Mapping(target = "commentId", source = "feedComment.id")
     @Mapping(target = "content", source = "deleteContent")
-    CommentDto.DeleteResponse toDelteResponseDto(FeedComment feedComment, String deleteContent);
+    @Mapping(target = "writer", expression = "java(feedComment.getMember().getEmail().equals(email))")
+    @Mapping(target = "liked", expression = "java(!feedComment.getLikedMembers().isEmpty() && " +
+            "feedComment.getLikedMembers().stream().map(Member::getEmail)" +
+            ".collect(java.util.stream.Collectors.toList()).contains(email))")
+    CommentDto.DeleteResponse toDelteResponseDto(FeedComment feedComment, String deleteContent, String email);
 
     @Mapping(target = "commentId", source = "feedComment.id")
-    CommentDto.GetResponse toGetResponseDto(FeedComment feedComment);
+    @Mapping(target = "writer", expression = "java(feedComment.getMember().getEmail().equals(email))")
+    @Mapping(target = "liked", expression = "java(!feedComment.getLikedMembers().isEmpty() && " +
+            "feedComment.getLikedMembers().stream().map(Member::getEmail)" +
+            ".collect(java.util.stream.Collectors.toList()).contains(email))")
+    CommentDto.GetResponse toGetResponseDto(FeedComment feedComment, String email);
 
-    List<CommentDto.GetResponse> toGetResponseDtoList(List<FeedComment> feedComments);
+    default List<CommentDto.GetResponse> toGetResponseDtoList(List<FeedComment> feedComments, String email) {
+        if (feedComments == null) {
+            return null;
+        }
+
+        return feedComments.stream()
+                .map(feedComment -> toGetResponseDto(feedComment, email))
+                .collect(Collectors.toList());
+    }
 }

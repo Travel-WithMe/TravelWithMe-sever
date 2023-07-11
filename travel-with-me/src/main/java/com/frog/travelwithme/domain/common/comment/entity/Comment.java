@@ -73,4 +73,12 @@ public class Comment extends BaseTimeEntity {
     public boolean isDeleted() {
         return this.isDeleted;
     }
+
+    protected void addLikeCount() {
+        this.likeCount += 1;
+    }
+
+    protected void minusLikeCount() {
+        this.likeCount -= 1;
+    }
 }
